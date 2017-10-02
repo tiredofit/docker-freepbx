@@ -5,15 +5,14 @@
 /var/log/asterisk/freepbx.log
 /var/log/asterisk/freepbx_security.log 
 /var/log/asterisk/freepbx_debug {
-        weekly
-        missingok
-        rotate 4
-        #compress
-        notifempty
+        daily
+        if empty
+        rotate 7
+        compress
+        dateext
         sharedscripts
         create 0640 asterisk asterisk
         postrotate
         /usr/sbin/asterisk -rx 'logger reload' > /dev/null 2> /dev/null || true
         endscript
-        su root root
 }
