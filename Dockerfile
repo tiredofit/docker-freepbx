@@ -1,4 +1,5 @@
 FROM tiredofit/debian:stretch
+LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Environment Variables
     ENV PHP_MEMORY_LIMIT=256M
