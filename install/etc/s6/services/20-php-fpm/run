@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/10-freepbx ]
+do
+  sleep 1
+done
+
+### Set Debug Mode
+if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
+    set -x
+fi
+
+if [ ! -f /tmp/state/20-php-fpm ]; then
+### Start php-fpm
+	mkdir -p /www/logs/php-fpm
+	chown -R asterisk /www/logs/php-fpm
+    chown -R asterisk /var/lib/php
+	echo 'Initialization Complete' >/tmp/state/20-php-fpm
+fi
+
+echo ''
+echo '** [php-fpm] Starting php-fpm'
+exec s6-setuidgid asterisk php-fpm5.6 --fpm-config /etc/php/5.6/fpm/php-fpm.conf -F;

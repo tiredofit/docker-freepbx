@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+
+
+### Set Defaults
+  PHP_LOG_LEVEL=${PHP_LOG_LEVEL:-"notice"}
+  PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT:-"128M"}
+  PHP_TIMEOUT=${PHP_TIMEOUT:-"180"}
+  UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:-"2G"}
+    
+### Adjust PHP Runtime Variables
+  sed -i -e "s/<PHP_MEMORY_LIMIT>/$PHP_MEMORY_LIMIT/g" /etc/php/5.6/fpm/php-fpm.conf
+  sed -i -e "s/<PHP_MEMORY_LIMIT>/$PHP_MEMORY_LIMIT/g" /etc/php/5.6/fpm/php.ini
+  sed -i -e "s/<PHP_TIMEOUT>/$PHP_TIMEOUT/g" /etc/php/5.6/fpm/php.ini
+  sed -i -e "s/<UPLOAD_MAX_SIZE>/$UPLOAD_MAX_SIZE/g" /etc/php/5.6/fpm/php-fpm.conf
+  sed -i -e "s/<UPLOAD_MAX_SIZE>/$UPLOAD_MAX_SIZE/g" /etc/php/5.6/fpm/php.ini
+
+### Timezone Config
+  echo 'date.timezone='$TIMEZONE >> /etc/php/5.6/fpm/conf.d/timezone.ini
+
+
+ if [ "$DEBUG_SMTP" = "TRUE" ] || [ "DEBUG_SMTP" = "true" ] || [ "DEBUG_MODE" = "true" ] || [ "DEBUG_MODE" = "TRUE" ];  then
+    ENABLE_SMTP=FALSE
+    echo 'sendmail_path="/usr/local/bin/mhsendmail"' > /etc/php/5.6/fpm/conf.d/smtp.ini
+ fi
+ 
+### SMTP Config
+  if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
+    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/fpm/conf.d/smtp.ini
+  fi
+
+  sed -i -e "s/<PHP_LOG_LEVEL>/$PHP_LOG_LEVEL/g" /etc/php/5.6/fpm/php-fpm.conf
+  mkdir -p /tmp/state
+  touch /tmp/state/20-php-fpm-init

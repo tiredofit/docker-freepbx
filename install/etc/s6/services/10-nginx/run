@@ -1,0 +1,29 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/10-freepbx-init ]
+do
+  sleep 1
+done
+
+### Set Debug Mode
+if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
+    set -x
+fi
+
+if [ ! -f /tmp/state/10-freepbx ]; then
+
+### Force Reset Permissions for Security
+  chown -R asterisk /www/freepbx
+
+### Start nginx
+  mkdir -p /www/logs/nginx
+  mkdir -p /tmp/nginx
+  chown -R asterisk /www/logs/nginx
+  chown asterisk /tmp/nginx
+  mkdir -p /tmp/state
+  echo 'Initialization Complete' >/tmp/state/10-freepbx
+fi
+
+echo '** [freepbx] Starting FreePBX'
+exec nginx
+
