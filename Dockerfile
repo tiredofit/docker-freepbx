@@ -57,6 +57,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libjansson4 \
             mariadb-client \
             mpg123 \
+            net-tools \
             nginx \
             php5.6-cli \
             php5.6-curl \
@@ -74,6 +75,14 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             xmlstarlet \
             && \
 \
+
+### Install NodeJS
+       curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - && \
+       echo 'deb https://deb.nodesource.com/node_8.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
+       echo 'deb-src https://deb.nodesource.com/node_8.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
+       apt-get update && \
+       apt-get install nodejs && \
+
 ### Install MySQL Connector
        cd /usr/src && \
        curl -sSL https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.9-linux-debian9-x86-64bit.tar.gz | tar xvfz - -C /usr/src/ && \
