@@ -113,6 +113,9 @@ The following ports are exposed.
 
 * There seems to be a problem with the CDR Module when updating where it refuses to update. If that happens, simply enter the container (as shown below) and execute `upgrade-cdr`, which will download the latest CDR module, apply a tweak, install, and reload the system for you.
 
+# Known Bugs
+
+* When installing Parking Lot or Feature Codes you sometimes get `SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'helptext' at row 1`. To resolve login to your SQL server and issue this statement: `alter table featurecodes modify column helptext varchar(500);`
 
 #### Shell Access
 
@@ -125,6 +128,7 @@ docker exec -it (whatever your container name is e.g. freepbx) bash
 # References
 
 * https://freepbx.org/
+
 
 
 

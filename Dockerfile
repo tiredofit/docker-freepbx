@@ -21,7 +21,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libasound2-dev \
             libcurl4-openssl-dev \
             libical-dev \
-            libicu-dev \
             libiksemel-dev \
             libjansson-dev \
             libmariadbclient-dev \
@@ -34,6 +33,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libsqlite3-dev \
             libsrtp0-dev \
             libssl-dev \
+            libtiff-dev \
             libtool-bin \
             libvorbis-dev \
             libxml2-dev \
@@ -50,10 +50,13 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
     apt-get install --no-install-recommends -y \
             $ASTERISK_BUILD_DEPS \
             fail2ban \
+            flite \
             ffmpeg \
             git \
+            g++ \
             iproute2 \
             lame \
+            libicu-dev \
             libjansson4 \
             mariadb-client \
             mpg123 \
@@ -67,6 +70,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             php5.6-mysql \
             php5.6-xml \
             php-pear \
+            procps \
             sox \
             sqlite3 \
             sudo \
@@ -78,10 +82,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Install NodeJS
        curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - && \
-       echo 'deb https://deb.nodesource.com/node_8.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-       echo 'deb-src https://deb.nodesource.com/node_8.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
+       echo 'deb https://deb.nodesource.com/node_6.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
+       echo 'deb-src https://deb.nodesource.com/node_6.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
        apt-get update && \
-       apt-get install nodejs && \
+       apt-get install -y nodejs && \
 
 ### Install MySQL Connector
        cd /usr/src && \
@@ -93,6 +97,14 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
 \
 \
+### Build SpanDSP
+       mkdir -p /usr/src/spandsp && \
+       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-20170924.tar.gz | tar xvfz - --strip=1 -C /usr/src/spandsp && \
+       cd /usr/src/spandsp && \
+       ./configure && \
+       make && \
+       make install && \
+
 ### Build Asterisk
        cd /usr/src && \
        curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-14-current.tar.gz | tar xvfz - -C /usr/src/ && \
@@ -116,7 +128,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 #### Add G729 Codecs
        curl -sSLo /usr/lib/asterisk/modules/codec_g729.so http://asterisk.hosting.lv/bin/codec_g729-ast140-gcc4-glibc-x86_64-core2-sse4.so && \
 
-
 ### Cleanup 
        mkdir -p /var/run/fail2ban && \
        cd / && \
@@ -124,6 +135,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        apt-get purge -y $ASTERISK_BUILD_DEPS && \
        apt-get -y autoremove && \
        apt-get clean && \
+       apt-get install -y make && \
        rm -rf /var/lib/apt/lists/* && \
 \
 ### FreePBX Hacks
@@ -151,3 +163,4 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Networking Configuration
 EXPOSE 80 5060 18000-20000/udp
+
