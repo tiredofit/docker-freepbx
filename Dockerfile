@@ -49,6 +49,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Install Runtime Dependencies
     apt-get install --no-install-recommends -y \
             $ASTERISK_BUILD_DEPS \
+            composer \
             fail2ban \
             flite \
             ffmpeg \
@@ -69,6 +70,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             php5.6-mbstring \
             php5.6-mysql \
             php5.6-xml \
+            php5.6-zip \
             php-pear \
             procps \
             sox \

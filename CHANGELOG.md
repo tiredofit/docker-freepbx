@@ -1,3 +1,7 @@
+## 0.4 2017-10-17 <dave at tiredofit dot ca>
+
+* Composer - UCP Currently Broken
+
 ## 0.3 2017-10-17 <dave at tiredofit dot ca>
 
 * Added NodeJS for UCP
