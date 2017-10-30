@@ -84,8 +84,8 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Install NodeJS
        curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - && \
-       echo 'deb https://deb.nodesource.com/node_6.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-       echo 'deb-src https://deb.nodesource.com/node_6.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
+       echo 'deb https://deb.nodesource.com/node_8.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
+       echo 'deb-src https://deb.nodesource.com/node_8.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
        apt-get update && \
        apt-get install -y nodejs && \
 
@@ -116,6 +116,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        contrib/scripts/get_mp3_source.sh && \
        ./configure --with-resample --with-pjproject-bundled && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
+       menuselect/menuselect --disable BUILD_NATIVE && \
        menuselect/menuselect --enable format_mp3 menuselect.makeopts && \
        menuselect/menuselect --enable app_fax menuselect.makeopts && \
        menuselect/menuselect --enable codec_opus menuselect.makeopts && \

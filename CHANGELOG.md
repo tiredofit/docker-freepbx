@@ -1,3 +1,7 @@
+## 0.5 2017-10-30 <dave at tiredofit dot ca>
+
+* Remove BUILDNATIVE compiler flag for compatibility
+
 ## 0.4 2017-10-17 <dave at tiredofit dot ca>
 
 * Composer - UCP Currently Broken

@@ -195,6 +195,9 @@ chown asterisk:asterisk /etc/freepbx.conf
 echo '** [freepbx] Set RTP Ports' 
 mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -e 'USE '$DB_NAME'; UPDATE sipsettings SET `data` = "'$RTP_START'" WHERE keyword = "rtpstart";  UPDATE sipsettings SET `data` = "'$RTP_FINISH'" WHERE keyword = "rtpend";'
 
+### Fix a Freepbx bug with upgrades
+mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
+
 echo '** [freepbx] Starting Asterisk]'
 fwconsole chown > /dev/null 2>&1
 fwconsole start > /dev/null 2>&1
