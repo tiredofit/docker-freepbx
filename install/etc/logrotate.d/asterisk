@@ -1,10 +1,12 @@
 /var/spool/mail/asterisk
-/var/log/asterisk/full
-/var/log/asterisk/dtmf
-/var/log/asterisk/fail2ban
-/var/log/asterisk/freepbx.log
-/var/log/asterisk/freepbx_security.log 
-/var/log/asterisk/freepbx_debug {
+/var/log/freepbx/full
+/var/log/freepbx/dtmf
+/var/log/freepbx/fail2ban
+/var/log/freepbx/freepbx.log
+/var/log/freepbx/freepbx_security.log 
+/var/log/freepbx/freepbx_debug 
+/var/log/freepbx/ucp_err.log
+/var/log/freepbx/ucp_out.log {
         daily
         if empty
         rotate 7
@@ -16,3 +18,4 @@
         /usr/sbin/asterisk -rx 'logger reload' > /dev/null 2> /dev/null || true
         endscript
 }
+

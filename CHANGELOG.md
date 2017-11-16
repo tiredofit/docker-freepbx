@@ -1,3 +1,7 @@
+## 0.51 2017-11-17 <dave at tiredofit dot ca>
+
+* Fix Logrotate
+
 ## 0.5 2017-10-30 <dave at tiredofit dot ca>
 
 * Remove BUILDNATIVE compiler flag for compatibility
