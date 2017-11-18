@@ -31,7 +31,7 @@ EOF
 
 echo ''
 echo '** [fail2ban] Starting Fail2ban'
-exec fail2ban-client -f -x start;
+service fail2ban restart;
 
   mkdir -p /tmp/state
   touch /tmp/state/04-fail2ban-init
