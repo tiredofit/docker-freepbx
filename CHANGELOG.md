@@ -1,3 +1,7 @@
+## 0.6 2017-11-18 <dave at tiredofit dot ca>
+
+* Fix Fail2ban to properly load Asterisk Jails
+
 ## 0.51 2017-11-17 <dave at tiredofit dot ca>
 
 * Fix Logrotate
