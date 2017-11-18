@@ -56,6 +56,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             git \
             g++ \
             iproute2 \
+            iptables \
             lame \
             libicu-dev \
             libjansson4 \

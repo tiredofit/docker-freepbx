@@ -28,10 +28,11 @@ services:
       - DB_NAME=asterisk
       - DB_USER=asterisk
       - DB_PASS=asteriskpass
-      
     restart: always
     networks:
       - proxy-tier
+    cap_add:
+      - NET_ADMIN
 
   freepbx-db:
     container_name: freepbx-db
