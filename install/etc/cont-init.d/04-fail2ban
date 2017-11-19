@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 rm -rf /etc/fail2ban/jail.d/*
-
+touch /var/log/asterisk/full
 cat <<EOF > /etc/fail2ban/jail.conf
 
 [asterisk-iptables]
