@@ -1,3 +1,8 @@
+## 0.7test 2017-12-12 <dave at tiredofit dot ca>
+
+* Test Single Container Mode proving that UCP works with Apache (Didn't work with Nginx)
+* Next release will decide which way forward (Split DB or Not)
+
 ## 0.6 2017-11-18 <dave at tiredofit dot ca>
 
 * Fix Fail2ban to properly load Asterisk Jails

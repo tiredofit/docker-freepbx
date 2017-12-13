@@ -1,4 +1,4 @@
-FROM tiredofit/debian:stretch
+FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Environment Variables
@@ -9,7 +9,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
-\
+
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
             autoconf \
@@ -49,6 +49,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Install Runtime Dependencies
     apt-get install --no-install-recommends -y \
             $ASTERISK_BUILD_DEPS \
+            apache2 \
             composer \
             fail2ban \
             flite \
@@ -61,12 +62,12 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libicu-dev \
             libjansson4 \
             mariadb-client \
+            mariadb-server \
             mpg123 \
             net-tools \
-            nginx \
+            php5.6 \
             php5.6-cli \
             php5.6-curl \
-            php5.6-fpm \
             php5.6-gd \
             php5.6-mbstring \
             php5.6-mysql \
@@ -81,41 +82,47 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             uuid \
             whois \
             xmlstarlet \
-            && \
-\
-
-### Install NodeJS
-       curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - && \
-       echo 'deb https://deb.nodesource.com/node_8.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-       echo 'deb-src https://deb.nodesource.com/node_8.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
-       apt-get update && \
-       apt-get install -y nodejs && \
+#            libboost-filesystem1.62.0 \
+#            libboost-iostreams1.62.0 \
+#            libboost-system1.62.0 \
+#            libcgi-fast-perl \
+#            libcgi-pm-perl \
+#            libclass-accessor-perl \
+#            libcwidget3v5 \
+#            libencode-locale-perl \
+#            libfcgi-perl \
+#            libhtml-parser-perl \
+#            libhtml-tagset-perl \
+#            libhttp-date-perl \
+#            libhttp-message-perl \
+#            libio-html-perl \
+#            libio-string-perl \
+#            liblocale-gettext-perl \
+#            liblwp-mediatypes-perl \
+#            libparse-debianchangelog-perl \
+#            libsigc++-2.0-0v5 \
+#            libsub-name-perl \
+#            libtimedate-perl \
+#            liburi-perl \
+             && \
 
 ### Install MySQL Connector
        cd /usr/src && \
-       curl -sSL https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.9-linux-debian9-x86-64bit.tar.gz | tar xvfz - -C /usr/src/ && \
-       cp mysql-connector-odbc-5.3.9*/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/ && \
-\
+       curl -sSL https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.0.2/mariadb-connector-odbc-3.0.2-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/ && \
+       cp mariadb-connector-odbc-3.0.2*/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
+
 ### Add Users
        addgroup --gid 2600 asterisk && \
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
-\
-\
-### Build SpanDSP
-       mkdir -p /usr/src/spandsp && \
-       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-20170924.tar.gz | tar xvfz - --strip=1 -C /usr/src/spandsp && \
-       cd /usr/src/spandsp && \
-       ./configure && \
-       make && \
-       make install && \
 
 ### Build Asterisk
        cd /usr/src && \
        curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-14-current.tar.gz | tar xvfz - -C /usr/src/ && \
        cd /usr/src/asterisk-14*/ && \
        make distclean && \
-       cd /usr/src/asterisk-14*/ && \
        contrib/scripts/get_mp3_source.sh && \
+       #apt-get install -y aptitude && \
+       #./contrib/scripts/install_prereq install && \
        ./configure --with-resample --with-pjproject-bundled && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE && \
@@ -128,8 +135,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        menuselect/menuselect --enable MOH-OPSOUND-GSM && \
        make && \
        make install && \
-\
-\
+
 #### Add G729 Codecs
        curl -sSLo /usr/lib/asterisk/modules/codec_g729.so http://asterisk.hosting.lv/bin/codec_g729-ast140-gcc4-glibc-x86_64-core2-sse4.so && \
 
@@ -142,11 +148,11 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        apt-get clean && \
        apt-get install -y make && \
        rm -rf /var/lib/apt/lists/* && \
-\
+
 ### FreePBX Hacks
        mkdir -p /var/log/httpd && \
-       ln -s /www/logs/nginx/error.log /var/log/httpd/error_log && \
-\
+       #ln -s /www/logs/nginx/error.log /var/log/httpd/error_log && \
+
 ### Setup for Data Persistence
        mkdir -p /assets/config/var/lib/ /assets/config/home/ /www/logs/asterisk && \
        mv /home/asterisk /assets/config/home/ && \
@@ -155,17 +161,18 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/var/lib/asterisk /var/lib/asterisk && \
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
+       mv /var/lib/mysql /assets/config/var/lib/ && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \
        rm -rf /etc/asterisk && \
-       ln -s /data/etc/asterisk /etc/asterisk && \
-       rm -rf /var/log/asterisk && \
-       ln -s /www/logs/asterisk /var/log/asterisk
+       ln -s /data/etc/asterisk /etc/asterisk
+       #rm -rf /var/log/asterisk && \
+       #ln -s /www/logs/asterisk /var/log/asterisk
 
 ### Files Add
    ADD install /
 
 ### Networking Configuration
-EXPOSE 80 5060 18000-20000/udp
+EXPOSE 80 443 5060 5160 4569 18000-20000/udp
 
