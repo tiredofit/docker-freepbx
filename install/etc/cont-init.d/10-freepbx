@@ -6,13 +6,13 @@ if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
 fi
 
  ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
-:    
+  if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then
+     DB_EMBEDDED=TRUE
+  else
+     DB_EMBEDDED=FALSE      
   fi
 
-# Embedded DB Variance
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
-
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Sanity Test
     if [ ! -n "DB_HOST" ]; then
         echo '** [freepbx] ERROR: No Database Host Entered! '
@@ -40,7 +40,7 @@ DB_PORT=${DB_PORT:-3306}
 RTP_START=${RTP_START:-18000}
 RTP_END=${RTP_END:-20000}
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
     while true; do
     	mysqlcmd='mysql -u'$DB_USER' -h'$DB_HOST' -p'$DB_PASS 
@@ -71,7 +71,7 @@ chown -R asterisk:asterisk /data
 if [ ! -f /var/www/html/admin/index.php ]; then
 	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX...'
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
   cat <<EOF > /etc/odbc.ini
 [asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
@@ -94,19 +94,20 @@ fi
    	cd /usr/src/freepbx
    	cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
    	./start_asterisk start 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
   sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
 	sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
 	sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
 fi
 	echo '** [freepbx] Installing FreePBX'
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 	./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=/var/www/html
 else
   ./install -n
 fi
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
   cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
@@ -129,7 +130,7 @@ fi
 	fwconsole ma upgrade framework core 
 	fwconsole ma download cdr
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then	
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
   # CDR Hack
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST asterisk < /usr/src/freepbx/installlib/SQL/cdr.sql
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
@@ -178,7 +179,7 @@ fi
 	  	touch /data/etc/amportal.conf
   fi
 
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then
+  if [ "$DB_EMBEDDED" = "TRUE" ];  then 
       if [ ! -f /data/etc/freepbx.conf ]; then
          mkdir -p /data/etc/
          cp -R /etc/freepbx.conf /data/etc/
@@ -192,7 +193,7 @@ fi
       fi
   fi
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 ### Setup Dynamic Configuration
 echo '** [freepbx] Setting Configuration'
 cat <<EOF > /etc/freepbx.conf
@@ -236,7 +237,7 @@ fi
 
 chown asterisk:asterisk /etc/freepbx.conf
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "false" ]];  then
+if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 ### Set RTP Ports
 echo '** [freepbx] Set RTP Ports' 
 mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -e 'USE '$DB_NAME'; UPDATE sipsettings SET `data` = "'$RTP_START'" WHERE keyword = "rtpstart";  UPDATE sipsettings SET `data` = "'$RTP_FINISH'" WHERE keyword = "rtpend";'

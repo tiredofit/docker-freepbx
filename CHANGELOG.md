@@ -1,3 +1,7 @@
+## 0.81 2017-12-14 <dave at tiredofit dot ca>
+
+* Tweak for DB_EMBEDDED acting strange
+
 ## 0.8 2017-12-14 <dave at tiredofit dot ca>
 
 * Support both embedded and external MariaDB servers via DB_EMBEDDED environment variable
