@@ -10,8 +10,8 @@ services:
     volumes:
       - ./certs:/certs
       - ./data:/data
-      - ./logs:/www/logs
-      - ./data/www:/www/freepbx
+      - ./logs:/var/log/asterisk
+      - ./data/www:/var/www/html
     environment: 
       - VIRTUAL_HOST=hostname.example.com
       - VIRTUAL_NETWORK=nginx-proxy
