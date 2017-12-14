@@ -1,9 +1,6 @@
 FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
-### Set Environment Variables
-    ENV PHP_MEMORY_LIMIT=256M
-
 ### Install Dependencies
    RUN apt-get update && \
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
@@ -62,7 +59,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libicu-dev \
             libjansson4 \
             mariadb-client \
-            mariadb-server \
             mpg123 \
             net-tools \
             php5.6 \
@@ -82,29 +78,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             uuid \
             whois \
             xmlstarlet \
-#            libboost-filesystem1.62.0 \
-#            libboost-iostreams1.62.0 \
-#            libboost-system1.62.0 \
-#            libcgi-fast-perl \
-#            libcgi-pm-perl \
-#            libclass-accessor-perl \
-#            libcwidget3v5 \
-#            libencode-locale-perl \
-#            libfcgi-perl \
-#            libhtml-parser-perl \
-#            libhtml-tagset-perl \
-#            libhttp-date-perl \
-#            libhttp-message-perl \
-#            libio-html-perl \
-#            libio-string-perl \
-#            liblocale-gettext-perl \
-#            liblwp-mediatypes-perl \
-#            libparse-debianchangelog-perl \
-#            libsigc++-2.0-0v5 \
-#            libsub-name-perl \
-#            libtimedate-perl \
-#            liburi-perl \
-             && \
+            && \
 
 ### Install MySQL Connector
        cd /usr/src && \
@@ -121,8 +95,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        cd /usr/src/asterisk-14*/ && \
        make distclean && \
        contrib/scripts/get_mp3_source.sh && \
-       #apt-get install -y aptitude && \
-       #./contrib/scripts/install_prereq install && \
        ./configure --with-resample --with-pjproject-bundled && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE && \
@@ -151,24 +123,20 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### FreePBX Hacks
        mkdir -p /var/log/httpd && \
-       #ln -s /www/logs/nginx/error.log /var/log/httpd/error_log && \
 
 ### Setup for Data Persistence
-       mkdir -p /assets/config/var/lib/ /assets/config/home/ /www/logs/asterisk && \
+       mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
        mv /home/asterisk /assets/config/home/ && \
        ln -s /data/home/asterisk /home/asterisk && \
        mv /var/lib/asterisk /assets/config/var/lib/ && \
        ln -s /data/var/lib/asterisk /var/lib/asterisk && \
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
-       mv /var/lib/mysql /assets/config/var/lib/ && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \
        rm -rf /etc/asterisk && \
        ln -s /data/etc/asterisk /etc/asterisk
-       #rm -rf /var/log/asterisk && \
-       #ln -s /www/logs/asterisk /var/log/asterisk
 
 ### Files Add
    ADD install /

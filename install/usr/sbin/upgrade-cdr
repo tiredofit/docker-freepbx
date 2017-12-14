@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/with-contenv /bin/bash
 
 ## This is a dirty hack to allow for updating the CDR Module to use a seperate DB Host and the same DB as FreePBX.
 	echo '** [freepbx] Performing Manual Upgrade of CDR Module'
-	cp -R /www/freepbx/admin/modules/cdr/install.php /www/freepbx/admin/modules/cdr/.install.php
-	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
-	sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
+	cp -R /var/www/html/admin/modules/cdr/install.php /var/www/html/admin/modules/cdr/.install.php
+	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /var/www/html/admin/modules/cdr/install.php
+	sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /var/www/html/admin/modules/cdr/install.php
 	fwconsole ma upgrade cdr
-	cp -R /www/freepbx/admin/modules/cdr/.install.php /www/freepbx/admin/modules/cdr/install.php
+	cp -R /var/www/html/admin/modules/cdr/.install.php /var/www/html/admin/modules/cdr/install.php
 	fwconsole chown 
     fwconsole reload
-    
+    chown -R asterisk /etc/asterisk

@@ -9,7 +9,9 @@ This will build a container for [FreePBX](https://www.freepbx.org) - A Voice ove
 * Modifies to support external MySQL Database and only require one DB.
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
-* Debian Stretch Base w/ Nginx and PHP-FPM
+* Debian Stretch Base w/ Apache2
+* NodeJS 8.9
+* Automatically Installs User Control Panel
         
 This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
 

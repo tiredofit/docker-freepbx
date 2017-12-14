@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bash
-  
-  fwconsole stop
-  service apache2 stop
-  service mysql stop
-  mkdir -p /tmp/state
-  touch /tmp/state/10-mariadb-finish

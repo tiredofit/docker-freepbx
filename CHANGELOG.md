@@ -1,3 +1,14 @@
+## 0.7 2017-12-14 <dave at tiredofit dot ca>
+
+* Debian Stretch
+* Asterisk 14
+* NodeJS 8.x
+* Apache2 (Potentially will revert to Nginx again later)
+* Seperate MariaDB database support as per original 0.2 build
+* FreePBX 14
+* UCP installed as part of freepbx initial install
+
+
 ## 0.7test 2017-12-12 <dave at tiredofit dot ca>
 
 * Test Single Container Mode proving that UCP works with Apache (Didn't work with Nginx)
