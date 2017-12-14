@@ -1,6 +1,9 @@
 FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
+### Set Defaults
+   ENV DB_EMBEDDED=TRUE
+
 ### Install Dependencies
    RUN apt-get update && \
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
@@ -59,6 +62,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libicu-dev \
             libjansson4 \
             mariadb-client \
+            mariadb-server \
             mpg123 \
             net-tools \
             php5.6 \
@@ -132,6 +136,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/var/lib/asterisk /var/lib/asterisk && \
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
+       mv /var/lib/mysql /assets/config/var/lib/ && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \

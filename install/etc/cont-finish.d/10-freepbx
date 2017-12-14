@@ -1,6 +1,10 @@
 #!/usr/bin/with-contenv bash
+  
+fwconsole stop
+service apache2 stop
+if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then
+	service mysql stop
+fi
 
-  service apache2 stop
-  fwconsole stop
-  mkdir -p /tmp/state
-  touch /tmp/state/20-freepbx-finish
+mkdir -p /tmp/state
+touch /tmp/state/10-mariadb-finish

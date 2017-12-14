@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then  
+  mkdir -p /var/lib/mysql
+
+  if [ ! -f /var/lib/mysql/database ]; then
+    echo '** [mysql] New Embedded Database Detected, setting up..'
+    cp -R /assets/config/var/lib/mysql/* /var/lib/mysql
+  fi
+
+  chown -R mysql:mysql /var/lib/mysql 
+  service mysql restart
+fi
+
+  mkdir -p /tmp/state
+  touch /tmp/state/10-mariadb-init

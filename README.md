@@ -6,7 +6,7 @@ This will build a container for [FreePBX](https://www.freepbx.org) - A Voice ove
 
 * Latest release Version 14
 * Compiles and Installs Asterisk 14
-* Modifies to support external MySQL Database and only require one DB.
+* Choice of running embedded database or Modifies to support external MySQL Database and only require one DB.
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
 * Debian Stretch Base w/ Apache2
@@ -91,6 +91,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 
 | Parameter        | Description                            |
 |------------------|----------------------------------------|
+| `DB_EMBEDDED` | Allows you to use an internally provided MariaDB Server e.g. `TRUE` or `FALSE` |
 | `DB_HOST` | Host or container name of MySQL Server e.g. `freepbx-db` |
 | `DB_PORT` | MySQL Port - Default `3306` |
 | `DB_NAME` | MySQL Database name e.g. `asterisk` |
@@ -107,13 +108,14 @@ The following ports are exposed.
 | Port      | Description |
 |-----------|-------------|
 | `80`      | HTTP        |
+| `4569`    | IAX         |
 | `5060`    | PJSIP         |
 | `5160`    | SIP         |
 | 18000-2000/udp | RTP Ports |
 
 # Maintenance
 
-* There seems to be a problem with the CDR Module when updating where it refuses to update. If that happens, simply enter the container (as shown below) and execute `upgrade-cdr`, which will download the latest CDR module, apply a tweak, install, and reload the system for you.
+* There seems to be a problem with the CDR Module when updating where it refuses to update when using an external DB Server. If that happens, simply enter the container (as shown below) and execute `upgrade-cdr`, which will download the latest CDR module, apply a tweak, install, and reload the system for you.
 
 # Known Bugs
 

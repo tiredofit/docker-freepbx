@@ -6,12 +6,16 @@ services:
     image: tiredofit/freepbx
     ports:
       - 5060:5060
+      - 5160:5160
       - 18000:20000/udp
     volumes:
       - ./certs:/certs
       - ./data:/data
       - ./logs:/var/log/asterisk
       - ./data/www:/var/www/html
+     ### Only Enable this option below if you set DB_EMBEDDED=TRUE
+     #- ./db:/var/lib/mysql
+
     environment: 
       - VIRTUAL_HOST=hostname.example.com
       - VIRTUAL_NETWORK=nginx-proxy
@@ -24,6 +28,9 @@ services:
       - RTP_START=18000
       - RTP_FINISH=20000
 
+      - DB_EMBEDDED=FALSE
+
+     ### These are only necessary is DB_EMBEDDED=FALSE
       - DB_HOST=freepbx-db
       - DB_NAME=asterisk
       - DB_USER=asterisk

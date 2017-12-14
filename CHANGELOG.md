@@ -1,3 +1,7 @@
+## 0.8 2017-12-14 <dave at tiredofit dot ca>
+
+* Support both embedded and external MariaDB servers via DB_EMBEDDED environment variable
+
 ## 0.7 2017-12-14 <dave at tiredofit dot ca>
 
 * Debian Stretch
