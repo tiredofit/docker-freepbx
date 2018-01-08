@@ -43,7 +43,8 @@ RTP_END=${RTP_END:-20000}
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
     while true; do
-    	mysqlcmd='mysql -u'$DB_USER' -h'$DB_HOST' -p'$DB_PASS' -P'$DB_PORT'
+    	mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
+        echo "mysqlcmd = $mysqlcmd"
     	out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
     	echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
     	if [ $? -eq 0 ]; then
