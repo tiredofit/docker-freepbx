@@ -134,7 +134,7 @@ fi
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
   # CDR Hack
-  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT asterisk < /usr/src/freepbx/installlib/SQL/cdr.sql
+  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
 	cp -R /var/www/html/admin/modules/cdr/install.php /var/www/html/admin/modules/cdr/.install.php
 	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
