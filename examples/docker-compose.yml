@@ -32,6 +32,7 @@ services:
 
      ### These are only necessary is DB_EMBEDDED=FALSE
       - DB_HOST=freepbx-db
+      - DB_PORT=3306
       - DB_NAME=asterisk
       - DB_USER=asterisk
       - DB_PASS=asteriskpass
