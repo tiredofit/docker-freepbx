@@ -49,7 +49,7 @@ You will also need an external MySQL/MariaDB Container
 
 # Installation
 
-Automated builds of the image are available on [Docker Hub](https://hub.docker.com/tiredofit/nginx) and is the recommended method of installation.
+Automated builds of the image are available on [Docker Hub](https://hub.docker.com/tiredofit/freepbx) and is the recommended method of installation.
 
 
 ```bash
@@ -132,8 +132,3 @@ docker exec -it (whatever your container name is e.g. freepbx) bash
 # References
 
 * https://freepbx.org/
-
-
-
-
-

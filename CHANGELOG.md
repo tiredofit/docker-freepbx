@@ -5,6 +5,10 @@
 * Installs all latest applications from --edge to avoid any signature failures
 * Compiles and installs app_confbridge
 
+## 0.82 2018-01-09 <mattcvinvent@github>
+
+* Added DB_PORT verification to SQL strings
+
 ## 0.81 2017-12-14 <dave at tiredofit dot ca>
 
 * Tweak for DB_EMBEDDED acting strange
