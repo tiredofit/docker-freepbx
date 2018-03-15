@@ -127,8 +127,8 @@ EOF
 fi
 
   echo '** [freepbx] Enabling Default Modules'
-	fwconsole ma upgrade framework core 
-	fwconsole ma download cdr
+	fwconsole ma downloadinstall framework core --edge
+	fwconsole ma download cdr --edge
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
   # CDR Hack
@@ -143,11 +143,11 @@ else
   fwconsole ma install cdr
 fi
 
-  fwconsole ma upgrade voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences 
-  fwconsole ma upgrade certman userman pm2
+  fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences --edge
+  fwconsole ma downloadinstall certman userman pm2 --edge
 	fwconsole chown 
 	fwconsole reload 
-  fwconsole ma upgrade ucp
+  fwconsole ma downloadinstall ucp --edge
   fwconsole chown 
   fwconsole reload 
   fwconsole restart

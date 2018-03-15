@@ -104,6 +104,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        menuselect/menuselect --disable BUILD_NATIVE && \
        menuselect/menuselect --enable format_mp3 menuselect.makeopts && \
        menuselect/menuselect --enable app_fax menuselect.makeopts && \
+       menuselect/menuselect --enable app_confbridge menuselect.makeopts && \
        menuselect/menuselect --enable codec_opus menuselect.makeopts && \
        menuselect/menuselect --enable codec_silk menuselect.makeopts && \
        menuselect/menuselect --enable BETTER_BACKTRACES menuselect.makeopts && \

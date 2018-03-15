@@ -1,3 +1,10 @@
+## 1.0 2018-03-15 <dave at tiredofit dot ca>
+
+* Production Ready
+* Fixes Previous Download and installation steps as reported by Github users
+* Installs all latest applications from --edge to avoid any signature failures
+* Compiles and installs app_confbridge
+
 ## 0.81 2017-12-14 <dave at tiredofit dot ca>
 
 * Tweak for DB_EMBEDDED acting strange
