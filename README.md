@@ -1,4 +1,13 @@
-# hub.docker.com/tiredofit/freepbx
+
+# hub.docker.com/r/tiredofit/freepbx
+
+[![Build Status](https://img.shields.io/docker/build/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
+[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
+[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/freepbx.svg)](https://microbadger.com/images/tiredofit/freepbx)
+[![Image Size](https://img.shields.io/microbadger/image-size/tiredofit/freepbx.svg)](https://microbadger.com/images/tiredofit/freepbx)
+
+
 
 # Introduction
 
