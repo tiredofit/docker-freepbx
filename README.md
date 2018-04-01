@@ -5,8 +5,6 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
 [![Docker Stars](https://img.shields.io/docker/stars/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
 [![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/freepbx.svg)](https://microbadger.com/images/tiredofit/freepbx)
-[![Image Size](https://img.shields.io/microbadger/image-size/tiredofit/freepbx.svg)](https://microbadger.com/images/tiredofit/freepbx)
-
 
 
 # Introduction
@@ -108,7 +106,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
-
+| `WEBOOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html' |
 
 ### Networking
 
@@ -117,9 +115,14 @@ The following ports are exposed.
 | Port      | Description |
 |-----------|-------------|
 | `80`      | HTTP        |
+| `443`     | HTTPS       |
 | `4569`    | IAX         |
-| `5060`    | PJSIP         |
+| `5060`    | PJSIP       |
 | `5160`    | SIP         |
+| `8001`    | UCP         |
+| `8003`    | UCP SSL     |
+| `8008`    | UCP         |
+| `8009`    | UCP SSL     |
 | 18000-2000/udp | RTP Ports |
 
 # Maintenance

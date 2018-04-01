@@ -119,7 +119,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Cleanup 
        mkdir -p /var/run/fail2ban && \
        cd / && \
-       rm -rf /usr/src/* && \
+       rm -rf /usr/src/* /tmp/* && \
        apt-get purge -y $ASTERISK_BUILD_DEPS && \
        apt-get -y autoremove && \
        apt-get clean && \
@@ -148,5 +148,4 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
    ADD install /
 
 ### Networking Configuration
-EXPOSE 80 443 5060 5160 4569 18000-20000/udp
-
+EXPOSE 80 443 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp

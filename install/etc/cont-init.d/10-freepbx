@@ -6,7 +6,7 @@ if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
 fi
 
  ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then
+  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
      DB_EMBEDDED=TRUE
   else
      DB_EMBEDDED=FALSE      
@@ -39,6 +39,7 @@ fi
 DB_PORT=${DB_PORT:-3306}
 RTP_START=${RTP_START:-18000}
 RTP_END=${RTP_END:-20000}
+WEBROOT=${WEBROOT:-"$WEBROOT"}
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
@@ -68,7 +69,7 @@ mkdir -p /data/var/run/asterisk
 chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
-if [ ! -f /var/www/html/admin/index.php ]; then
+if [ ! -f $WEBROOT/admin/index.php ]; then
 	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX...'
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
@@ -90,7 +91,7 @@ fi
     sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
     sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
    	cd /usr/src
-   	git clone -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
+   	git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
    	cd /usr/src/freepbx
    	cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
    	./start_asterisk start 
@@ -102,7 +103,7 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
 fi
 	echo '** [freepbx] Installing FreePBX'
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-	./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=/var/www/html
+	./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
 else
   ./install -n
 fi
@@ -123,7 +124,7 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
 \$amp_conf['CDRDBPASS'] = '$DB_PASS';
 \$amp_conf['CDRDBPORT'] = '$DB_PORT';
 \$amp_conf['CDRDBTYPE'] = 'mysql';
-require_once('/var/www/html/admin/bootstrap.php');
+require_once('$WEBROOT/admin/bootstrap.php');
 ?>
 EOF
 fi
@@ -136,11 +137,11 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
   # CDR Hack
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
-	cp -R /var/www/html/admin/modules/cdr/install.php /var/www/html/admin/modules/cdr/.install.php
+	cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
 	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
 	sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
 	fwconsole ma install cdr
-	cp -R /var/www/html/admin/modules/cdr/.install.php /var/www/html/admin/modules/cdr/install.php
+	cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
 else
   fwconsole ma install cdr
 fi
@@ -211,7 +212,7 @@ cat <<EOF > /etc/freepbx.conf
 \$amp_conf['CDRDBUSER'] = '$DB_USER';
 \$amp_conf['CDRDBPASS'] = '$DB_PASS';
 \$amp_conf['CDRDBTYPE'] = 'mysql';
-require_once('/var/www/html/admin/bootstrap.php');
+require_once('$WEBROOT/admin/bootstrap.php');
 ?>
 EOF
 
@@ -242,8 +243,7 @@ chown asterisk:asterisk /etc/freepbx.conf
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 ### Set RTP Ports
 echo '** [freepbx] Set RTP Ports' 
-mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE sipsettings SET `data` = "'$RTP_START'" WHERE keyword = "rtpstart";  UPDATE sipsettings SET `data` = "'$RTP_FINISH'" WHERE keyword = "rtpend";'
-
+mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
 ### Fix a Freepbx bug with upgrades
 mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
 fi
@@ -256,7 +256,7 @@ chown -R asterisk /etc/asterisk/*
 
 ### Apache Setup
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF 
-<Directory /var/www/html>
+<Directory $WEBROOT>
     AllowOverride All
     </Directory>
 EOF

@@ -7,7 +7,7 @@ services:
     ports:
       - 5060:5060
       - 5160:5160
-      - 18000:20000/udp
+      - 18000-18100:18000-18100/udp
     volumes:
       - ./certs:/certs
       - ./data:/data
@@ -26,11 +26,11 @@ services:
       - ZABBIX_HOSTNAME=freepbx-app
 
       - RTP_START=18000
-      - RTP_FINISH=20000
+      - RTP_FINISH=18100
 
       - DB_EMBEDDED=FALSE
 
-     ### These are only necessary is DB_EMBEDDED=FALSE
+     ### These are only necessary if DB_EMBEDDED=FALSE
       - DB_HOST=freepbx-db
       - DB_PORT=3306
       - DB_NAME=asterisk
@@ -56,6 +56,29 @@ services:
     networks:
       - proxy-tier
 
+
+  freepbx-db-backup:
+    container_name: freepbx-db-backup
+    image: tiredofit/db-backup
+    links:
+     - freepbx-db
+    volumes:
+      - ./dbbackup:/backup
+    environment:
+      - ZABBIX_HOSTNAME=freepbx-db-backup
+      - DB_HOST=freepbx-db
+      - DB_TYPE=mariadb
+      - DB_NAME=asterisk
+      - DB_USER=asterisk
+      - DB_PASS=asteriskpass
+      - DB_DUMP_FREQ=1440
+      - DB_DUMP_BEGIN=0000
+      - DB_CLEANUP_TIME=8640
+      - COMPRESSION=BZ
+      - MD5=TRUE
+    networks:
+      - proxy-tier
+    restart: always
 
 networks:
   proxy-tier:

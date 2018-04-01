@@ -1,3 +1,11 @@
+## 1.1 2018-03-31 <dave at tiredofit dot ca>
+
+* Cleanup some of the Embedded DB Routines
+* Expose more ports
+* Fix RTP Port Range Modification in Database
+* Update docker-compose.yml example
+* Added WEBROOT variable for adding subfolder based install
+
 ## 1.0 2018-03-15 <dave at tiredofit dot ca>
 
 * Production Ready
