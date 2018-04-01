@@ -1,3 +1,8 @@
+## 1.21 2018-04-01 <dave at tiredofit dot ca>
+
+* Be more verbose when Webroot environment variable is being changed
+* Disable Indexing if custom webroot enabled
+
 ## 1.2 2018-04-01 <dave at tiredofit dot ca>
 
 * Updated Asterisk Compilation options courtesy of github.com/flaviut
