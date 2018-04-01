@@ -27,7 +27,7 @@ This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofi
 
 # Authors
 
-- [Dave Conroy] [https://github.com/tiredofit]
+- [Dave Conroy](https://github.com/tiredofit)
 
 # Table of Contents
 
@@ -106,7 +106,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
-| `WEBOOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html' |
+| `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html' |
 
 ### Networking
 
