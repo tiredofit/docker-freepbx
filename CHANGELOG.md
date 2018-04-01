@@ -1,3 +1,7 @@
+## 1.2 2018-04-01 <dave at tiredofit dot ca>
+
+* Updated Asterisk Compilation options courtesy of github.com/flaviut
+
 ## 1.1 2018-03-31 <dave at tiredofit dot ca>
 
 * Cleanup some of the Embedded DB Routines

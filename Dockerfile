@@ -101,15 +101,15 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        contrib/scripts/get_mp3_source.sh && \
        ./configure --with-resample --with-pjproject-bundled && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
-       menuselect/menuselect --disable BUILD_NATIVE && \
-       menuselect/menuselect --enable format_mp3 menuselect.makeopts && \
-       menuselect/menuselect --enable app_fax menuselect.makeopts && \
-       menuselect/menuselect --enable app_confbridge menuselect.makeopts && \
-       menuselect/menuselect --enable codec_opus menuselect.makeopts && \
-       menuselect/menuselect --enable codec_silk menuselect.makeopts && \
-       menuselect/menuselect --enable BETTER_BACKTRACES menuselect.makeopts && \
-       menuselect/menuselect --disable MOH-OPSOUND-WAV && \
-       menuselect/menuselect --enable MOH-OPSOUND-GSM && \
+       menuselect/menuselect --disable BUILD_NATIVE \
+                             --enable format_mp3 \
+                             --enable app_fax \
+                             --enable app_confbridge \
+                             --enable codec_opus \
+                             --enable codec_silk \
+                             --enable BETTER_BACKTRACES \
+                             --disable MOH-OPSOUND-WAV \
+                             --enable MOH-OPSOUND-GSM \
        make && \
        make install && \
 
