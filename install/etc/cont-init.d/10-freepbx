@@ -72,8 +72,12 @@ chown -R asterisk:asterisk /data
 if [ ! -f $WEBROOT/admin/index.php ]; then
 	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX...'
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-  cat <<EOF > /etc/odbc.ini
+  if [ $WEBROOT != "/var/www/html" ]; then
+    echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
+  fi
+
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+    cat <<EOF > /etc/odbc.ini
 [asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
 driver = MySQL
@@ -96,20 +100,22 @@ fi
    	cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
    	./start_asterisk start 
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-  sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
-	sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
-	sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
-fi
-	echo '** [freepbx] Installing FreePBX'
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-	./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
-else
-        ./install -n --webroot=$WEBROOT
-fi
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+    sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
+	  sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
+	  sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
+  fi
+	
+  echo '** [freepbx] Installing FreePBX'
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-  cat <<EOF > /etc/freepbx.conf
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+	  ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
+  else
+    ./install -n --webroot=$WEBROOT
+  fi
+
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+    cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
 \$amp_conf['AMPDBPASS'] = '$DB_PASS';
@@ -127,38 +133,38 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
 require_once('$WEBROOT/admin/bootstrap.php');
 ?>
 EOF
-fi
+  fi
 
   echo '** [freepbx] Enabling Default Modules'
 	fwconsole ma downloadinstall framework core --edge
 	fwconsole ma download cdr --edge
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
-  # CDR Hack
-  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
-  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
-	cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
-	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
-	sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
-	fwconsole ma install cdr
-	cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
-else
-  fwconsole ma install cdr
-fi
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
+    # CDR Hack
+    mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
+    mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
+	  cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
+	  sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
+	  sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
+	  fwconsole ma install cdr
+	  cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
+  else
+    fwconsole ma install cdr
+  fi
 
-  fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences --edge
-  fwconsole ma downloadinstall certman userman pm2 --edge
-	fwconsole chown 
-	fwconsole reload 
-  fwconsole ma downloadinstall ucp --edge
-  fwconsole chown 
-  fwconsole reload 
-  fwconsole restart
-	fwconsole stop
-	
-  cd / 
-	rm -rf /usr/src/freepbx
-	touch /data/.installed
+    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences --edge
+    fwconsole ma downloadinstall certman userman pm2 --edge
+  	fwconsole chown 
+  	fwconsole reload 
+    fwconsole ma downloadinstall ucp --edge
+    fwconsole chown 
+    fwconsole reload 
+    fwconsole restart
+  	fwconsole stop
+  	
+    cd / 
+  	rm -rf /usr/src/freepbx
+  	touch /data/.installed
 fi
 
 ### Data Persistence Workaround
@@ -198,8 +204,8 @@ fi
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 ### Setup Dynamic Configuration
-echo '** [freepbx] Setting Configuration'
-cat <<EOF > /etc/freepbx.conf
+  echo '** [freepbx] Setting Configuration'
+  cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
 \$amp_conf['AMPDBPASS'] = '$DB_PASS';
@@ -216,7 +222,7 @@ require_once('$WEBROOT/admin/bootstrap.php');
 ?>
 EOF
 
-cat <<EOF > /etc/odbc.ini
+  cat <<EOF > /etc/odbc.ini
 [asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
 driver = MySQL
@@ -241,11 +247,11 @@ fi
 chown asterisk:asterisk /etc/freepbx.conf
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-### Set RTP Ports
-echo '** [freepbx] Set RTP Ports' 
-mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
-### Fix a Freepbx bug with upgrades
-mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
+  ### Set RTP Ports
+  echo '** [freepbx] Set RTP Ports' 
+  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
+  ### Fix a Freepbx bug with upgrades
+  mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
 fi
 
 echo '** [freepbx] Starting Asterisk'
