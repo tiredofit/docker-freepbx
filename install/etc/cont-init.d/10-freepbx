@@ -39,7 +39,7 @@ fi
 DB_PORT=${DB_PORT:-3306}
 RTP_START=${RTP_START:-18000}
 RTP_END=${RTP_END:-20000}
-WEBROOT=${WEBROOT:-"$WEBROOT"}
+WEBROOT=${WEBROOT:-"/var/www/html"}
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
