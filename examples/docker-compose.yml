@@ -14,7 +14,7 @@ services:
       - ./logs:/var/log/asterisk
       - ./data/www:/var/www/html
      ### Only Enable this option below if you set DB_EMBEDDED=TRUE
-     #- ./db:/var/lib/mysql
+     #- ./dbembedded:/var/lib/mysql
 
     environment: 
       - VIRTUAL_HOST=hostname.example.com
