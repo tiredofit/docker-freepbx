@@ -72,7 +72,7 @@ chown -R asterisk:asterisk /data
 if [ ! -f $WEBROOT/admin/index.php ]; then
 	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX...'
 
-  if [ $WEBROOT != "/var/www/html" ]; then
+  if [ "$WEBROOT" != "/var/www/html" ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
   fi
 
@@ -272,6 +272,12 @@ a2enconf allowoverride >/dev/null
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 chown asterisk. /run/lock/apache2
+
+### Disable Indexes if outside of regular webroot
+if [ "$WEBROOT" != "/var/www/html" ]; then
+  a2dismod autoindex -f
+fi
+
 a2enmod rewrite >/dev/null
 service apache2 restart >/dev/null
 
