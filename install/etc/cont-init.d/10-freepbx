@@ -105,7 +105,7 @@ fi
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 	./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
 else
-  ./install -n
+        ./install -n --webroot=$WEBROOT
 fi
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
