@@ -28,6 +28,7 @@ services:
       - RTP_START=18000
       - RTP_FINISH=18100
 
+      - WEBROOT=/var/www/html
       - DB_EMBEDDED=FALSE
 
      ### These are only necessary if DB_EMBEDDED=FALSE
