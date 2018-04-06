@@ -1,3 +1,7 @@
+## 1.22 2018-04-05 <dave at tiredofit dot ca>
+
+* Fix /etc/amportal.conf permissions after initial install courtesy of github.com/flaviut
+
 ## 1.21 2018-04-01 <dave at tiredofit dot ca>
 
 * Be more verbose when Webroot environment variable is being changed
