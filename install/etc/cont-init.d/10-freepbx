@@ -287,8 +287,8 @@ EOF
 cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
 <VirtualHost *:80>
   DocumentRoot /var/www/html
-  ErrorLog ${APACHE_LOG_DIR}/error.log
-  CustomLog ${APACHE_LOG_DIR}/access.log combined
+  ErrorLog /var/log/apache2/error.log
+  CustomLog /var/log/apache2/access.log combined
 </VirtualHost>
 EOF
 
@@ -331,14 +331,28 @@ Listen 443
     SSLEngine on
     SSLCertificateFile "/certs/$TLS_CERT"
     SSLCertificateKeyFile "/certs/$TLS_KEY"
+    ErrorLog /var/log/apache2/error.log
+    CustomLog /var/log/apache2/access.log combined
 </VirtualHost>
 EOF
 fi
 
+a2enmod remoteip >/dev/null 
+    cat >> /etc/apache2/conf-available/remoteip.conf << EOF 
+RemoteIPHeader X-Real-IP
+RemoteIPTrustedProxy 10.0.0.0/8
+RemoteIPTrustedProxy 172.16.0.0/12
+RemoteIPTrustedProxy 192.168.0.0/16
 a2enconf allowoverride >/dev/null
+EOF
+
+a2enconf remoteip.conf >/dev/null
+a2disconf other-vhosts-access-log.conf
 
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
+mkdir -p /var/log/apache2
+chown -R root:adm /var/log/apache2
 chown asterisk. /run/lock/apache2
 
 ### Disable Indexes if outside of regular webroot

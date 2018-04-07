@@ -1,3 +1,11 @@
+## 1.32 - 2018-04-06 <dave at tiredofit dot ca>
+
+* Set X-Real-IP in Apache2 logs, fix log location
+
+## 1.31 - 2018-04-06 <dave at tiredofit dot ca>
+
+* Sanity test for Apache logdir if following example/docker-compose.yml
+
 ## 1.3 - 2018-04-06 <dave at tiredofit dot ca>
 
 * SSL Support for Apache Included - Map /certs volume somewhere, drop your keys in and set ENV Var `TLS_CERT` and `TLS_KEY` and set `ENABLE_SSL=TRUE`
