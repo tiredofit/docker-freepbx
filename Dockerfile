@@ -127,6 +127,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        rm -rf /var/lib/apt/lists/* && \
 
 ### FreePBX Hacks
+       rm -rf /var/log/* && \
+       mkdir -p /var/log/asterisk && \
+       mkdir -p /var/log/apache2 && \
        mkdir -p /var/log/httpd && \
 
 ### Setup for Data Persistence

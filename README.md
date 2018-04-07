@@ -85,9 +85,9 @@ The following directories are used for configuration and can be mapped for persi
 
 | Directory    | Description                                                 |
 |--------------|-------------------------------------------------------------|
-|  `/certs`    | Drop your Certificates here for TLS w/PJSIP |
+|  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP |
 |  `/www/freepbx` | FreePBX web files |
-|  `/var/log/asterisk` | Asterisk and FreePBX Log Files |
+|  `/var/log/` | Apache, Asterisk and FreePBX Log Files |
 |  `/data`      | Data Persistence for Asterisk and Freepbx 
       
 
@@ -104,9 +104,12 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_NAME` | MySQL Database name e.g. `asterisk` |
 | `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
+| `ENABLE_SSL` | Enable HTTPd to listen on Port 443 as well as port 80 - Default `FALSE`|
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
-| `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html' |
+| `TLS_CERT` | TLS Certificate to drop in /certs for HTTPS if no reverse proxy |
+| `TLS_KEY` | TLS Key to drop in /certs for HTTPS if no reverse proxy |
+| `WEBOOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'
 
 ### Networking
 

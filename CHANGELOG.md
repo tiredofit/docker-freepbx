@@ -1,3 +1,9 @@
+## 1.3 - 2018-04-06 <dave at tiredofit dot ca>
+
+* SSL Support for Apache Included - Map /certs volume somewhere, drop your keys in and set ENV Var `TLS_CERT` and `TLS_KEY` and set `ENABLE_SSL=TRUE`
+* Add logrotate for fail2ban and apache
+* Added some error checking to exit when bad stuff happens
+
 ## 1.22 2018-04-05 <dave at tiredofit dot ca>
 
 * Fix /etc/amportal.conf permissions after initial install courtesy of github.com/flaviut
@@ -26,7 +32,7 @@
 * Installs all latest applications from --edge to avoid any signature failures
 * Compiles and installs app_confbridge
 
-## 0.82 2018-01-09 <mattcvinvent@github>
+## 0.82 2018-01-09 <mattcvinvent@github.com>
 
 * Added DB_PORT verification to SQL strings
 

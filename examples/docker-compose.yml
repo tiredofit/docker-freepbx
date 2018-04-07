@@ -5,20 +5,29 @@ services:
     container_name: freepbx-app
     image: tiredofit/freepbx
     ports:
+     #### If you aren't using a reverse proxy
+     #- 80:80
+     #### If you want SSL Support and not using a reverse proxy
+     #- 443:443
+
       - 5060:5060
       - 5160:5160
       - 18000-18100:18000-18100/udp
     volumes:
       - ./certs:/certs
       - ./data:/data
-      - ./logs:/var/log/asterisk
+      - ./logs:/var/log
       - ./data/www:/var/www/html
      ### Only Enable this option below if you set DB_EMBEDDED=TRUE
-     #- ./dbembedded:/var/lib/mysql
+     #- ./db:/var/lib/mysql
 
     environment: 
       - VIRTUAL_HOST=hostname.example.com
       - VIRTUAL_NETWORK=nginx-proxy
+     ### If you want to connect to the SSL Enabled Container 
+     #- VIRTUAL_PORT=443
+     #- VIRTUAL_PROTO=https
+
       - VIRTUAL_PORT=80
       - LETSENCRYPT_HOST=hostname.example.com
       - LETSENCRYPT_EMAIL=email@example.com
@@ -28,7 +37,6 @@ services:
       - RTP_START=18000
       - RTP_FINISH=18100
 
-      - WEBROOT=/var/www/html
       - DB_EMBEDDED=FALSE
 
      ### These are only necessary if DB_EMBEDDED=FALSE
@@ -37,6 +45,11 @@ services:
       - DB_NAME=asterisk
       - DB_USER=asterisk
       - DB_PASS=asteriskpass
+    
+     ### If you are using TLS Support for Apache to listen on 443 in the container drop them in /certs and set these:
+     #- TLS_CERT=cert.pem
+     #- TLS_KEY=key.pem
+     
     restart: always
     networks:
       - proxy-tier

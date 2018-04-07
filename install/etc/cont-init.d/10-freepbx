@@ -38,7 +38,7 @@ fi
 ### Set Defaults
 DB_PORT=${DB_PORT:-3306}
 RTP_START=${RTP_START:-18000}
-RTP_END=${RTP_END:-20000}
+RTP_FINISH=${RTP_FINISH:-20000}
 WEBROOT=${WEBROOT:-"/var/www/html"}
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
@@ -100,6 +100,11 @@ fi
    	cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
    	./start_asterisk start 
 
+  if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
+    echo "** [freepbx] Can't seem to start Asterisk.. Exitting"
+    exit 1
+  fi
+
   if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
 	  sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
@@ -133,6 +138,11 @@ fi
 require_once('$WEBROOT/admin/bootstrap.php');
 ?>
 EOF
+  fi
+
+  if [ ! -f "/usr/sbin/fwconsole" ]; then
+    echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+    exit 1
   fi
 
   echo '** [freepbx] Enabling Default Modules'
@@ -255,6 +265,12 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
 fi
 
 echo '** [freepbx] Starting Asterisk'
+
+if [ ! -f "/usr/sbin/fwconsole" ]; then
+  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+  exit 1
+fi
+
 fwconsole chown > /dev/null 2>&1
 fwconsole start > /dev/null 2>&1
 fwconsole reload > /dev/null 2>&1
@@ -267,6 +283,57 @@ cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
     AllowOverride All
     </Directory>
 EOF
+
+cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
+<VirtualHost *:80>
+  DocumentRoot /var/www/html
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SSL" = "TRUE" ] ;  then 
+    echo '** [freepbx] Enabling SSL'
+    if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
+            echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned'
+            cat <<EOF > /tmp/openssl.cnf
+[ req ]
+default_bits = 2048
+encrypt_key = yes
+distinguished_name = req_dn
+x509_extensions = cert_type
+prompt = no
+
+[ req_dn ]
+C=XX
+ST=XX
+L=Self Signed
+O=Freepbx
+OU=Freepbx
+CN=*
+emailAddress=selfsigned@example.com
+
+[ cert_type ]
+nsCertType = server   
+EOF
+
+    openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
+    chmod 0600 /certs/key.pem
+    rm -rf /tmp/openssl.cnf
+    TLS_CERT="cert.pem"
+    TLS_KEY="key.pem"
+    fi  
+
+    a2enmod ssl >/dev/null
+    cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
+Listen 443
+<VirtualHost *:443>
+    SSLEngine on
+    SSLCertificateFile "/certs/$TLS_CERT"
+    SSLCertificateKeyFile "/certs/$TLS_KEY"
+</VirtualHost>
+EOF
+fi
 
 a2enconf allowoverride >/dev/null
 
