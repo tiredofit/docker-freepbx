@@ -109,7 +109,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
 | `TLS_CERT` | TLS Certificate to drop in /certs for HTTPS if no reverse proxy |
 | `TLS_KEY` | TLS Key to drop in /certs for HTTPS if no reverse proxy |
-| `WEBOOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'
+| `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'
 
 ### Networking
 
@@ -126,7 +126,7 @@ The following ports are exposed.
 | `8003`    | UCP SSL     |
 | `8008`    | UCP         |
 | `8009`    | UCP SSL     |
-| 18000-2000/udp | RTP Ports |
+| `18000-20000/udp` | RTP Ports |
 
 # Maintenance
 
