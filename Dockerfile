@@ -2,7 +2,7 @@ FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
-   ENV DB_EMBEDDED=TRUE && \
+   ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE
 
 ### Install Dependencies
