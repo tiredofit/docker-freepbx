@@ -286,10 +286,11 @@ EOF
 
 cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
 Listen 73
+
 ExtendedStatus On
 
 <VirtualHost *:73>
-CustomLog /dev/null combined
+CustomLog /dev/null common
 ErrorLog /dev/null
 
 <Location /server-status>
@@ -303,7 +304,12 @@ ErrorLog /dev/null
 <VirtualHost *:80>
   DocumentRoot /var/www/html
   ErrorLog /var/log/apache2/error.log
-  CustomLog /var/log/apache2/access.log combined
+  CustomLog /var/log/apache2/access.log common
+  <Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+ </Location>
 </VirtualHost>
 EOF
 
@@ -347,8 +353,14 @@ Listen 443
     SSLCertificateFile "/certs/$TLS_CERT"
     SSLCertificateKeyFile "/certs/$TLS_KEY"
     ErrorLog /var/log/apache2/error.log
-    CustomLog /var/log/apache2/access.log combined
+    CustomLog /var/log/apache2/access.log common
+    <Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+  </Location>
 </VirtualHost>
+
 EOF
 fi
 

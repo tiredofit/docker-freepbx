@@ -8,17 +8,12 @@ if [ ! -n "$1" ]; then
 fi
 
 function calls.active(){
-    CALL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show calls" |grep "calls active"|awk '{print$1}'`
+    CALL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" |grep "active calls"|awk '{print$1}'`
     echo "$CALL"
 }
 
 function calls.processed(){
-    CALL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show calls" |grep "calls processed"|awk '{print$1}'`
-    echo "$CALL"
-}
-
-function calls.number(){
-    CALL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" |grep "active call"|awk '{print$1}'`
+    CALL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" |grep "calls processed"|awk '{print$1}'`
     echo "$CALL"
 }
 
@@ -43,14 +38,9 @@ function calls.longest(){
 }
 
 function channels.active(){
-    CALL=`sudo sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" | awk '{print $1}' | awk 'NR==2'`
-    if [[ CALL -eq '0'  ]]; then
-        echo "0"
-    else
-        echo "1"
-    fi
+    CHANNEL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" | grep "active channels | awk '{print $1}'`
+    echo "$CHANNEL"
 }
-
 
 function iax.peers(){
     TRUNK=`sudo -u asterisk /usr/sbin/asterisk -rx "iax2 show peers" | grep UNREACHABLE | awk '{print$1}'| grep [A-Za-z]`
@@ -153,7 +143,7 @@ function sip.peers(){
 }
 
 function sip.register.time(){
-    MS=$(sudo sudo -u asterisk /usr/sbin/asterisk -rx "sip show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199')
+    MS=$(sudo -u asterisk /usr/sbin/asterisk -rx "sip show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199')
     LOG=$(for i in $(sudo -u asterisk /usr/sbin/asterisk -rx "sip show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199'); do sudo -u asterisk /usr/sbin/asterisk -rx "sip show peers" | grep OK | grep $i; done)
     DATE=$(date +"%Y-%m-%d %H:%M:%S")
 

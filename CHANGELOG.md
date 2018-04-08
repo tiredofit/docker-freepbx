@@ -1,4 +1,8 @@
-## 1.4 - 2018-04-06 <dave at tiredofit dot ca>
+## 1.41 - 2018-04-08 <dave at tiredofit dot ca>
+
+* Apache2 Fixup for Extended Status
+
+## 1.4 - 2018-04-08 <dave at tiredofit dot ca>
 
 * Add Zabbix Monitoring for Asterisk and Apache
 * Shuffle Log Locations around a bit (just map /var/log as a directory now for seperated service folders)
