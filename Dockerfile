@@ -2,7 +2,8 @@ FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
-   ENV DB_EMBEDDED=TRUE
+   ENV DB_EMBEDDED=TRUE && \
+       ENABLE_CRON=TRUE
 
 ### Install Dependencies
    RUN apt-get update && \
@@ -131,6 +132,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /var/log/asterisk && \
        mkdir -p /var/log/apache2 && \
        mkdir -p /var/log/httpd && \
+
+### Zabbix Setup
+       echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers && \
 
 ### Setup for Data Persistence
        mkdir -p /assets/config/var/lib/ /assets/config/home/ && \

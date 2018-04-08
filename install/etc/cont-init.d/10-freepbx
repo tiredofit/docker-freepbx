@@ -48,11 +48,11 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
     	out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
     	echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
     	if [ $? -eq 0 ]; then
-        	echo "** [freepbx] DB Server is available !"
+        	echo "** [freepbx] MariaDB Server '"$DB_HOST"' is available"
         	break
     	fi
-    	echo "** [freepbx] DB Server unavailable, sleeping a little bit ..."
-    	sleep 2
+    	echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sdleeping a little bit ..."
+    	sleep 5
     done
 fi
 
@@ -70,7 +70,7 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX...'
+	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
@@ -258,7 +258,7 @@ chown asterisk:asterisk /etc/freepbx.conf
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
   ### Set RTP Ports
-  echo '** [freepbx] Set RTP Ports' 
+  echo '** [freepbx] Setting RTP Ports - Start: '$RTP_START' Finish: '$RTP_FINISH 
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
   ### Fix a Freepbx bug with upgrades
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
@@ -285,6 +285,21 @@ cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
 EOF
 
 cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
+Listen 73
+ExtendedStatus On
+
+<VirtualHost *:73>
+CustomLog /dev/null combined
+ErrorLog /dev/null
+
+<Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+    Allow from localhost
+</Location>
+</VirtualHost>
+
 <VirtualHost *:80>
   DocumentRoot /var/www/html
   ErrorLog /var/log/apache2/error.log
@@ -347,7 +362,7 @@ EOF
 
 a2enconf allowoverride >/dev/null
 a2enconf remoteip.conf >/dev/null
-a2disconf other-vhosts-access-log.conf
+a2disconf other-vhosts-access-log.conf >/dev/null
 
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars

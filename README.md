@@ -17,7 +17,7 @@ This will build a container for [FreePBX](https://www.freepbx.org) - A Voice ove
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
 * Debian Stretch Base w/ Apache2
-* NodeJS 8.9
+* NodeJS 8.x
 * Automatically Installs User Control Panel
         
 This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
@@ -71,7 +71,7 @@ docker pull hub.docker.com/tiredofit/freepbx
 * Map [persistent storage](#data-volumes) for access to configuration and data files for backup.
 * Make [networking ports](#networking) available for public access if necessary
 
-** The first boot can take from 3 minutes - 30 minutes depending on your internet connection as there is a considerable amount of downloading to do!
+*The first boot can take from 3 minutes - 30 minutes depending on your internet connection as there is a considerable amount of downloading to do!*
 
 Login to the web server and enter in your admin username, admin password, and email address and start configuring the system!
 
@@ -85,7 +85,7 @@ The following directories are used for configuration and can be mapped for persi
 
 | Directory    | Description                                                 |
 |--------------|-------------------------------------------------------------|
-|  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP |
+|  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP / HTTpd |
 |  `/www/freepbx` | FreePBX web files |
 |  `/var/log/` | Apache, Asterisk and FreePBX Log Files |
 |  `/data`      | Data Persistence for Asterisk and Freepbx 
@@ -104,6 +104,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_NAME` | MySQL Database name e.g. `asterisk` |
 | `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
+| `ENABLE_FAIL2BAN` | Enable Fail2ban to block the bad guys - Default `TRUE`|
 | `ENABLE_SSL` | Enable HTTPd to listen on Port 443 as well as port 80 - Default `FALSE`|
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |

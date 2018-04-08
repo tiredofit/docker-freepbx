@@ -9,7 +9,6 @@ services:
      #- 80:80
      #### If you want SSL Support and not using a reverse proxy
      #- 443:443
-
       - 5060:5060
       - 5160:5160
       - 18000-18100:18000-18100/udp
@@ -27,7 +26,6 @@ services:
      ### If you want to connect to the SSL Enabled Container 
      #- VIRTUAL_PORT=443
      #- VIRTUAL_PROTO=https
-
       - VIRTUAL_PORT=80
       - LETSENCRYPT_HOST=hostname.example.com
       - LETSENCRYPT_EMAIL=email@example.com
@@ -36,7 +34,8 @@ services:
 
       - RTP_START=18000
       - RTP_FINISH=18100
-
+    
+     ## Use for External MySQL Server
       - DB_EMBEDDED=FALSE
 
      ### These are only necessary if DB_EMBEDDED=FALSE
@@ -53,8 +52,10 @@ services:
     restart: always
     networks:
       - proxy-tier
+    ### These final lines are for Fail2ban. If you don't want, comment and also add ENABLE_FAIL2BAN=FALSE to your environment
     cap_add:
       - NET_ADMIN
+    privileged: true
 
   freepbx-db:
     container_name: freepbx-db
@@ -69,7 +70,6 @@ services:
       - MYSQL_PASSWORD=asteriskpass
     networks:
       - proxy-tier
-
 
   freepbx-db-backup:
     container_name: freepbx-db-backup

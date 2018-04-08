@@ -1,3 +1,11 @@
+## 1.4 - 2018-04-06 <dave at tiredofit dot ca>
+
+* Add Zabbix Monitoring for Asterisk and Apache
+* Shuffle Log Locations around a bit (just map /var/log as a directory now for seperated service folders)
+* Tweak Fail2ban Scripts to properly block PJSIP
+* Add Fail2ban script to block FreePBX authentication failures (Admin and UCP)
+* Add ability to disable Fail2ban on Startup
+
 ## 1.32 - 2018-04-06 <dave at tiredofit dot ca>
 
 * Set X-Real-IP in Apache2 logs, fix log location

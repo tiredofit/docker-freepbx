@@ -15,4 +15,4 @@ if [ "$DB_EMBEDDED" = "TRUE" ];  then
 fi
 
 mkdir -p /tmp/state
-touch /tmp/state/10-mariadb-finish
+touch /tmp/state/10-freepbx-finish

@@ -1,9 +1,0 @@
-/var/log/apache2/*
-    daily
-    ifempty
-    rotate 7
-    missingok
-    compress
-    dateext
-    copytruncate
-}
