@@ -390,5 +390,7 @@ fi
 a2enmod rewrite >/dev/null
 service apache2 restart >/dev/null
 
+echo '** [freepbx] Web Server Started - Container Initialization Complete'
+
 mkdir -p /tmp/state
 touch /tmp/state/10-freepbx-init

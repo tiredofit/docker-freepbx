@@ -38,7 +38,7 @@ function calls.longest(){
 }
 
 function channels.active(){
-    CHANNEL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" | grep "active channels | awk '{print $1}'`
+    CHANNEL=`sudo -u asterisk /usr/sbin/asterisk -rx "core show channels" | grep "active channels" | awk '{print $1}'`
     echo "$CHANNEL"
 }
 
@@ -56,7 +56,7 @@ function iax.peers(){
 
 
 function iax.register.time(){
-    MS=$(sudo sudo -u asterisk /usr/sbin/asterisk -rx "iax2 show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199')
+    MS=$(sudo -u asterisk /usr/sbin/asterisk -rx "iax2 show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199')
     LOG=$(for i in $(sudo -u asterisk /usr/sbin/asterisk -rx "iax2 show peers" | grep OK | grep -oP '\(\K[^\)]+' | sed 's/ms//g' | sort -n | awk '$1>199'); do sudo -u asterisk /usr/sbin/asterisk -rx "iax2 show peers" | grep OK | grep $i; done)
     DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
