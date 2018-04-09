@@ -1,4 +1,4 @@
-FROM tiredofit/nodejs:8-debian-latest
+FROM registry.selfdesign.org/docker/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
@@ -62,6 +62,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             lame \
             libicu-dev \
             libjansson4 \
+            libsrtp0 \
             mariadb-client \
             mariadb-server \
             mpg123 \
@@ -128,6 +129,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        rm -rf /var/lib/apt/lists/* && \
 
 ### FreePBX Hacks
+       sed -i -e "s/memory_limit = 128M /memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
+       a2disconf other-vhosts-access-log.conf && \
+       a2enmod rewrite && \
        rm -rf /var/log/* && \
        mkdir -p /var/log/asterisk && \
        mkdir -p /var/log/apache2 && \

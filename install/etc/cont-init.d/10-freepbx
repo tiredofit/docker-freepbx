@@ -51,7 +51,7 @@ if [ "$DB_EMBEDDED" = "FALSE" ];  then
         	echo "** [freepbx] MariaDB Server '"$DB_HOST"' is available"
         	break
     	fi
-    	echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sdleeping a little bit ..."
+    	echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
     	sleep 5
     done
 fi
@@ -374,7 +374,6 @@ EOF
 
 a2enconf allowoverride >/dev/null
 a2enconf remoteip.conf >/dev/null
-a2disconf other-vhosts-access-log.conf >/dev/null
 
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
@@ -387,7 +386,6 @@ if [ "$WEBROOT" != "/var/www/html" ]; then
   a2dismod autoindex -f
 fi
 
-a2enmod rewrite >/dev/null
 service apache2 restart >/dev/null
 
 echo '** [freepbx] Web Server Started - Container Initialization Complete'
