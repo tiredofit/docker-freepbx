@@ -1,3 +1,7 @@
+## 1.51 - 2018-04-10 <dave at tiredofit dot ca>
+
+* Add php5.6-ldap for LDAP Lookups
+
 ## 1.5 - 2018-04-08 <dave at tiredofit dot ca>
 
 * Add libsrtp for TLS RTP
