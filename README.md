@@ -56,7 +56,7 @@ You will also need an external MySQL/MariaDB Container
 
 # Installation
 
-Automated builds of the image are available on [Docker Hub](https://hub.docker.com/tiredofit/freepbx) and is the recommended method of installation.
+Automated builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/freepbx) and is the recommended method of installation.
 
 
 ```bash
@@ -65,7 +65,7 @@ docker pull hub.docker.com/tiredofit/freepbx
 
 # Quick Start
 
-* The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working [docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use.
+* The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working [docker-compose.yml](https://github.com/tiredofit/docker-freepbx/blob/master/examples/docker-compose.yml) that can be modified for development or production use.
 
 * Set various [environment variables](#environment-variables) to understand the capabilities of this image.
 * Map [persistent storage](#data-volumes) for access to configuration and data files for backup.
@@ -74,6 +74,7 @@ docker pull hub.docker.com/tiredofit/freepbx
 *The first boot can take from 3 minutes - 30 minutes depending on your internet connection as there is a considerable amount of downloading to do!*
 
 Login to the web server and enter in your admin username, admin password, and email address and start configuring the system!
+If for some reason you can't see anything but a default start page (ie loading as host) tack an `/admin` onto your address bar.
 
 # Configuration
 
