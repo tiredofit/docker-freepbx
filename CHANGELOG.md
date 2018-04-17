@@ -1,3 +1,15 @@
+## 1.6 - 2018-04-17 <dave at tiredofit dot ca>
+
+* Add custom file support - Drop your files in /assets/custom following the /var/www/html directory structure and they will get overwritten (Use with care, modules may not work after this after upgrading)
+
+## 1.53 - 2018-04-14 <dave at tiredofit dot ca>
+
+* Tweak for Asterisk Logging
+
+## 1.52 - 2018-04-14 <dave at tiredofit dot ca>
+
+* Update PHP to support SMTP sending
+
 ## 1.51 - 2018-04-10 <dave at tiredofit dot ca>
 
 * Add php5.6-ldap for LDAP Lookups

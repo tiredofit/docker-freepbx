@@ -19,6 +19,8 @@ services:
       - ./data/www:/var/www/html
      ### Only Enable this option below if you set DB_EMBEDDED=TRUE
      #- ./db:/var/lib/mysql
+     ### You can drop custom files overtop of the image if you have made modifications to modules/css/whatever - Use with care
+     #- ./assets/custom:/assets/custom
 
     environment: 
       - VIRTUAL_HOST=hostname.example.com
@@ -52,6 +54,7 @@ services:
     restart: always
     networks:
       - proxy-tier
+
     ### These final lines are for Fail2ban. If you don't want, comment and also add ENABLE_FAIL2BAN=FALSE to your environment
     cap_add:
       - NET_ADMIN

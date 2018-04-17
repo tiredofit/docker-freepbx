@@ -277,6 +277,13 @@ fwconsole reload > /dev/null 2>&1
 chown -R asterisk /etc/asterisk/*
 chown -R asterisk:asterisk /etc/amportal.conf
 
+### Custom File Support
+  if [ -d /assets/custom ] ; then
+     echo "** [freepbx] Custom Files Found, Copying over top of Master.."
+     cp -R /assets/custom/* /var/www/html/
+     chown -R asterisk: /var/www/html/
+  fi
+
 ### Apache Setup
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF 
 <Directory $WEBROOT>
@@ -385,6 +392,19 @@ chown asterisk. /run/lock/apache2
 if [ "$WEBROOT" != "/var/www/html" ]; then
   a2dismod autoindex -f
 fi
+
+### SMTP
+if [ "$DEBUG_SMTP" = "TRUE" ] || [ "DEBUG_SMTP" = "true" ] || [ "DEBUG_MODE" = "true" ] || [ "DEBUG_MODE" = "TRUE" ];  then
+   ENABLE_SMTP=FALSE
+   echo 'sendmail_path="/usr/local/bin/mhsendmail"' > /etc/php/5.6/apache2/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/local/bin/mhsendmail"' > /etc/php/5.6/cli/conf.d/smtp.ini
+fi
+ 
+### SMTP Config
+ if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
+ fi
 
 service apache2 restart >/dev/null
 
