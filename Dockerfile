@@ -4,7 +4,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Set Defaults
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
-       ENABLE_SMTP=TRUE
+       ENABLE_SMTP=TRUE \
+       ASTERISK_VERSION=14 \
+       BCG729_VERSION=1.0.4
 
 ### Install Dependencies
    RUN set -x ; \
@@ -12,7 +14,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.org/php/apt.gpg | apt-key add - ; \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list ; \
        apt-get update  ; \
-
+       \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
             autoconf \
@@ -62,8 +64,8 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             iproute2 \
             iptables \
             lame \
+            libiodbc2 \
             libicu-dev \
-            libjansson4 \
             libsrtp0 \
             mariadb-client \
             mariadb-server \
@@ -88,23 +90,31 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             whois \
             xmlstarlet \
             ; \
-
+       \
 ### Install MySQL Connector
        cd /usr/src ; \
-       curl -sSL https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.0.2/mariadb-connector-odbc-3.0.2-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/ ; \
-       cp mariadb-connector-odbc-3.0.2*/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ ; \
-
+       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.15/mariadb-connector-odbc-2.0.15-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/ ; \
+       cp mariadb-connector-*/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ ; \
+       \
 ### Add Users
        addgroup --gid 2600 asterisk ; \
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk ; \
-
+       \
+### Install Jansson
+       git clone https://github.com/akheron/jansson.git /usr/src/jansson ; \
+       cd /usr/src/jansson ; \
+       autoreconf -i ; \
+       ./configure ; \
+       make ; \
+       make install ; \
+       \
 ### Build Asterisk
        cd /usr/src ; \
-       curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-14-current.tar.gz | tar xvfz - -C /usr/src/ ; \
-       cd /usr/src/asterisk-14*/ ; \
+       curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-${ASTERISK_VERSION}-current.tar.gz | tar xvfz - -C /usr/src/ ; \
+       cd /usr/src/asterisk-${ASTERISK_VERSION}*/ ; \
        make distclean ; \
        contrib/scripts/get_mp3_source.sh ; \
-       ./configure --with-resample --with-pjproject-bundled ; \
+       ./configure --with-resample --with-pjproject-bundled --with-ssl=ssl --with-srtp ; \
        make menuselect/menuselect menuselect-tree menuselect.makeopts ; \
        menuselect/menuselect --disable BUILD_NATIVE \
                              --enable format_mp3 \
@@ -117,10 +127,25 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
                              --enable MOH-OPSOUND-GSM \
        make ; \
        make install ; \
-
+       ldconfig ; \
+       \
 #### Add G729 Codecs
-       curl -sSLo /usr/lib/asterisk/modules/codec_g729.so http://asterisk.hosting.lv/bin/codec_g729-ast140-gcc4-glibc-x86_64-core2-sse4.so ; \
-
+       git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 ; \
+       cd /usr/src/bcg729 ; \
+       git checkout tags/$BCG729_VERSION ; \
+       ./autogen.sh ; \
+       ./configure --libdir=/lib ; \
+       make ; \
+       make install ; \
+       \
+       mkdir -p /usr/src/asterisk-g72x ; \
+       curl https://bitbucket.org/arkadi/asterisk-g72x/get/default.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x ; \
+       cd /usr/src/asterisk-g72x ; \
+       ./autogen.sh ; \
+       ./configure --with-bcg729 --with-asterisk${ASTERISK_VERSION}0 --enable-penryn; \
+       make ; \
+       make install ; \
+       \
 ### Cleanup 
        mkdir -p /var/run/fail2ban ; \
        cd / ; \
@@ -130,7 +155,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        apt-get clean ; \
        apt-get install -y make ; \
        rm -rf /var/lib/apt/lists/* ; \
-
+       \
 ### FreePBX Hacks
        sed -i -e "s/memory_limit = 128M /memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini ; \
        a2disconf other-vhosts-access-log.conf ; \
@@ -139,10 +164,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /var/log/asterisk ; \
        mkdir -p /var/log/apache2 ; \
        mkdir -p /var/log/httpd ; \
-
+       \
 ### Zabbix Setup
        echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers ; \
-
+       \
 ### Setup for Data Persistence
        mkdir -p /assets/config/var/lib/ /assets/config/home/ ; \
        mv /home/asterisk /assets/config/home/ ; \
@@ -159,8 +184,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking Configuration
-EXPOSE 80 443 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
+   EXPOSE 80 443 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
 
 ### Files Add
    ADD install /
-

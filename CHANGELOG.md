@@ -1,3 +1,13 @@
+## 1.8 - 2018-05-07 <dave at tiredofit dot ca>
+
+* Tweak to ODBC Driver to allow for CDR to be recorded.
+
+## 1.7 - 2018-05-07 <dave at tiredofit dot ca>
+
+* Compile Jansson
+* Compile BCG729
+* Compile G729 Codecs instead of relying on prebuilt binary
+
 ## 1.6 - 2018-04-17 <dave at tiredofit dot ca>
 
 * Add custom file support - Drop your files in /assets/custom following the /var/www/html directory structure and they will get overwritten (Use with care, modules may not work after this after upgrading)
