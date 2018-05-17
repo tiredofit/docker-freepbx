@@ -56,11 +56,11 @@ You will also need an external MySQL/MariaDB Container
 
 # Installation
 
-Automated builds of the image are available on [Docker Hub](https://hub.docker.com/tiredofit/freepbx) and is the recommended method of installation.
+Automated builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/freepbx) and is the recommended method of installation.
 
 
 ```bash
-docker pull hub.docker.com/tiredofit/freepbx
+docker pull tiredofit/freepbx
 ```
 
 # Quick Start
