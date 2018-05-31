@@ -1,3 +1,7 @@
+## 1.9 - 2018-05-30 <dave at tiredofit dot ca>
+
+* Add UCP_FIRST env var to display the UCP first instead of the FreePBX Admin screen
+
 ## 1.8 - 2018-05-07 <dave at tiredofit dot ca>
 
 * Tweak to ODBC Driver to allow for CDR to be recorded.

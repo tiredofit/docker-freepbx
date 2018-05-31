@@ -6,7 +6,8 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
        ASTERISK_VERSION=14 \
-       BCG729_VERSION=1.0.4
+       BCG729_VERSION=1.0.4 \
+       UCP_FIRST=TRUE
 
 ### Install Dependencies
    RUN set -x ; \
@@ -14,7 +15,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.org/php/apt.gpg | apt-key add - ; \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list ; \
        apt-get update  ; \
-       \
+
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
             autoconf \
@@ -122,6 +123,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
                              --enable app_confbridge \
                              --enable codec_opus \
                              --enable codec_silk \
+                             #--enable res_config_mysql \
                              --enable BETTER_BACKTRACES \
                              --disable MOH-OPSOUND-WAV \
                              --enable MOH-OPSOUND-GSM \

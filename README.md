@@ -108,6 +108,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `ENABLE_SSL` | Enable HTTPd to listen on Port 443 as well as port 80 - Default `FALSE`|
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
+| `UCP_FIRST` | Load UCP as web frontpage `TRUE/FALSE` - Default `TRUE` |
 | `TLS_CERT` | TLS Certificate to drop in /certs for HTTPS if no reverse proxy |
 | `TLS_KEY` | TLS Key to drop in /certs for HTTPS if no reverse proxy |
 | `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'

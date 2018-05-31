@@ -40,6 +40,7 @@ DB_PORT=${DB_PORT:-3306}
 RTP_START=${RTP_START:-18000}
 RTP_FINISH=${RTP_FINISH:-20000}
 WEBROOT=${WEBROOT:-"/var/www/html"}
+UCP_FIRST=${UCP_FIRST:-"TRUE"}
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
@@ -309,7 +310,17 @@ ErrorLog /dev/null
 </VirtualHost>
 
 <VirtualHost *:80>
-  DocumentRoot /var/www/html
+EOF
+
+if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
+  echo "    DocumentRoot /var/www/html/ucp" >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "/admin" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+else
+  echo "    DocumentRoot /var/www/html" >> /etc/apache2/sites-enabled/000-default.conf
+fi
+
+cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
+
   ErrorLog /var/log/apache2/error.log
   CustomLog /var/log/apache2/access.log common
   <Location /server-status>
@@ -361,6 +372,16 @@ Listen 443
     SSLCertificateKeyFile "/certs/$TLS_KEY"
     ErrorLog /var/log/apache2/error.log
     CustomLog /var/log/apache2/access.log common
+EOF
+
+if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
+  echo "    DocumentRoot /var/www/html/ucp" >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "/admin" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+else
+  echo "    DocumentRoot /var/www/html" >> /etc/apache2/sites-enabled/000-default.conf
+fi
+
+cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
     <Location /server-status>
     SetHandler server-status
     Order deny,allow
@@ -396,8 +417,8 @@ fi
 ### SMTP
 if [ "$DEBUG_SMTP" = "TRUE" ] || [ "DEBUG_SMTP" = "true" ] || [ "DEBUG_MODE" = "true" ] || [ "DEBUG_MODE" = "TRUE" ];  then
    ENABLE_SMTP=FALSE
-   echo 'sendmail_path="/usr/local/bin/mhsendmail"' > /etc/php/5.6/apache2/conf.d/smtp.ini
-   echo 'sendmail_path="/usr/local/bin/mhsendmail"' > /etc/php/5.6/cli/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
 fi
  
 ### SMTP Config
