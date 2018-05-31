@@ -1,4 +1,4 @@
-/var/log/fail2ban.log {
+/var/log/fail2ban/fail2ban.log {
     daily
     ifempty
     rotate 7

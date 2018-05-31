@@ -1,3 +1,7 @@
+## 1.11 - 2018-05-31 <dave at tiredofit dot ca>
+
+* Fixup for fail2ban logrotate
+
 ## 1.10 - 2018-05-30 <dave at tiredofit dot ca>
 
 * Additional Tweaks for CDR and CEL to be recorded without issues.
