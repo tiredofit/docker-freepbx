@@ -79,6 +79,16 @@ if [ ! -f $WEBROOT/admin/index.php ]; then
 
   if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     cat <<EOF > /etc/odbc.ini
+[MySQL-asteriskcdrdb]
+Description = MySQL connection to 'asteriskcdrdb' database
+driver = MySQL
+server = $DB_HOST
+User = $DB_USER
+Password = $DB_PASS
+database = $DB_NAME
+Port = $DB_PORT
+option = 3
+
 [asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
 driver = MySQL
@@ -88,6 +98,7 @@ Password = $DB_PASS
 database = $DB_NAME
 Port = $DB_PORT
 option = 3
+
 EOF
 fi
 
@@ -234,6 +245,16 @@ require_once('$WEBROOT/admin/bootstrap.php');
 EOF
 
   cat <<EOF > /etc/odbc.ini
+[MySQL-asteriskcdrdb]
+Description = MySQL connection to 'asteriskcdrdb' database
+driver = MySQL
+server = $DB_HOST
+User = $DB_USER
+Password = $DB_PASS
+database = $DB_NAME
+Port = $DB_PORT
+option = 3
+
 [asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
 driver = MySQL
@@ -243,15 +264,17 @@ Password = $DB_PASS
 database = $DB_NAME
 Port = $DB_PORT
 option = 3
+
 EOF
 fi
 
 if [ ! -f /etc/asterisk/cdr_adaptive_odbc.conf ]; then
 	cat <<EOF > /etc/asterisk/cdr_adaptive_odbc.conf
-[first]
-connection=asteriskcdrdb
+[MySQL-asteriskcdrdb]
+connection=MySQL-asteriskcdrdb
 table=cdr
 alias start => calldate
+loguniqueid=yes
 EOF
 fi
 

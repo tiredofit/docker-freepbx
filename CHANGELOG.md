@@ -1,3 +1,7 @@
+## 1.10 - 2018-05-30 <dave at tiredofit dot ca>
+
+* Additional Tweaks for CDR and CEL to be recorded without issues.
+
 ## 1.9 - 2018-05-30 <dave at tiredofit dot ca>
 
 * Add UCP_FIRST env var to display the UCP first instead of the FreePBX Admin screen
