@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv /bin/bash
+
+DB_PORT=${DB_PORT:-"3306"}
+## When updating core or the framework modules, FreePBX will fail due to the in the `featurecodes` table `helptext` column being corrupt. This is a simple script to update FreePBX framework and core modules
+
+mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE featurecodes SET helptext =  "";'
+fwconsole ma upgrade framework
+fwconsole ma upgrade core
+fwconsole chown 
+fwconsole reload
+chown -R asterisk /etc/asterisk
+

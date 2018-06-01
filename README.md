@@ -18,7 +18,10 @@ This will build a container for [FreePBX](https://www.freepbx.org) - A Voice ove
 * Fail2Ban installed to block brute force attacks
 * Debian Stretch Base w/ Apache2
 * NodeJS 8.x
-* Automatically Installs User Control Panel
+* Automatically Installs User Control Panel and displays at first page
+* Option to Install [Flash Operator Panel 2](https://www.fop2.com/)
+* Customizable FOP and Admin URLs
+
         
 This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
 
@@ -88,7 +91,7 @@ The following directories are used for configuration and can be mapped for persi
 |  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP / HTTpd |
 |  `/www/freepbx` | FreePBX web files |
 |  `/var/log/` | Apache, Asterisk and FreePBX Log Files |
-|  `/data`      | Data Persistence for Asterisk and Freepbx 
+|  `/data`      | Data Persistence for Asterisk and Freepbx and FOP
 |  `/assets/custom` | *OPTIONAL* - If you would like to overwrite some files in the container, put them here following the same folder structure for anything underneath the /var/www/html directory |
 
 ### Environment Variables
@@ -98,6 +101,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 
 | Parameter        | Description                            |
 |------------------|----------------------------------------|
+| `ADMIN_DIRECTORY` | What folder to access admin panel - Default `/admin` |
 | `DB_EMBEDDED` | Allows you to use an internally provided MariaDB Server e.g. `TRUE` or `FALSE` |
 | `DB_HOST` | Host or container name of MySQL Server e.g. `freepbx-db` |
 | `DB_PORT` | MySQL Port - Default `3306` |
@@ -105,13 +109,17 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
 | `ENABLE_FAIL2BAN` | Enable Fail2ban to block the bad guys - Default `TRUE`|
+| `ENABLE_FOP` | Enable Flash Operator Panel
 | `ENABLE_SSL` | Enable HTTPd to listen on Port 443 as well as port 80 - Default `FALSE`|
+| `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
 | `UCP_FIRST` | Load UCP as web frontpage `TRUE/FALSE` - Default `TRUE` |
 | `TLS_CERT` | TLS Certificate to drop in /certs for HTTPS if no reverse proxy |
 | `TLS_KEY` | TLS Key to drop in /certs for HTTPS if no reverse proxy |
 | `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'
+
+*`ADMIN_DIRECTORY ` and `FOP_DIRECTORY` may not work correctly if `WEBROOT` is changed or `UCP_FIRST=FALSE`*
 
 ### Networking
 
@@ -121,6 +129,7 @@ The following ports are exposed.
 |-----------|-------------|
 | `80`      | HTTP        |
 | `443`     | HTTPS       |
+| `4445`    | FOP         |
 | `4569`    | IAX         |
 | `5060`    | PJSIP       |
 | `5160`    | SIP         |
@@ -137,6 +146,7 @@ The following ports are exposed.
 # Known Bugs
 
 * When installing Parking Lot or Feature Codes you sometimes get `SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'helptext' at row 1`. To resolve login to your SQL server and issue this statement: `alter table featurecodes modify column helptext varchar(500);`
+* If you find yourself needing to update the framework or core modules and experience issues, enter the container and run `upgrade-core` which will truncate the column and auto upgrade the core and framework modules.
 
 #### Shell Access
 

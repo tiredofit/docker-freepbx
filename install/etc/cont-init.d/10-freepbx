@@ -41,6 +41,9 @@ RTP_START=${RTP_START:-18000}
 RTP_FINISH=${RTP_FINISH:-20000}
 WEBROOT=${WEBROOT:-"/var/www/html"}
 UCP_FIRST=${UCP_FIRST:-"TRUE"}
+ENABLE_FOP=${ENABLE_FOP:-"TRUE"}
+FOP_DIRECTORY=${FOP_DIRECTORY:-"/fop"}
+ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
@@ -186,6 +189,15 @@ EOF
   	
     cd / 
   	rm -rf /usr/src/freepbx
+
+  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then     
+      ### FOP2 Installation
+      mkdir -p /data/usr/local/fop2
+      curl -ssL http://download.fop2.com/install_fop2.sh | bash
+      service apache2 stop > /dev/null
+      chown -R asterisk. /usr/local/fop2/
+  fi
+
   	touch /data/.installed
 fi
 
@@ -270,8 +282,8 @@ fi
 
 if [ ! -f /etc/asterisk/cdr_adaptive_odbc.conf ]; then
 	cat <<EOF > /etc/asterisk/cdr_adaptive_odbc.conf
-[MySQL-asteriskcdrdb]
-connection=MySQL-asteriskcdrdb
+[asteriskcdrdb]
+connection=asteriskcdrdb
 table=cdr
 alias start => calldate
 loguniqueid=yes
@@ -308,6 +320,19 @@ chown -R asterisk:asterisk /etc/amportal.conf
      chown -R asterisk: /var/www/html/
   fi
 
+### Check to see if FOP Enabled and exists (Upgrade Catcher)
+if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
+    if [ ! -f /usr/local/fop2/fop2_server ] ; then
+      echo "** [freepbx] Installing Operator Panel"
+
+        ### FOP2 Installation
+        mkdir -p /data/usr/local/fop2
+        curl -ssL http://download.fop2.com/install_fop2.sh | bash
+        service apache2 stop > /dev/null
+        chown -R asterisk. /usr/local/fop2/
+    fi
+fi
+
 ### Apache Setup
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF 
 <Directory $WEBROOT>
@@ -337,9 +362,14 @@ EOF
 
 if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
   echo "    DocumentRoot /var/www/html/ucp" >> /etc/apache2/sites-enabled/000-default.conf
-  echo '    Alias "/admin" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "'$ADMIN_DIRECTORY'" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "/ucp" "/var/www/html/ucp"' >> /etc/apache2/sites-enabled/000-default.conf
 else
   echo "    DocumentRoot /var/www/html" >> /etc/apache2/sites-enabled/000-default.conf
+fi
+
+if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
+  echo '    Alias "'$FOP_DIRECTORY'" "/var/www/html/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
 fi
 
 cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
@@ -399,9 +429,16 @@ EOF
 
 if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
   echo "    DocumentRoot /var/www/html/ucp" >> /etc/apache2/sites-enabled/000-default.conf
-  echo '    Alias "/admin" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "'$ADMIN_DIRECTORY'" "/var/www/html/admin"' >> /etc/apache2/sites-enabled/000-default.conf
+  echo '    Alias "/ucp" "/var/www/html/ucp"' >> /etc/apache2/sites-enabled/000-default.conf
 else
   echo "    DocumentRoot /var/www/html" >> /etc/apache2/sites-enabled/000-default.conf
+fi
+
+if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
+  echo '    Alias "'$FOP_DIRECTORY'" "/var/www/html/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
+  sed -i -e 's#ssl_certificate_file=.*#ssl_certificate_file=/certs/'$TLS_CERT'#g' /usr/local/fop2/fop2.cfg
+  sed -i -e 's#ssl_certificate_key_file=.*#ssl_certificate_key_file=/certs/'$TLS_KEY'#g' /usr/local/fop2/fop2.cfg
 fi
 
 cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
@@ -416,7 +453,8 @@ EOF
 fi
 
 a2enmod remoteip >/dev/null 
-    cat >> /etc/apache2/conf-available/remoteip.conf << EOF 
+
+cat >> /etc/apache2/conf-available/remoteip.conf << EOF 
 RemoteIPHeader X-Real-IP
 RemoteIPTrustedProxy 10.0.0.0/8
 RemoteIPTrustedProxy 172.16.0.0/12
@@ -431,6 +469,7 @@ sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 mkdir -p /var/log/apache2
 chown -R root:adm /var/log/apache2
 chown asterisk. /run/lock/apache2
+chown -R asterisk. /usr/local/fop2
 
 ### Disable Indexes if outside of regular webroot
 if [ "$WEBROOT" != "/var/www/html" ]; then
@@ -449,6 +488,13 @@ fi
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
  fi
+
+### FOP2 Setup
+ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
+    echo '[freepbx] Starting Operator Panel'
+    rm -rf /var/run/fop2.*
+    /usr/local/fop2/fop2_server -d
+ fi 
 
 service apache2 restart >/dev/null
 

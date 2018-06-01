@@ -79,6 +79,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             php5.6-ldap \
             php5.6-mbstring \
             php5.6-mysql \
+            php5.6-sqlite \
             php5.6-xml \
             php5.6-zip \
             php-pear \
@@ -162,6 +163,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        sed -i -e "s/memory_limit = 128M /memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini ; \
        a2disconf other-vhosts-access-log.conf ; \
        a2enmod rewrite ; \
+       a2enmod headers ; \
        rm -rf /var/log/* ; \
        mkdir -p /var/log/asterisk ; \
        mkdir -p /var/log/apache2 ; \
@@ -176,6 +178,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/home/asterisk /home/asterisk ; \
        mv /var/lib/asterisk /assets/config/var/lib/ ; \
        ln -s /data/var/lib/asterisk /var/lib/asterisk ; \
+       ln -s /data/usr/local/fop2 /usr/local/fop2 ; \
        mkdir -p /assets/config/var/run/ ; \
        mv /var/run/asterisk /assets/config/var/run/ ; \
        mv /var/lib/mysql /assets/config/var/lib/ ; \
@@ -186,7 +189,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking Configuration
-   EXPOSE 80 443 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
+   EXPOSE 80 443 4445 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
 
 ### Files Add
    ADD install /

@@ -1,6 +1,12 @@
+## 2.0 - 2018-05-31 <dave at tiredofit dot ca>
+
+* Flash Operator Panel 2 integrated (no need to re-install, will detect if you are upgrading)
+* Customizable admin URL
+* Customizable FOP URL
+
 ## 1.11 - 2018-05-31 <dave at tiredofit dot ca>
 
-* Fixup for fail2ban logrotate
+* Fail2ban Logrotate Fixup
 
 ## 1.10 - 2018-05-30 <dave at tiredofit dot ca>
 
