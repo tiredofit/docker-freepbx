@@ -1,3 +1,8 @@
+## 2.1 - 2018-06-01 <dave at tiredofit dot ca>
+
+* Added `HTTP_PORT` Variable
+* Added `HTTPS_PORT` Variable
+
 ## 2.0 - 2018-05-31 <dave at tiredofit dot ca>
 
 * Flash Operator Panel 2 integrated (no need to re-install, will detect if you are upgrading)

@@ -109,8 +109,10 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
 | `DB_PASS` | MySQL Password for above Database e.g. `password`|
 | `ENABLE_FAIL2BAN` | Enable Fail2ban to block the bad guys - Default `TRUE`|
-| `ENABLE_FOP` | Enable Flash Operator Panel
-| `ENABLE_SSL` | Enable HTTPd to listen on Port 443 as well as port 80 - Default `FALSE`|
+| `ENABLE_FOP` | Enable Flash Operator Panel - Default `TRUE` |
+| `ENABLE_SSL` | Enable HTTPd to serve SSL requests - Default `FALSE`|
+| `HTTP_PORT`  | HTTP Listening Port - Default `80` |
+| `HTTS_PORT`  | HTTP Listening Port - Default `443` |
 | `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
