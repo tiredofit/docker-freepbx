@@ -1,3 +1,7 @@
+## 2.2 - 2018-06-01 <dave at tiredofit dot ca>
+
+* Fix for FOP Installation (add wget)
+
 ## 2.1 - 2018-06-01 <dave at tiredofit dot ca>
 
 * Added `HTTP_PORT` Variable

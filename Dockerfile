@@ -89,6 +89,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             sudo \
             unixodbc \
             uuid \
+            wget \
             whois \
             xmlstarlet \
             ; \
