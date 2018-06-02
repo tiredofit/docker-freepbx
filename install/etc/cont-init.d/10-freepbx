@@ -499,6 +499,7 @@ fi
     rm -rf /var/run/fop2.*
     mkdir -p /var/log/fop
     chown -R asterisk. /var/log/fop
+    sed -i -e "s#manager_host=.*#manager_host=127.0.0.1#g" /usr/local/fop2/fop2.cfg
     /usr/local/fop2/fop2_server -d --logdir /var/log/fop
  fi 
 

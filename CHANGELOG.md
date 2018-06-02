@@ -1,3 +1,7 @@
+## 2.22 - 2018-06-01 <dave at tiredofit dot ca>
+
+* Final Fop2 Fix to change fop2.cfg to look to 127.0.0.1 instead of localhost
+
 ## 2.21 - 2018-06-01 <dave at tiredofit dot ca>
 
 * Add logrotate and output FOP log to /var/log/fop/
