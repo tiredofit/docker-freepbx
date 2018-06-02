@@ -197,6 +197,7 @@ EOF
       mkdir -p /data/usr/local/fop2
       curl -ssL http://download.fop2.com/install_fop2.sh | bash
       service apache2 stop > /dev/null
+      service fop2 stop > /dev/null
       chown -R asterisk. /usr/local/fop2/
   fi
 
@@ -331,6 +332,7 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
         mkdir -p /data/usr/local/fop2
         curl -ssL http://download.fop2.com/install_fop2.sh | bash
         service apache2 stop > /dev/null
+        service fop2 stop > /dev/null
         chown -R asterisk. /usr/local/fop2/
     fi
 fi
