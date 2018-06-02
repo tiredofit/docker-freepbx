@@ -1,3 +1,7 @@
+## 2.21 - 2018-06-01 <dave at tiredofit dot ca>
+
+* Add logrotate and output FOP log to /var/log/fop/
+
 ## 2.2 - 2018-06-01 <dave at tiredofit dot ca>
 
 * Fix for FOP Installation (add wget)

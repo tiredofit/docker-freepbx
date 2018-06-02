@@ -50,21 +50,21 @@ ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     ### Make sure that DB is accessible
     while true; do
-    	mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
-    	out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
-    	echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
-    	if [ $? -eq 0 ]; then
-        	echo "** [freepbx] MariaDB Server '"$DB_HOST"' is available"
-        	break
-    	fi
-    	echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
-    	sleep 5
+      mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
+      out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
+      echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
+      if [ $? -eq 0 ]; then
+          echo "** [freepbx] MariaDB Server '"$DB_HOST"' is available"
+          break
+      fi
+      echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
+      sleep 5
     done
 fi
 
 if [ ! -f /data/.installed ]; then
   echo '** [freepbx] Creating Default Configuration Files'
-	cp -R /assets/config/* /data/
+  cp -R /assets/config/* /data/
 fi
 
 echo '** [freepbx] Setting File Permissions'
@@ -76,7 +76,7 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-	echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
+  echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
@@ -111,11 +111,11 @@ fi
     sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 9F9169F4B33B4659 >/dev/null 2>&1
     sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
     sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
-   	cd /usr/src
-   	git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
-   	cd /usr/src/freepbx
-   	cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
-   	./start_asterisk start 
+    cd /usr/src
+    git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
+    cd /usr/src/freepbx
+    cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
+    ./start_asterisk start 
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
     echo "** [freepbx] Can't seem to start Asterisk.. Exitting"
@@ -124,14 +124,14 @@ fi
 
   if [ "$DB_EMBEDDED" = "FALSE" ];  then 
     sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
-	  sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
-	  sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
+    sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
+    sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
   fi
-	
+  
   echo '** [freepbx] Installing FreePBX'
 
   if [ "$DB_EMBEDDED" = "FALSE" ];  then 
-	  ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
+    ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
   else
     ./install -n --webroot=$WEBROOT
   fi
@@ -163,34 +163,34 @@ EOF
   fi
 
   echo '** [freepbx] Enabling Default Modules'
-	fwconsole ma downloadinstall framework core --edge
-	fwconsole ma download cdr --edge
+  fwconsole ma downloadinstall framework core --edge
+  fwconsole ma download cdr --edge
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then 	
+  if [ "$DB_EMBEDDED" = "FALSE" ];  then  
     # CDR Hack
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
-	  cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
-	  sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
-	  sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
-	  fwconsole ma install cdr
-	  cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
+    cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
+    sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
+    sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
+    fwconsole ma install cdr
+    cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
     fwconsole ma install cdr
   fi
 
     fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences --edge
     fwconsole ma downloadinstall certman userman pm2 --edge
-  	fwconsole chown 
-  	fwconsole reload 
+    fwconsole chown 
+    fwconsole reload 
     fwconsole ma downloadinstall ucp --edge
     fwconsole chown 
     fwconsole reload 
     fwconsole restart
-  	fwconsole stop
-  	
+    fwconsole stop
+    
     cd / 
-  	rm -rf /usr/src/freepbx
+    rm -rf /usr/src/freepbx
 
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then     
       ### FOP2 Installation
@@ -201,28 +201,28 @@ EOF
       chown -R asterisk. /usr/local/fop2/
   fi
 
-  	touch /data/.installed
+    touch /data/.installed
 fi
 
 ### Data Persistence Workaround
   if [ ! -f /usr/sbin/fwconsole ]; then
-  	   ln -s /var/lib/asterisk/bin/fwconsole /usr/sbin/fwconsole
+       ln -s /var/lib/asterisk/bin/fwconsole /usr/sbin/fwconsole
   fi
 
   if [ ! -f /usr/sbin/amportal ]; then
-  	   ln -s /var/lib/asterisk/bin/amportal /usr/sbin/amportal
+       ln -s /var/lib/asterisk/bin/amportal /usr/sbin/amportal
   fi
   
   if [ ! -f /data/etc/amportal.conf ]; then
-  		mkdir -p /data/etc/
-	  	cp -R /etc/amportal.conf /data/etc/
-	  	rm -rf /etc/amportal.conf
-	  	touch /data/etc/amportal.conf
-	  	chown asterisk:asterisk /data/etc/amportal.conf
-	  	ln -s /data/etc/amportal.conf /etc/amportal.conf
+      mkdir -p /data/etc/
+      cp -R /etc/amportal.conf /data/etc/
+      rm -rf /etc/amportal.conf
+      touch /data/etc/amportal.conf
+      chown asterisk:asterisk /data/etc/amportal.conf
+      ln -s /data/etc/amportal.conf /etc/amportal.conf
   else
-	  	ln -s /data/etc/amportal.conf /etc/amportal.conf
-	  	touch /data/etc/amportal.conf
+      ln -s /data/etc/amportal.conf /etc/amportal.conf
+      touch /data/etc/amportal.conf
   fi
 
   if [ "$DB_EMBEDDED" = "TRUE" ];  then 
@@ -284,7 +284,7 @@ EOF
 fi
 
 if [ ! -f /etc/asterisk/cdr_adaptive_odbc.conf ]; then
-	cat <<EOF > /etc/asterisk/cdr_adaptive_odbc.conf
+  cat <<EOF > /etc/asterisk/cdr_adaptive_odbc.conf
 [asteriskcdrdb]
 connection=asteriskcdrdb
 table=cdr
@@ -497,7 +497,9 @@ fi
  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
     echo '[freepbx] Starting Operator Panel'
     rm -rf /var/run/fop2.*
-    /usr/local/fop2/fop2_server -d
+    mkdir -p /var/log/fop
+    chown -R asterisk. /var/log/fop
+    /usr/local/fop2/fop2_server -d --logdir /var/log/fop
  fi 
 
 service apache2 restart >/dev/null
