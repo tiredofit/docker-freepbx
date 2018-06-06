@@ -319,8 +319,10 @@ chown -R asterisk:asterisk /etc/amportal.conf
 ### Custom File Support
   if [ -d /assets/custom ] ; then
      echo "** [freepbx] Custom Files Found, Copying over top of Master.."
-     cp -R /assets/custom/* /var/www/html/
-     chown -R asterisk: /var/www/html/
+     cp -R /assets/custom/* /
+     chown -R asterisk. /var/www/html/
+     chown -R asterisk. /var/lib/asterisk
+     chown -R asterisk. /var/spool/asterisk
   fi
 
 ### Check to see if FOP Enabled and exists (Upgrade Catcher)
@@ -343,6 +345,10 @@ cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
     AllowOverride All
     </Directory>
 EOF
+
+if [ "HTTP_PORT" != "80"]; then
+  sed -i -e "s/Listen 80/Listen $HTTP_PORT/g" /etc/apache2/ports.conf
+fi
 
 cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
 Listen 73
@@ -390,6 +396,11 @@ EOF
 
 if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SSL" = "TRUE" ] ;  then 
     echo '** [freepbx] Enabling SSL'
+
+    if [ "HTTPS_PORT" != "443"]; then
+      sed -i -e "s/Listen 443/Listen $HTTPS_PORT/g" /etc/apache2/ports.conf
+    fi
+
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
             echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned'
             cat <<EOF > /tmp/openssl.cnf

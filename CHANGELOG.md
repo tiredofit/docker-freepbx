@@ -1,3 +1,11 @@
+## 2.4 - 2018-06-06 <dave at tiredofit dot ca>
+
+* Update for HTTP_PORT/HTTPS_PORT Variable
+
+## 2.3 - 2018-06-06 <dave at tiredofit dot ca>
+
+* Custom Files Modification to support adding custom files outside of webroot - Follow general linux filesystem
+
 ## 2.22 - 2018-06-01 <dave at tiredofit dot ca>
 
 * Final Fop2 Fix to change fop2.cfg to look to 127.0.0.1 instead of localhost
@@ -8,7 +16,7 @@
 
 ## 2.2 - 2018-06-01 <dave at tiredofit dot ca>
 
-* Fix for FOP Installation (add wget)
+* Fix for FOP Installation
 
 ## 2.1 - 2018-06-01 <dave at tiredofit dot ca>
 
