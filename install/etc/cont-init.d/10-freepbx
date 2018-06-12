@@ -346,10 +346,6 @@ cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
     </Directory>
 EOF
 
-if [ "$HTTP_PORT" != "80" ]; then
-  sed -i -e "s/Listen 80/Listen $HTTP_PORT/g" /etc/apache2/ports.conf
-fi
-
 cat > /etc/apache2/sites-enabled/000-default.conf << EOF 
 Listen 73
 
@@ -396,10 +392,6 @@ EOF
 
 if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SSL" = "TRUE" ] ;  then 
     echo '** [freepbx] Enabling SSL'
-
-    if [ "$HTTPS_PORT" != "443" ]; then
-      sed -i -e "s/Listen 443/Listen $HTTPS_PORT/g" /etc/apache2/ports.conf
-    fi
 
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
             echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned'
@@ -466,6 +458,19 @@ cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
 
 EOF
 fi
+
+# Write ports.conf
+cat > /etc/apache2/ports.conf <<EOF
+Listen $HTTP_PORT
+
+<IfModule ssl_module>
+  Listen $HTTPS_PORT
+</IfModule>
+
+<IfModule mod_gnutls.c>
+  Listen $HTTPS_PORT
+</IfModule>
+EOF
 
 a2enmod remoteip >/dev/null 
 

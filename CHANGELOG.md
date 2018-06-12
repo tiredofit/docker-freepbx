@@ -1,3 +1,7 @@
+## 2.42 - 2018-06-12 <dave at tiredofit dot ca>
+
+Still fixing 2.4
+
 ## 2.41 - 2018-06-06 <dave at tiredofit dot ca>
 
 Still fixing 2.4 release
