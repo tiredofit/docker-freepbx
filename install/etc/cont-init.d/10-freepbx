@@ -508,6 +508,13 @@ fi
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
  fi
+ 
+### Gmail Specific SMTP Config
+if [ "$ENABLE_SMTP_GMAIL" = "TRUE" ] || [ "$ENABLE_SMTP_GMAIL" = "true" ]; then
+   echo "auto_from on" >> /etc/msmtp
+   chown asterisk:asterisk /etc/msmtp
+   chmod 600 /etc/msmtp
+fi
 
 ### FOP2 Setup
  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
