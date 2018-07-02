@@ -496,17 +496,12 @@ if [ "$WEBROOT" != "/var/www/html" ]; then
   a2dismod autoindex -f
 fi
 
-### SMTP
-if [ "$DEBUG_SMTP" = "TRUE" ] || [ "DEBUG_SMTP" = "true" ] || [ "DEBUG_MODE" = "true" ] || [ "DEBUG_MODE" = "TRUE" ];  then
-   ENABLE_SMTP=FALSE
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
-fi
- 
 ### SMTP Config
  if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
+   chown asterisk:asterisk /etc/msmtp
+   chmod 600 /etc/msmtp
  fi
 
 ### FOP2 Setup

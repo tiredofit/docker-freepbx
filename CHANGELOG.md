@@ -1,6 +1,6 @@
-## 2.42 - 2018-06-12 <dave at tiredofit dot ca>
+## 2.5 - 2018-07-02 <dave at tiredofit dot ca>
 
-Still fixing 2.4
+* MSMTP Cleanup courtesy of @joeyberkovitz
 
 ## 2.41 - 2018-06-06 <dave at tiredofit dot ca>
 
