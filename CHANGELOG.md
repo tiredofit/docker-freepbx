@@ -1,3 +1,7 @@
+## 2.6 - 2018-07-02 <dave at tiredofit dot ca>
+
+* Fix logrotate for Apache
+
 ## 2.5 - 2018-07-02 <dave at tiredofit dot ca>
 
 * MSMTP Cleanup courtesy of @joeyberkovitz

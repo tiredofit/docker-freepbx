@@ -1,4 +1,5 @@
 /var/log/apache2/*
+{
     daily
     ifempty
     rotate 7
