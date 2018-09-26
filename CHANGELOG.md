@@ -1,3 +1,7 @@
+## 2.7 - 2018-09-26 <github:joycebabu>
+
+* Fix for internal database being deleted on 2nd startup
+
 ## 2.6 - 2018-07-02 <dave at tiredofit dot ca>
 
 * Fix logrotate for Apache
