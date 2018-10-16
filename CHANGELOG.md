@@ -1,3 +1,8 @@
+## 2.8 - 2018-10-16 <dave at tiredofit dot ca>
+
+* Change Download Link for Asterisk Source
+* Cleanup Dockerfile to fail on error
+
 ## 2.7 - 2018-09-26 <github:joycebabu>
 
 * Fix for internal database being deleted on 2nd startup
