@@ -1,4 +1,4 @@
-/var/log/apache2/*
+/var/log/apache2/*.log
 {
     daily
     ifempty

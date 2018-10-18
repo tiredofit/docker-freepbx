@@ -1,11 +1,15 @@
+## 2.9 2018-10-18 <dave at tiredofit dot ca> 
+
+* Remove /etc/cron.* folders to avoid calling anacron even if isnt installed
+* Repair Logrotate for Apache Log files
+
 ## 2.8 - 2018-10-16 <dave at tiredofit dot ca>
 
-* Change Download Link for Asterisk Source
-* Cleanup Dockerfile to fail on error
+* Fix for changed Asterisk Download link
 
-## 2.7 - 2018-09-26 <github:joycebabu>
+## 2.7 - 2018-08-15 <dave at tiredofit dot ca>
 
-* Fix for internal database being deleted on 2nd startup
+* Update for changed MSMTP in Base Image
 
 ## 2.6 - 2018-07-02 <dave at tiredofit dot ca>
 

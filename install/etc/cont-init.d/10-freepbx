@@ -498,10 +498,10 @@ fi
 
 ### SMTP Config
  if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
-   chown asterisk:asterisk /etc/msmtp
-   chmod 600 /etc/msmtp
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
+   chown asterisk:asterisk /etc/msmtprc
+   chmod 600 /etc/msmtprc
  fi
 
 ### FOP2 Setup

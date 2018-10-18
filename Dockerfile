@@ -15,7 +15,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
-
+       \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
             autoconf \
@@ -113,7 +113,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        \
 ### Build Asterisk
        cd /usr/src && \
-       mkdir asterisk && \
+       mkdir -p asterisk && \
        curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-${ASTERISK_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk && \
        cd /usr/src/asterisk/ && \
        make distclean && \
@@ -154,7 +154,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Cleanup 
        mkdir -p /var/run/fail2ban && \
        cd / && \
-       rm -rf /usr/src/* /tmp/* && \
+       rm -rf /usr/src/* /tmp/* /etc/cron* && \
        apt-get purge -y $ASTERISK_BUILD_DEPS && \
        apt-get -y autoremove && \
        apt-get clean && \

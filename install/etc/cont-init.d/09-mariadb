@@ -11,7 +11,7 @@
   service mysql stop
   mkdir -p /var/lib/mysql
 
-     if [ ! -d /var/lib/mysql/mysql ]; then
+     if [ ! -f /var/lib/mysql/mysql ]; then
         echo '** [mysql] New Embedded Database Detected, setting up..'
         cp -R /assets/config/var/lib/mysql/* /var/lib/mysql
      fi
