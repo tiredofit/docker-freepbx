@@ -1,3 +1,7 @@
+## 2.10 - 2018-09-26 <github:joycebabu>
+
+* Refix for internal database being deleted on 2nd startup
+
 ## 2.9 2018-10-18 <dave at tiredofit dot ca> 
 
 * Remove /etc/cron.* folders to avoid calling anacron even if isnt installed
