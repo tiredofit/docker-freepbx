@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv /bin/bash
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] && [[ "$DB_EMBEDDED" = "FALSE" ]];  then  
+if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
 	## This is a dirty hack to allow for updating the CDR Module to use a seperate DB Host and the same DB as FreePBX.
 		echo '** [freepbx] Performing Manual Upgrade of CDR Module'
 		cp -R /var/www/html/admin/modules/cdr/install.php /var/www/html/admin/modules/cdr/.install.php
