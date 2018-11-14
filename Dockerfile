@@ -162,7 +162,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        rm -rf /var/lib/apt/lists/* && \
        \
 ### FreePBX Hacks
-       sed -i -e "s/memory_limit = 128M /memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
+       sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
        a2disconf other-vhosts-access-log.conf && \
        a2enmod rewrite && \
        a2enmod headers && \
