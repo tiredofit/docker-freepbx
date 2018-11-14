@@ -12,7 +12,7 @@ fi
      DB_EMBEDDED=FALSE      
   fi
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
     ### Sanity Test
     if [ ! -n "DB_HOST" ]; then
         echo '** [freepbx] ERROR: No Database Host Entered! '
@@ -47,7 +47,7 @@ ENABLE_FOP=${ENABLE_FOP:-"TRUE"}
 FOP_DIRECTORY=${FOP_DIRECTORY:-"/fop"}
 ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
     ### Make sure that DB is accessible
     while true; do
       mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
@@ -82,7 +82,7 @@ if [ ! -f $WEBROOT/admin/index.php ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
   fi
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
     cat <<EOF > /etc/odbc.ini
 [MySQL-asteriskcdrdb]
 Description = MySQL connection to 'asteriskcdrdb' database
@@ -122,7 +122,7 @@ fi
     exit 1
   fi
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
     sed -i -e "s/\$amp_conf\['AMPDBHOST'\] = 'localhost';/\$amp_conf\['AMPDBHOST'\] = '$DB_HOST';/g" /usr/src/freepbx/installlib/installcommand.class.php
     sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
     sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
@@ -130,13 +130,13 @@ fi
   
   echo '** [freepbx] Installing FreePBX'
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
     ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
   else
     ./install -n --webroot=$WEBROOT
   fi
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
     cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
@@ -166,7 +166,7 @@ EOF
   fwconsole ma downloadinstall framework core --edge
   fwconsole ma download cdr --edge
 
-  if [ "$DB_EMBEDDED" = "FALSE" ];  then  
+  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
@@ -225,7 +225,7 @@ fi
       touch /data/etc/amportal.conf
   fi
 
-  if [ "$DB_EMBEDDED" = "TRUE" ];  then 
+  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then 
       if [ ! -f /data/etc/freepbx.conf ]; then
          mkdir -p /data/etc/
          cp -R /etc/freepbx.conf /data/etc/
@@ -295,7 +295,7 @@ fi
 
 chown asterisk:asterisk /etc/freepbx.conf
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then 
+if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
   ### Set RTP Ports
   echo '** [freepbx] Setting RTP Ports - Start: '$RTP_START' Finish: '$RTP_FINISH 
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
@@ -366,7 +366,7 @@ ErrorLog /dev/null
 <VirtualHost *:$HTTP_PORT>
 EOF
 
-if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
+if [ "$UCP_FIRST" = "TRUE" ] || [ "$UCP_FIRST" = "true" ] ; then
   echo "    DocumentRoot "$WEBROOT"/ucp" >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "'$ADMIN_DIRECTORY'" "'$WEBROOT'/admin"' >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "/ucp" "'$WEBROOT'/ucp"' >> /etc/apache2/sites-enabled/000-default.conf
@@ -434,7 +434,7 @@ Listen $HTTPS_PORT
     CustomLog /var/log/apache2/access.log common
 EOF
 
-if [ "$UCP_FIRST" = "true" ] || [ "$UCP_FIRST" = "TRUE" ] ; then
+if [ "$UCP_FIRST" = "TRUE" ] || [ "$UCP_FIRST" = "true" ] ; then
   echo "    DocumentRoot "$WEBROOT"/ucp" >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "'$ADMIN_DIRECTORY'" "'$WEBROOT'/admin"' >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "/ucp" "'$WEBROOT'/ucp"' >> /etc/apache2/sites-enabled/000-default.conf
