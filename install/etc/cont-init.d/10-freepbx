@@ -183,6 +183,7 @@ EOF
     fwconsole ma downloadinstall certman userman pm2 --edge
     fwconsole chown 
     fwconsole reload 
+    chown -R asterisk. /home/asterisk/.npm
     fwconsole ma downloadinstall ucp --edge
     fwconsole chown 
     fwconsole reload 
