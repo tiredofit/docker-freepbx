@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] && [[ "$DB_EMBEDDED" = "TRUE" ]];  then
+  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
      DB_EMBEDDED=TRUE
   else
      DB_EMBEDDED=FALSE      
@@ -10,7 +10,7 @@
 fwconsole stop
 service apache2 stop
 
-if [ "$DB_EMBEDDED" = "TRUE" ];  then 
+if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
 	service mysql stop
 fi
 
