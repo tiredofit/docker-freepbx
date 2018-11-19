@@ -1,3 +1,8 @@
+## 2.11 - 2018-11-20 <github:si458>
+
+* Refinements to environment variables being TRUE/true or FALSE/false
+* Fixup PHP Memory Limit issue due to poor regex
+
 ## 2.10 - 2018-09-26 <github:joycebabu>
 
 * Refix for internal database being deleted on 2nd startup
