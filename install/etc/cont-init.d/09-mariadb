@@ -7,7 +7,7 @@
      DB_EMBEDDED=FALSE      
   fi
 
-  if [ "$DB_EMBEDDED" = "TRUE" ];  then 
+  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then 
   service mysql stop
   mkdir -p /var/lib/mysql
 
