@@ -191,7 +191,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking Configuration
-   EXPOSE 80 443 4445 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
+   EXPOSE 80 443 4445 4569 5060/udp 5160/udp 8001 8003 8008 8009 18001-18020/udp
 
 ### Files Add
    ADD install /
