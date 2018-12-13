@@ -70,7 +70,7 @@ fi
 echo '** [freepbx] Setting File Permissions'
 mkdir -p /data/etc/asterisk
 mkdir -p /data/var/lib/asterisk/{agi-bin,bin,playback}
-mkdir -p /data/var/spool/asterisk/{dictate,meetme,monitor,recording,system,tmp,voicemail}
+mkdir -p /data/var/spool/asterisk/{cache,dictate,meetme,monitor,recording,system,tmp,voicemail}
 mkdir -p /data/var/run/asterisk
 chown -R asterisk:asterisk /data
 
@@ -107,10 +107,11 @@ option = 3
 EOF
 fi
 
-    sudo -u asterisk gpg --refresh-keys --keyserver pgp.mit.edu >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 9F9169F4B33B4659 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver pgp.mit.edu --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
+    sudo -u asterisk gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80 >/dev/null 2>&1
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9F9169F4B33B4659 >/dev/null 2>&1
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
+
     cd /usr/src
     git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
     cd /usr/src/freepbx
