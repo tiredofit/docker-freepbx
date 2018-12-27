@@ -14,22 +14,22 @@ fi
 
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
     ### Sanity Test
-    if [ ! -n "DB_HOST" ]; then
+    if [ ! -n "$DB_HOST" ]; then
         echo '** [freepbx] ERROR: No Database Host Entered! '
         exit 1
     fi
 
-    if [ ! -n "DB_NAME" ]; then
+    if [ ! -n "$DB_NAME" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
     fi
 
-    if [ ! -n "DB_USER" ]; then
+    if [ ! -n "$DB_USER" ]; then
         echo '** [freepbx] ERROR: No Database User Entered! '
         exit 1
     fi
 
-    if [ ! -n "DB_PASS" ]; then
+    if [ ! -n "$DB_PASS" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
     fi
@@ -164,8 +164,8 @@ EOF
   fi
 
   echo '** [freepbx] Enabling Default Modules'
-  fwconsole ma downloadinstall framework core --edge
-  fwconsole ma download cdr --edge
+  fwconsole ma downloadinstall framework core
+  fwconsole ma download cdr
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
@@ -180,12 +180,12 @@ EOF
     fwconsole ma install cdr
   fi
 
-    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles callrecording dashboard music conferences --edge
-    fwconsole ma downloadinstall certman userman pm2 --edge
+    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
+    fwconsole ma downloadinstall certman userman pm2
     fwconsole chown 
     fwconsole reload 
     chown -R asterisk. /home/asterisk/.npm
-    fwconsole ma downloadinstall ucp --edge
+    fwconsole ma downloadinstall ucp
     fwconsole chown 
     fwconsole reload 
     fwconsole restart
@@ -396,7 +396,7 @@ if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SS
     echo '** [freepbx] Enabling SSL'
 
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
-            echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned'
+            echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned - WebRTC will not work with a SelfSigned Certificate!'
             cat <<EOF > /tmp/openssl.cnf
 [ req ]
 default_bits = 2048

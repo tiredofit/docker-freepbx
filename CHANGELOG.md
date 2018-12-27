@@ -1,3 +1,16 @@
+## 2.12 - 2018-12-27 <dave at tiredofit dot ca>
+
+* Sort Defaults in Startup Script (cosmetic)
+* Add cache dir upon first startup
+* Fix internal ports exposure
+* Change GPG Keyserver
+* Change PHP Packages Source Location
+* Update MariaDB Connector
+* Fix Database Sanity Tests
+* Reorder Module Download
+* Add Warning for Self Signed Certificate
+* Stop using edge versions on initial bootup, problems have been resolved which caused this on upstream
+
 ## 2.11 - 2018-11-20 <github:si458>
 
 * Refinements to environment variables being TRUE/true or FALSE/false

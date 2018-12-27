@@ -12,8 +12,8 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Install Dependencies
    RUN set -x && \
        apt-get update && \
-       curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
-       echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
+       curl https://packages.sury.xyz/php/apt.gpg | apt-key add - && \
+       echo 'deb https://packages.sury.xyz/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
        \
 ### Install Development Dependencies
@@ -26,6 +26,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             flex \
             libasound2-dev \
             libcurl4-openssl-dev \
+            libedit-dev \
             libical-dev \
             libiksemel-dev \
             libjansson-dev \
@@ -96,8 +97,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        \
 ### Install MySQL Connector
        cd /usr/src && \
-       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.15/mariadb-connector-odbc-2.0.15-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/ && \
-       cp mariadb-connector-*/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
+       mkdir -p mariadb-connector && \
+       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.18/mariadb-connector-odbc-2.0.18-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
+       cp mariadb-connector/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
        \
 ### Add Users
        addgroup --gid 2600 asterisk && \
@@ -191,7 +193,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking Configuration
-   EXPOSE 80 443 4445 4569 5060 5160 8001 8003 8008 8009 18000-20000/udp
+   EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8008 8009 18000-20000/udp
 
 ### Files Add
    ADD install /
