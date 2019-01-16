@@ -1,6 +1,8 @@
 FROM tiredofit/nodejs:8-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
+### Add Extra Language
+   ADD extra/locale.gen /etc
 ### Set Defaults
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
@@ -15,6 +17,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.xyz/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.xyz/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
+       apt-get install -y debconf locales locales-all && \
        \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
