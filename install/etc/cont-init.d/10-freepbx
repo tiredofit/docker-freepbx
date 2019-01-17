@@ -180,12 +180,12 @@ EOF
     fwconsole ma install cdr
   fi
 
-    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
+    fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
     fwconsole ma downloadinstall certman userman pm2
     fwconsole chown 
     fwconsole reload 
     chown -R asterisk. /home/asterisk/.npm
-    fwconsole ma downloadinstall ucp
+    fwconsole ma downloadinstall ucp --edge
     fwconsole chown 
     fwconsole reload 
     fwconsole restart
@@ -311,7 +311,7 @@ if [ ! -f "/usr/sbin/fwconsole" ]; then
   echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
   exit 1
 fi
-
+fwconsole setting SHOWLANGUAGE 1 > /dev/null 2>&1
 fwconsole chown > /dev/null 2>&1
 fwconsole start > /dev/null 2>&1
 fwconsole reload > /dev/null 2>&1
