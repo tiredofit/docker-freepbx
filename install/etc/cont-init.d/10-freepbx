@@ -164,8 +164,9 @@ EOF
   fi
 
   echo '** [freepbx] Enabling Default Modules'
-  fwconsole ma downloadinstall framework core
-  fwconsole ma download cdr
+  fwconsole ma downloadinstall framework --tag 14.0.5.26
+  fwconsole ma downloadinstall core --tag 14.0.18.48
+  fwconsole ma download cdr --tag 14.0.5.18
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
@@ -185,9 +186,12 @@ EOF
     fwconsole chown 
     fwconsole reload 
     chown -R asterisk. /home/asterisk/.npm
-    fwconsole ma downloadinstall ucp --edge
+    fwconsole ma downloadinstall ucp
     fwconsole chown 
-    fwconsole reload 
+    fwconsole reload
+    fwconsole setting SHOWLANGUAGE 1
+    fwconsole chown 
+    fwconsole reload
     fwconsole restart
     fwconsole stop
     
@@ -311,7 +315,6 @@ if [ ! -f "/usr/sbin/fwconsole" ]; then
   echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
   exit 1
 fi
-fwconsole setting SHOWLANGUAGE 1 > /dev/null 2>&1
 fwconsole chown > /dev/null 2>&1
 fwconsole start > /dev/null 2>&1
 fwconsole reload > /dev/null 2>&1
