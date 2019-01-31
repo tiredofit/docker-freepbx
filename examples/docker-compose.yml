@@ -3,7 +3,7 @@ version: '2'
 services:
   freepbx-app:
     container_name: freepbx-app
-    image: tiredofit/freepbx
+    image: tiredofit/freepbx:14
     ports:
      #### If you aren't using a reverse proxy
      #- 80:80

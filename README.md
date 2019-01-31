@@ -63,7 +63,7 @@ Automated builds of the image are available on [Docker Hub](https://hub.docker.c
 
 
 ```bash
-docker pull tiredofit/freepbx
+docker pull tiredofit/freepbx:14
 ```
 
 # Quick Start
