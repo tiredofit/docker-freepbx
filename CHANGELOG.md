@@ -1,3 +1,7 @@
+## 2.13 - 2019-01-31 <dave at tiredofit dot ca>
+
+* Add Asterisk Version in startup step to prepare for upcoming image shift to Asterisk 16 and FreePBX 15
+
 ## 2.12 - 2018-12-27 <dave at tiredofit dot ca>
 
 * Sort Defaults in Startup Script (cosmetic)

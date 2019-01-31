@@ -516,6 +516,7 @@ fi
     /usr/local/fop2/fop2_server -d --logdir /var/log/fop
  fi 
 
+echo $ASTERISK_VERSION > /etc/asterisk/.asterisk-version
 service apache2 restart >/dev/null
 
 echo '** [freepbx] Web Server Started - Container Initialization Complete'
