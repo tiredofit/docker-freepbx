@@ -11,19 +11,21 @@
 
 This will build a container for [FreePBX](https://www.freepbx.org) - A Voice over IP Manager for Asterisk. Upon starting this image it will give you a turn-key PBX system for SIP calling. 
 
-* Latest release Version 14
-* Compiles and Installs Asterisk 14
+* Latest release Version 15
+* Compiles and Installs Asterisk 16
 * Choice of running embedded database or Modifies to support external MySQL Database and only require one DB.
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
 * Debian Stretch Base w/ Apache2
-* NodeJS 8.x
+* NodeJS 11.x
 * Automatically Installs User Control Panel and displays at first page
 * Option to Install [Flash Operator Panel 2](https://www.fop2.com/)
 * Customizable FOP and Admin URLs
 
-        
 This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
+        
+**If you are presently running this image when it utilized FreePBX 14 and 
+Asterisk 14 and can no longer use your image, please see [this post](https://github.com/tiredofit/docker-freepbx/issues/51)
 
 
 [Changelog](CHANGELOG.md)
@@ -55,7 +57,7 @@ Companion @
 https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) 
 in order to serve your pages. However, it will run just fine on it's own if you map appropriate ports.
 
-You will also need an external MySQL/MariaDB Container
+You will also need an external MySQL/MariaDB Container, athough it can use an internally provided service (not recommended).
 
 # Installation
 
@@ -63,8 +65,13 @@ Automated builds of the image are available on [Docker Hub](https://hub.docker.c
 
 
 ```bash
-docker pull tiredofit/freepbx:14
+docker pull tiredofit/freepbx:(imagetag)
 ```
+The following image tags are available:
+
+* `15` - Asterisk 16, Freepbx 16 - Debian Stretch
+* `14` - Asterisk 14, Freepbx 14 - Debian Stretch
+* `latest` - Asterisk 16, Freepbx 16 - Debian Stretch
 
 # Quick Start
 

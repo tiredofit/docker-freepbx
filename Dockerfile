@@ -1,11 +1,11 @@
-FROM tiredofit/nodejs:8-debian-latest
+FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=14.7.8 \
+       ASTERISK_VERSION=16.1.1 \
        BCG729_VERSION=1.0.4 \
        UCP_FIRST=TRUE
 
@@ -15,6 +15,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.xyz/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.xyz/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
+       apt-get -y upgrade && \
        \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
@@ -69,6 +70,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libiodbc2 \
             libicu-dev \
             libsrtp0 \
+            locales-all \
             mariadb-client \
             mariadb-server \
             mpg123 \
@@ -95,23 +97,15 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             xmlstarlet \
             && \
        \
-### Install MySQL Connector
+### Install MySQL/MariaDB Connector
        cd /usr/src && \
        mkdir -p mariadb-connector && \
-       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.18/mariadb-connector-odbc-2.0.18-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
+       curl -sSL https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.0.8/mariadb-connector-odbc-3.0.8-ga-debian-i686.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
        cp mariadb-connector/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
        \
 ### Add Users
        addgroup --gid 2600 asterisk && \
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
-       \
-### Install Jansson
-       git clone https://github.com/akheron/jansson.git /usr/src/jansson && \
-       cd /usr/src/jansson && \
-       autoreconf -i && \
-       ./configure && \
-       make && \
-       make install && \
        \
 ### Build Asterisk
        cd /usr/src && \
@@ -120,20 +114,22 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        cd /usr/src/asterisk/ && \
        make distclean && \
        contrib/scripts/get_mp3_source.sh && \
-       ./configure --with-resample --with-pjproject-bundled --with-ssl=ssl --with-srtp && \
+       ./configure --with-resample --with-pjproject-bundled --with-jansson-bundled --with-ssl=ssl --with-srtp && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
-                             --enable format_mp3 \
-                             --enable app_fax \
                              --enable app_confbridge \
+                             ## Broken at present
+                             #--enable app_fax \
+                             --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
-                             #--enable res_config_mysql \
+                             --enable format_mp3 \
                              --enable BETTER_BACKTRACES \
                              --disable MOH-OPSOUND-WAV \
                              --enable MOH-OPSOUND-GSM \
        make && \
        make install && \
+       make config && \
        ldconfig && \
        \
 #### Add G729 Codecs
@@ -149,7 +145,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://bitbucket.org/arkadi/asterisk-g72x/get/default.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
        cd /usr/src/asterisk-g72x && \
        ./autogen.sh && \
-       ./configure --with-bcg729 --with-asterisk${ASTERISK_VERSION}0 --enable-penryn&& \
+       ./configure --with-bcg729 --with-asterisk160 --enable-penryn&& \
        make && \
        make install && \
        \
@@ -165,6 +161,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        \
 ### FreePBX Hacks
        sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
+       sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/5.6/apache2/php.ini && \
        a2disconf other-vhosts-access-log.conf && \
        a2enmod rewrite && \
        a2enmod headers && \

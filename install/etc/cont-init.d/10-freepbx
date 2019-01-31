@@ -3,6 +3,9 @@
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
     set -x
+    DEBUG=''
+else
+    DEBUG='>/dev/null 2>&1' 
 fi
 
  ## Embedded DB Variance
@@ -62,6 +65,23 @@ if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     done
 fi
 
+### Container Version Sanity Check
+if [ -f /data/etc/asterisk/.asterisk_version ]; then
+  ASTERISK_VERSION_TMP=`cat /data/etc/asterisk/.asterisk_version`
+  ASTERISK_VERSION_TMP=${ASTERISK_VERSION_TMP:0:2}
+
+  if [[ ${ASTERISK_VERSION_TMP//./} -lt "16" ]]; then
+    echo "**"
+    echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
+    echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
+    echo "** [freepbx] ERROR - To continue using this image switch to using tiredofit/freepbx:14-latest"
+    echo "** [freepbx] ERROR - See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
+    echo "** [freepbx] ERROR - This container will now cease to function"
+    echo "**"
+    exit 1
+  fi
+fi
+
 if [ ! -f /data/.installed ]; then
   echo '** [freepbx] Creating Default Configuration Files'
   cp -R /assets/config/* /data/
@@ -105,17 +125,19 @@ Port = $DB_PORT
 option = 3
 
 EOF
-fi
+  fi
 
-    sudo -u asterisk gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9F9169F4B33B4659 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
+    sudo -u asterisk gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80 $DEBUG
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9F9169F4B33B4659 $DEBUG
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 3DDB2122FE6D84F7 $DEBUG
+    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 86CE877469D2EAD9 $DEBUG
 
     cd /usr/src
-    git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
+    mkdir -p /usr/src/freepbx
+    curl -ssL http://mirror.freepbx.org/modules/packages/freepbx/freepbx-15.0-latest.tgz | tar xfz - --strip 1 -C /usr/src/freepbx $DEBUG
     cd /usr/src/freepbx
     cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
+    touch /etc/asterisk/{modules,cdr}.conf
     ./start_asterisk start 
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
@@ -198,8 +220,8 @@ EOF
       ### FOP2 Installation
       mkdir -p /data/usr/local/fop2
       curl -ssL http://download.fop2.com/install_fop2.sh | bash
-      service apache2 stop > /dev/null
-      service fop2 stop > /dev/null
+      service apache2 stop $DEBUG
+      service fop2 stop $DEBUG
       chown -R asterisk. /usr/local/fop2/
   fi
 
@@ -308,13 +330,13 @@ fi
 echo '** [freepbx] Starting Asterisk'
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
-  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX fails, and usually an upstream error."
   exit 1
 fi
 
-fwconsole chown > /dev/null 2>&1
-fwconsole start > /dev/null 2>&1
-fwconsole reload > /dev/null 2>&1
+fwconsole chown $DEBUG
+fwconsole start $DEBUG
+fwconsole reload $DEBUG
 chown -R asterisk /etc/asterisk/*
 chown -R asterisk:asterisk /etc/amportal.conf
 
@@ -333,10 +355,12 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
       echo "** [freepbx] Installing Operator Panel"
 
         ### FOP2 Installation
+        fwconsole start $DEBUG
         mkdir -p /data/usr/local/fop2
-        curl -ssL http://download.fop2.com/install_fop2.sh | bash
-        service apache2 stop > /dev/null
-        service fop2 stop > /dev/null
+        curl -ssL http://download.fop2.com/install_fop2.sh | bash $DEBUG
+        service apache2 stop $DEBUG
+        service fop2 stop $DEBUG
+        fwconsole stop $DEBUG
         chown -R asterisk. /usr/local/fop2/
     fi
 fi
@@ -418,14 +442,14 @@ emailAddress=selfsigned@example.com
 nsCertType = server   
 EOF
 
-    openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
+    openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem $DEBUG
     chmod 0600 /certs/key.pem
     rm -rf /tmp/openssl.cnf
     TLS_CERT="cert.pem"
     TLS_KEY="key.pem"
     fi  
 
-    a2enmod ssl >/dev/null
+    a2enmod ssl $DEBUG
     cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
 Listen $HTTPS_PORT
 <VirtualHost *:$HTTPS_PORT>
@@ -474,7 +498,7 @@ Listen $HTTP_PORT
 </IfModule>
 EOF
 
-a2enmod remoteip >/dev/null 
+a2enmod remoteip $DEBUG
 
 cat >> /etc/apache2/conf-available/remoteip.conf << EOF 
 RemoteIPHeader X-Real-IP
@@ -483,8 +507,8 @@ RemoteIPTrustedProxy 172.16.0.0/12
 RemoteIPTrustedProxy 192.168.0.0/16
 EOF
 
-a2enconf allowoverride >/dev/null
-a2enconf remoteip.conf >/dev/null
+a2enconf allowoverride $DEBUG
+a2enconf remoteip.conf $DEBUG
 
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
@@ -495,7 +519,7 @@ chown -R asterisk. /usr/local/fop2
 
 ### Disable Indexes if outside of regular webroot
 if [ "$WEBROOT" != "/var/www/html" ]; then
-  a2dismod autoindex -f
+  a2dismod autoindex -f $DEBUG
 fi
 
 ### SMTP Config
@@ -516,8 +540,7 @@ fi
     /usr/local/fop2/fop2_server -d --logdir /var/log/fop
  fi 
 
-echo $ASTERISK_VERSION > /etc/asterisk/.asterisk-version
-service apache2 restart >/dev/null
+service apache2 restart $DEBUG
 
 echo '** [freepbx] Web Server Started - Container Initialization Complete'
 
