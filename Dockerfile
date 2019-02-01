@@ -194,8 +194,3 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Files Add
    ADD install /
-
-ENV LANGUAGE en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-ENV LC_CTYPE en_US.UTF-8
