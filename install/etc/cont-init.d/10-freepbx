@@ -205,8 +205,8 @@ EOF
   echo '** [freepbx] Enabling Default Modules'
   echo '** [freepbx] Module Install: framework, core'
   silent fwconsole ma downloadinstall framework core 
-  silent fwconsole ma download cdr
-
+  fwconsole ma download cdr
+  
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
