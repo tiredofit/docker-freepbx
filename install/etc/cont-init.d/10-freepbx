@@ -150,7 +150,7 @@ EOF
 
     cd /usr/src
     mkdir -p /usr/src/freepbx
-    silent curl -ssL http://mirror.freepbx.org/modules/packages/freepbx/freepbx-15.0-latest.tgz | tar xfz - --strip 1 -C /usr/src/freepbx
+    curl -ssL http://mirror.freepbx.org/modules/packages/freepbx/freepbx-15.0-latest.tgz | tar xfz - --strip 1 -C /usr/src/freepbx
     cd /usr/src/freepbx
     cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
     touch /etc/asterisk/{modules,cdr}.conf
@@ -168,12 +168,12 @@ EOF
     sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
   fi
   
-  echo '** [freepbx] Installing FreePBX'
+  echo '** [freepbx] Installing FreePBX source code'
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
-    ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
+    silent ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
   else
-    ./install -n --webroot=$WEBROOT
+    silent ./install -n --webroot=$WEBROOT
   fi
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
@@ -243,7 +243,7 @@ EOF
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then     
       ### FOP2 Installation
       mkdir -p /data/usr/local/fop2
-      curl -ssL http://download.fop2.com/install_fop2.sh | bash
+      silent curl -ssL http://download.fop2.com/install_fop2.sh | bash
       silent service apache2 stop
       silent service fop2 stop
       chown -R asterisk. /usr/local/fop2/
