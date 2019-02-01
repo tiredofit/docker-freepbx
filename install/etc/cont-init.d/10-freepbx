@@ -138,7 +138,8 @@ EOF
     cd /usr/src/freepbx
     cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
     touch /etc/asterisk/{modules,cdr}.conf
-    ./start_asterisk start 
+    echo "** [freepbx] Starting Asterisk for the first time.."
+    ./start_asterisk start $DEBUG
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
     echo "** [freepbx] Can't seem to start Asterisk.. Exitting"
@@ -204,14 +205,15 @@ EOF
 
     fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
     fwconsole ma downloadinstall certman userman pm2
-    fwconsole chown 
-    fwconsole reload 
+    fwconsole chown $DEBUG
+    fwconsole reload $DEBUG
     chown -R asterisk. /home/asterisk/.npm
     fwconsole ma downloadinstall ucp
-    fwconsole chown 
-    fwconsole reload 
-    fwconsole restart
-    fwconsole stop
+    fwconsole chown  $DEBUG
+    fwconsole reload $DEBUG
+    fwconsole restart $DEBUG
+    echo "** [freepbx] Finished Installation of FreePBX Modules - Proceeding with next phase of install"
+    fwconsole stop $DEBUG
     
     cd / 
     rm -rf /usr/src/freepbx
@@ -358,10 +360,10 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
         fwconsole start $DEBUG
         mkdir -p /data/usr/local/fop2
         curl -ssL http://download.fop2.com/install_fop2.sh | bash $DEBUG
+        chown -R asterisk. /usr/local/fop2/
         service apache2 stop $DEBUG
         service fop2 stop $DEBUG
         fwconsole stop $DEBUG
-        chown -R asterisk. /usr/local/fop2/
     fi
 fi
 
