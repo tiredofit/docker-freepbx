@@ -25,21 +25,29 @@ if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     if [ ! -n "$DB_HOST" ]; then
         echo '** [freepbx] ERROR: No Database Host Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_NAME" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_USER" ]; then
         echo '** [freepbx] ERROR: No Database User Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_PASS" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 fi
 
@@ -214,7 +222,7 @@ EOF
     cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
     sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
-    echo '** [freepbx] Module Install: cdr '
+    echo '** [freepbx] Module Install: cdr'
     silent fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
