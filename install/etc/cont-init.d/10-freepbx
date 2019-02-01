@@ -80,6 +80,17 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
     echo "**"
     exit 1
   fi
+else
+  if [ -f /data/.installed ]; then
+    echo "**"
+    echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
+    echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
+    echo "** [freepbx] ERROR - To continue using this image switch to using tiredofit/freepbx:14-latest"
+    echo "** [freepbx] ERROR - See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
+    echo "** [freepbx] ERROR - This container will now cease to function"
+    echo "**"
+    exit 1
+  fi
 fi
 
 if [ ! -f /data/.installed ]; then
@@ -187,8 +198,9 @@ EOF
   fi
 
   echo '** [freepbx] Enabling Default Modules'
-  fwconsole ma downloadinstall framework core
-  fwconsole ma download cdr
+  echo '** [freepbx] Module Install: framework, core'
+  fwconsole ma downloadinstall framework core#DEBUG
+  fwconsole ma download cdr $DEBUG
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
@@ -197,18 +209,23 @@ EOF
     cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
     sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
-    fwconsole ma install cdr
+    echo '** [freepbx] MModule Install: cdr '
+    fwconsole ma install cdr $DEBUG
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
-    fwconsole ma install cdr
+    echo '** [freepbx] MModule Install: cdr'
+    fwconsole ma install cdr $DEBUG
   fi
 
-    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
-    fwconsole ma downloadinstall certman userman pm2
+    echo '** [freepbx] MModule Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail '
+    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music $DEBUG
+    echo '** [freepbx] MModule Install: certman, userman, pm2'
+    fwconsole ma downloadinstall certman userman pm2 $DEBUG
     fwconsole chown $DEBUG
     fwconsole reload $DEBUG
     chown -R asterisk. /home/asterisk/.npm
-    fwconsole ma downloadinstall ucp
+    echo '** [freepbx] MModule Install: ucp '
+    fwconsole ma downloadinstall ucp $DEBUG
     fwconsole chown  $DEBUG
     fwconsole reload $DEBUG
     fwconsole restart $DEBUG
