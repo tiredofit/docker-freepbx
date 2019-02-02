@@ -1,4 +1,4 @@
-## pre 3.0-Development 2019-01-31 <dave at tiredofit dot ca>
+## pre3.0 2019-02-01 <dave at tiredofit dot ca>
 
 This is a breaking release due to major version changes.
 If attempting to run from a previous release and system detects Asterisk 14 and FreePBX instructions will be given on how to let container operate. New installations only in the 3.x series.
