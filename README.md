@@ -25,7 +25,7 @@ This will build a container for [FreePBX](https://www.freepbx.org) - A Voice ove
 This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
         
 **If you are presently running this image when it utilized FreePBX 14 and 
-Asterisk 14 and can no longer use your image, please see [this post](https://github.com/tiredofit/docker-freepbx/issues/51)
+Asterisk 14 and can no longer use your image, please see [this post](https://github.com/tiredofit/docker-freepbx/issues/51)**
 
 
 [Changelog](CHANGELOG.md)
