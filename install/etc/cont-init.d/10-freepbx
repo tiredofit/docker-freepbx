@@ -212,7 +212,7 @@ EOF
 
   echo '** [freepbx] Enabling Default Modules'
   echo '** [freepbx] Module Install: framework, core'
-  silent fwconsole ma downloadinstall framework core 
+  fwconsole ma downloadinstall framework core 
   fwconsole ma download cdr
   
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
@@ -223,22 +223,22 @@ EOF
     sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
     echo '** [freepbx] Module Install: cdr'
-    silent fwconsole ma install cdr
+    fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
     echo '** [freepbx] Module Install: cdr'
-    silent fwconsole ma install cdr
+    fwconsole ma install cdr
   fi
 
     echo '** [freepbx] Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail '
-    silent fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
+    fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
     echo '** [freepbx] Module Install: certman, userman, pm2'
-    silent fwconsole ma downloadinstall certman userman pm2
+    fwconsole ma downloadinstall certman userman pm2
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
     echo '** [freepbx] MModule Install: ucp '
-    silent fwconsole ma downloadinstall ucp
+    fwconsole ma downloadinstall ucp
     silent fwconsole chown 
     silent fwconsole reload
     silent fwconsole restart
@@ -250,10 +250,17 @@ EOF
 
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then     
       ### FOP2 Installation
+      silent fwconsole start
       mkdir -p /data/usr/local/fop2
-      silent curl -ssL http://download.fop2.com/install_fop2.sh | bash
+      cd /usr/src
+      silent wget http://download.fop2.com/install_fop2.sh
+      chmod +x install_fop2.sh 
+      silent ./install_fop2.sh
+      chown -R asterisk. /usr/local/fop2/
+      rm -rf /usr/src/*
       silent service apache2 stop
       silent service fop2 stop
+      silent fwconsole stop
       chown -R asterisk. /usr/local/fop2/
   fi
 
@@ -389,8 +396,12 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
         ### FOP2 Installation
         silent fwconsole start
         mkdir -p /data/usr/local/fop2
-        silent curl -ssL http://download.fop2.com/install_fop2.sh | bash
+        cd /usr/src
+        silent wget http://download.fop2.com/install_fop2.sh
+        chmod +x install_fop2.sh 
+        silent ./install_fop2.sh
         chown -R asterisk. /usr/local/fop2/
+        rm -rf /usr/src/*
         silent service apache2 stop
         silent service fop2 stop
         silent fwconsole stop
