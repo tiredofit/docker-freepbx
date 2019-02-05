@@ -106,6 +106,7 @@ else
   fi
 fi
 
+### Startup
 if [ ! -f /data/.installed ]; then
   echo '** [freepbx] Creating Default Configuration Files'
   cp -R /assets/config/* /data/
@@ -446,6 +447,9 @@ fi
 if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
   echo '    Alias "'$FOP_DIRECTORY'" "/var/www/html/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
 fi
+
+### Update CDR Hack Script
+sed -i -e "s#<WEBROOT>#$WEBROOT#g" /usr/sbin/upgrade-cdr
 
 cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
 
