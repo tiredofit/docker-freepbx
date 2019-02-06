@@ -1,3 +1,7 @@
+## 3.1 2019-02-06 <dave at tiredofit dot ca>
+
+* Added Fax Support
+
 ## 3.0 2019-02-06 <dave at tiredofit dot ca>
 
 This is a breaking release due to major version changes.
