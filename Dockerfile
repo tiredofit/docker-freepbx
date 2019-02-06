@@ -7,6 +7,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ENABLE_SMTP=TRUE \
        ASTERISK_VERSION=16.1.1 \
        BCG729_VERSION=1.0.4 \
+       SPANDSP_VERSION=20180108 \
        UCP_FIRST=TRUE
 
 ### Install Dependencies
@@ -107,6 +108,15 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        addgroup --gid 2600 asterisk && \
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
        \
+### Build SpanDSP
+       set -x && \
+       mkdir -p /usr/src/spandsp && \
+       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
+       cd /usr/src/spandsp && \
+       ./configure && \
+       make && \
+       make install && \
+       \
 ### Build Asterisk
        cd /usr/src && \
        mkdir -p asterisk && \
@@ -118,8 +128,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
                              --enable app_confbridge \
-                             ## Broken at present
-                             #--enable app_fax \
+                             --enable app_fax \
                              --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
