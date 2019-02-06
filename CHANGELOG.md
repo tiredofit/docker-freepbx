@@ -1,3 +1,10 @@
+## 2.14 - 2019-02-06 <dave at tiredofit dot ca>
+
+* Backported fixes from 3.x Branch
+* CDR Script Cleanup
+* FOP2 Install
+* Multilanguage Support
+
 ## 2.13 - 2019-01-31 <dave at tiredofit dot ca>
 
 * Add Asterisk Version in startup step to prepare for upcoming image shift to Asterisk 16 and FreePBX 15

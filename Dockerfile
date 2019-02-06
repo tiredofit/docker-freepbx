@@ -69,6 +69,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libiodbc2 \
             libicu-dev \
             libsrtp0 \
+            locales-all \
             mariadb-client \
             mariadb-server \
             mpg123 \
