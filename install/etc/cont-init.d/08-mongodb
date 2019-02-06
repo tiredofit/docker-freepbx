@@ -6,7 +6,8 @@ ENABLE_XMPP=${ENABLE_XMPP:-"FALSE"}
 
 if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
 	echo '** [mongodb] Enabling MongoDB for XMPP support'
-        s6-svc -u /var/run/s6/services/08-mongodb   
+        mkdir -p /var/log/mongodb
+        s6-svc -u /var/run/s6/services/08-mongodb
 fi
 
 mkdir -p /tmp/state
