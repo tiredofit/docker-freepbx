@@ -74,6 +74,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             locales-all \
             mariadb-client \
             mariadb-server \
+            mongodb \
             mpg123 \
             net-tools \
             php5.6 \
@@ -192,6 +193,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
        mv /var/lib/mysql /assets/config/var/lib/ && \
+       mkdir -p /var/run/mongodb && \
+       rm -rf /var/lib/mongodb && \
+       ln -s /data/var/lib/mongodb /var/lib/mongodb && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \

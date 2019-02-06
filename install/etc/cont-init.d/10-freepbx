@@ -238,8 +238,16 @@ EOF
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
-    echo '** [freepbx] MModule Install: ucp '
+    echo '** [freepbx] Module Install: ucp '
     fwconsole ma downloadinstall ucp
+    if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then   
+      echo '** [freepbx] Starting MongoDB temporarily'
+      mkdir -p /data/var/lib/mongodb
+      mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
+      echo '** [freepbx] Module Install: xmpp'
+      fwconsole ma downloadinstall xmpp
+      echo '** [freepbx] Stopping MongoDB '
+      silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
     silent fwconsole chown 
     silent fwconsole reload
     silent fwconsole restart

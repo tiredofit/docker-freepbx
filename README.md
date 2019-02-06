@@ -96,7 +96,7 @@ The following directories are used for configuration and can be mapped for persi
 | Directory    | Description                                                 |
 |--------------|-------------------------------------------------------------|
 |  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP / HTTPd/ FOP |
-|  `/www/freepbx` | FreePBX web files |
+|  `/var/www/html` | FreePBX web files |
 |  `/var/log/` | Apache, Asterisk and FreePBX Log Files |
 |  `/data`      | Data Persistence for Asterisk and Freepbx and FOP
 |  `/assets/custom` | *OPTIONAL* - If you would like to overwrite some files in the container, put them here following the same folder structure for anything underneath the /var/www/html directory |
@@ -118,6 +118,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `ENABLE_FAIL2BAN` | Enable Fail2ban to block the bad guys - Default `TRUE`|
 | `ENABLE_FOP` | Enable Flash Operator Panel - Default `TRUE` |
 | `ENABLE_SSL` | Enable HTTPd to serve SSL requests - Default `FALSE`|
+| `ENABLE_XMPP` | Enable XMPP Module with MongoDB - Default `FALSE` |
 | `HTTP_PORT`  | HTTP Listening Port - Default `80` |
 | `HTTPS_PORT`  | HTTPS Listening Port - Default `443` |
 | `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
