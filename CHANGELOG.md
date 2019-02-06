@@ -1,3 +1,15 @@
+## 3.0 2019-02-06 <dave at tiredofit dot ca>
+
+This is a breaking release due to major version changes.
+If attempting to run from a previous release and system detects Asterisk 14 and FreePBX instructions will be given on how to let container operate. New installations only in the 3.x series.
+
+* Asterisk 16
+* Freepbx 15
+* NodeJS 11
+* Multilanguage Support
+* Many bugfixes
+* Better Debug verbosity when `DEBUG_MODE=TRUE`
+
 ## 2.13 - 2019-01-31 <dave at tiredofit dot ca>
 
 * Add Asterisk Version in startup step to prepare for upcoming image shift to Asterisk 16 and FreePBX 15
