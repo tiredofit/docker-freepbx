@@ -1,6 +1,7 @@
 ## 3.2 2019-02-06 <dave at tiredofit dot ca>
 
 * Added MongoDB to support `ENABLE_XMPP` environment variable/installing XMPP module from inside FreePBX.
+* A few more sanity checks to ensure installation completes
 
 ## 3.1 2019-02-06 <dave at tiredofit dot ca>
 
