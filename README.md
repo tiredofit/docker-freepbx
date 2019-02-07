@@ -69,9 +69,9 @@ docker pull tiredofit/freepbx:(imagetag)
 ```
 The following image tags are available:
 
-* `15` - Asterisk 16, Freepbx 16 - Debian Stretch
+* `15` - Asterisk 16, Freepbx 15 - Debian Stretch
 * `14` - Asterisk 14, Freepbx 14 - Debian Stretch
-* `latest` - Asterisk 16, Freepbx 16 - Debian Stretch
+* `latest` - Asterisk 16, Freepbx 15 - Debian Stretch
 
 # Quick Start
 
