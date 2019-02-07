@@ -14,5 +14,9 @@ if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
 	service mysql stop
 fi
 
+if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
+	mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
+fi
+
 mkdir -p /tmp/state
 touch /tmp/state/10-freepbx-finish

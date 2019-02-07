@@ -8,6 +8,18 @@ silent() {
   fi
 }
 
+check_process() {
+  while [ true ]; do
+    pid=`pgrep php | wc -l`  
+    if [ "$pid" = "1" ]; then 
+      sleep 3
+    else
+      sleep 1
+      break           
+    fi
+  done
+}
+
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
     set -x
@@ -213,7 +225,9 @@ EOF
 
   echo '** [freepbx] Enabling Default Modules'
   echo '** [freepbx] Module Install: framework, core'
+  check_process
   fwconsole ma downloadinstall framework core 
+  check_process
   fwconsole ma download cdr
   
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
@@ -224,22 +238,37 @@ EOF
     sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' $WEBROOT/admin/modules/cdr/install.php
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' $WEBROOT/admin/modules/cdr/install.php
     echo '** [freepbx] Module Install: cdr'
+    check_process
     fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
     echo '** [freepbx] Module Install: cdr'
+    check_process
     fwconsole ma install cdr
   fi
 
     echo '** [freepbx] Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail '
+    check_process
     fwconsole ma downloadinstall voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
     echo '** [freepbx] Module Install: certman, userman, pm2'
+    check_process
     fwconsole ma downloadinstall certman userman pm2
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
-    echo '** [freepbx] MModule Install: ucp '
+    echo '** [freepbx] Module Install: ucp '
+    check_process
     fwconsole ma downloadinstall ucp
+    if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then   
+      echo '** [freepbx] Starting MongoDB temporarily'
+      mkdir -p /data/var/lib/mongodb
+      mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
+      echo '** [freepbx] Module Install: xmpp'
+      check_process
+      fwconsole ma downloadinstall xmpp
+      echo '** [freepbx] Stopping MongoDB '
+      silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
+    fi
     silent fwconsole chown 
     silent fwconsole reload
     silent fwconsole restart
