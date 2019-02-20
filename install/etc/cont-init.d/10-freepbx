@@ -106,7 +106,7 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
     exit 1
   fi
 else
-  if [ -f /data/.installed ]; then
+  if [ ! -f /data/.installed ]; then
     echo "**"
     echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
     echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
@@ -227,7 +227,9 @@ EOF
   echo '** [freepbx] Module Install: framework, core'
   check_process
   fwconsole ma downloadinstall framework core 
+  sleep 3
   check_process
+  sleep 3
   fwconsole ma download cdr
   
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   

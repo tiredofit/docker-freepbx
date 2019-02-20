@@ -110,14 +110,13 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
        \
 ### Build SpanDSP
-       set -x && \
-       mkdir -p /usr/src/spandsp && \
-       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
-       cd /usr/src/spandsp && \
-       ./configure && \
-       make && \
-       make install && \
-       \
+#       mkdir -p /usr/src/spandsp && \
+#       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C #/usr/src/spandsp && \
+#       cd /usr/src/spandsp && \
+#       ./configure && \
+#       make && \
+#       make install && \
+#
 ### Build Asterisk
        cd /usr/src && \
        mkdir -p asterisk && \
@@ -129,7 +128,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
                              --enable app_confbridge \
-                             --enable app_fax \
+#                             --enable app_fax \
                              --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
@@ -163,7 +162,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /var/run/fail2ban && \
        cd / && \
        rm -rf /usr/src/* /tmp/* /etc/cron* && \
-       apt-get purge -y $ASTERISK_BUILD_DEPS && \
+       apt-get purge -y $ASTERISK_BUILD_DEPS libspandsp-dev && \
        apt-get -y autoremove && \
        apt-get clean && \
        apt-get install -y make && \

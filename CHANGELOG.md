@@ -1,3 +1,9 @@
+## 3.2.1 2019-02-20 <dave at tiredofit dot ca>
+
+* Fixup for restarting the container after first install
+* Minor DB Fixes
+* Removal of SpanDSP temporarily and app_fax due to problems with source site (soft-switch.org)
+
 ## 3.2 2019-02-06 <dave at tiredofit dot ca>
 
 * Added MongoDB to support `ENABLE_XMPP` environment variable/installing XMPP module from inside FreePBX.
