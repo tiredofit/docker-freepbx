@@ -120,7 +120,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ## Temp Hack (soft-switch is down)
 	apt-get -y install \
         libspandsp2 \
-        libspandsp2-dev \
+        libspandsp-dev \
         && \
 ### Build Asterisk
        cd /usr/src && \
