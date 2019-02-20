@@ -117,11 +117,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 #       make && \
 #       make install && \
 #
-## Temp Hack (soft-switch is down)
-	apt-get -y install \
-        libspandsp2 \
-        libspandsp-dev \
-        && \
 ### Build Asterisk
        cd /usr/src && \
        mkdir -p asterisk && \
@@ -133,7 +128,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
                              --enable app_confbridge \
-                             --enable app_fax \
+#                             --enable app_fax \
                              --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
