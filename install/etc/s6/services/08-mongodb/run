@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-while [ ! -f /tmp/state/08-mongodb-init ]
-do
-  sleep 1
-done
-
-rm -rf /var/run/mongodb/*
-exec mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run
