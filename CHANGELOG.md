@@ -1,3 +1,8 @@
+## 3.3 2019-02-21 <dave at tiredofit dot ca>
+
+* Embarassing fix for breaking first install
+* Asterisk 16.2.0
+
 ## 3.2.1 2019-02-20 <dave at tiredofit dot ca>
 
 * Fixup for restarting the container after first install

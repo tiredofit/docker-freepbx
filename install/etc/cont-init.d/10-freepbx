@@ -90,6 +90,12 @@ if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     done
 fi
 
+### Startup
+if [ ! -f /data/.installed ]; then
+  echo '** [freepbx] Creating Default Configuration Files'
+  cp -R /assets/config/* /data/
+fi
+
 ### Container Version Sanity Check
 if [ -f /data/etc/asterisk/.asterisk_version ]; then
   ASTERISK_VERSION_TMP=`cat /data/etc/asterisk/.asterisk_version`
@@ -105,23 +111,6 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
     echo "**"
     exit 1
   fi
-else
-  if [ ! -f /data/.installed ]; then
-    echo "**"
-    echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
-    echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
-    echo "** [freepbx] ERROR - To continue using this image switch to using tiredofit/freepbx:14-latest"
-    echo "** [freepbx] ERROR - See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
-    echo "** [freepbx] ERROR - This container will now cease to function"
-    echo "**"
-    exit 1
-  fi
-fi
-
-### Startup
-if [ ! -f /data/.installed ]; then
-  echo '** [freepbx] Creating Default Configuration Files'
-  cp -R /assets/config/* /data/
 fi
 
 echo '** [freepbx] Setting File Permissions'
@@ -133,7 +122,7 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-  echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
+    echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
@@ -297,6 +286,7 @@ EOF
   fi
 
     touch /data/.installed
+    echo $ASTERISK_VERSION > /etc/asterisk/.asterisk-version
 fi
 
 ### Data Persistence Workaround
