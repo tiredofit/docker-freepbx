@@ -99,10 +99,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             xmlstarlet \
             && \
        \
-### Install MySQL/MariaDB Connector
+### Install MySQL Connector
        cd /usr/src && \
        mkdir -p mariadb-connector && \
-       curl -sSL https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.0.8/mariadb-connector-odbc-3.0.8-ga-debian-i686.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
+       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.18/mariadb-connector-odbc-2.0.18-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
        cp mariadb-connector/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
        \
 ### Add Users
