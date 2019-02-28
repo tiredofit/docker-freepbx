@@ -1,3 +1,7 @@
+## 3.3.1 2019-02-27 <dave at tiredofit dot ca>
+
+* Downgrade MariaDB Connector to fix CDR Issues
+
 ## 3.3 2019-02-21 <dave at tiredofit dot ca>
 
 * Embarassing fix for breaking first install
