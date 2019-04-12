@@ -1,3 +1,43 @@
+## 3.3.1 2019-02-27 <dave at tiredofit dot ca>
+
+* Downgrade MariaDB Connector to fix CDR Issues
+
+## 3.3 2019-02-21 <dave at tiredofit dot ca>
+
+* Embarassing fix for breaking first install
+* Asterisk 16.2.0
+
+## 3.2.1 2019-02-20 <dave at tiredofit dot ca>
+
+* Fixup for restarting the container after first install
+* Minor DB Fixes
+* Removal of SpanDSP temporarily and app_fax due to problems with source site (soft-switch.org)
+
+## 3.2 2019-02-06 <dave at tiredofit dot ca>
+
+* Added MongoDB to support `ENABLE_XMPP` environment variable/installing XMPP module from inside FreePBX.
+* A few more sanity checks to ensure installation completes
+
+## 3.1 2019-02-06 <dave at tiredofit dot ca>
+
+* Added Fax Support
+
+## 3.0 2019-02-06 <dave at tiredofit dot ca>
+
+This is a breaking release due to major version changes.
+If attempting to run from a previous release and system detects Asterisk 14 and FreePBX instructions will be given on how to let container operate. New installations only in the 3.x series.
+
+* Asterisk 16
+* Freepbx 15
+* NodeJS 11
+* Multilanguage Support
+* Many bugfixes
+* Better Debug verbosity when `DEBUG_MODE=TRUE`
+
+## 2.13 - 2019-01-31 <dave at tiredofit dot ca>
+
+* Add Asterisk Version in startup step to prepare for upcoming image shift to Asterisk 16 and FreePBX 15
+
 ## 2.12 - 2018-12-27 <dave at tiredofit dot ca>
 
 * Sort Defaults in Startup Script (cosmetic)

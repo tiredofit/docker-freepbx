@@ -1,4 +1,4 @@
-FROM tiredofit/nodejs:8-debian-latest
+FROM tiredofit/nodejs:11-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Add Extra Language
@@ -7,8 +7,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=14.7.8 \
+       ASTERISK_VERSION=16.2.0 \
        BCG729_VERSION=1.0.4 \
+       SPANDSP_VERSION=20180108 \
        UCP_FIRST=TRUE
 
 ### Install Dependencies
@@ -18,6 +19,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        echo 'deb https://packages.sury.xyz/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
        apt-get install -y debconf locales locales-all && \
+       apt-get -y upgrade && \
        \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
@@ -72,8 +74,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libiodbc2 \
             libicu-dev \
             libsrtp0 \
+            locales-all \
             mariadb-client \
             mariadb-server \
+            mongodb \
             mpg123 \
             net-tools \
             php5.6 \
@@ -108,14 +112,14 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        addgroup --gid 2600 asterisk && \
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
        \
-### Install Jansson
-       git clone https://github.com/akheron/jansson.git /usr/src/jansson && \
-       cd /usr/src/jansson && \
-       autoreconf -i && \
-       ./configure && \
-       make && \
-       make install && \
-       \
+### Build SpanDSP
+#       mkdir -p /usr/src/spandsp && \
+#       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C #/usr/src/spandsp && \
+#       cd /usr/src/spandsp && \
+#       ./configure && \
+#       make && \
+#       make install && \
+#
 ### Build Asterisk
        cd /usr/src && \
        mkdir -p asterisk && \
@@ -123,20 +127,21 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        cd /usr/src/asterisk/ && \
        make distclean && \
        contrib/scripts/get_mp3_source.sh && \
-       ./configure --with-resample --with-pjproject-bundled --with-ssl=ssl --with-srtp && \
+       ./configure --with-resample --with-pjproject-bundled --with-jansson-bundled --with-ssl=ssl --with-srtp && \
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
-                             --enable format_mp3 \
-                             --enable app_fax \
                              --enable app_confbridge \
+#                             --enable app_fax \
+                             --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
-                             #--enable res_config_mysql \
+                             --enable format_mp3 \
                              --enable BETTER_BACKTRACES \
                              --disable MOH-OPSOUND-WAV \
                              --enable MOH-OPSOUND-GSM \
        make && \
        make install && \
+       make config && \
        ldconfig && \
        \
 #### Add G729 Codecs
@@ -152,7 +157,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://bitbucket.org/arkadi/asterisk-g72x/get/default.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
        cd /usr/src/asterisk-g72x && \
        ./autogen.sh && \
-       ./configure --with-bcg729 --with-asterisk${ASTERISK_VERSION}0 --enable-penryn&& \
+       ./configure --with-bcg729 --with-asterisk160 --enable-penryn&& \
        make && \
        make install && \
        \
@@ -160,7 +165,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /var/run/fail2ban && \
        cd / && \
        rm -rf /usr/src/* /tmp/* /etc/cron* && \
-       apt-get purge -y $ASTERISK_BUILD_DEPS && \
+       apt-get purge -y $ASTERISK_BUILD_DEPS libspandsp-dev && \
        apt-get -y autoremove && \
        apt-get clean && \
        apt-get install -y make && \
@@ -168,6 +173,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        \
 ### FreePBX Hacks
        sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
+       sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/5.6/apache2/php.ini && \
        a2disconf other-vhosts-access-log.conf && \
        a2enmod rewrite && \
        a2enmod headers && \
@@ -189,6 +195,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
        mv /var/lib/mysql /assets/config/var/lib/ && \
+       mkdir -p /var/run/mongodb && \
+       rm -rf /var/lib/mongodb && \
+       ln -s /data/var/lib/mongodb /var/lib/mongodb && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \

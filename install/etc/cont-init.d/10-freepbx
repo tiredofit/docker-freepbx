@@ -1,5 +1,25 @@
 #!/usr/bin/with-contenv bash
 
+silent() {
+  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
+    "$@"
+  else
+    "$@" > /dev/null 2>&1
+  fi
+}
+
+check_process() {
+  while [ true ]; do
+    pid=`pgrep php | wc -l`  
+    if [ "$pid" = "1" ]; then 
+      sleep 3
+    else
+      sleep 1
+      break           
+    fi
+  done
+}
+
 ### Set Debug Mode
 if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
     set -x
@@ -17,21 +37,29 @@ if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     if [ ! -n "$DB_HOST" ]; then
         echo '** [freepbx] ERROR: No Database Host Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_NAME" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_USER" ]; then
         echo '** [freepbx] ERROR: No Database User Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 
     if [ ! -n "$DB_PASS" ]; then
         echo '** [freepbx] ERROR: No Database Pass Entered! '
         exit 1
+    else 
+        DB_EMBEDDED=FALSE
     fi
 fi
 
@@ -62,9 +90,27 @@ if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     done
 fi
 
+### Startup
 if [ ! -f /data/.installed ]; then
   echo '** [freepbx] Creating Default Configuration Files'
   cp -R /assets/config/* /data/
+fi
+
+### Container Version Sanity Check
+if [ -f /data/etc/asterisk/.asterisk_version ]; then
+  ASTERISK_VERSION_TMP=`cat /data/etc/asterisk/.asterisk_version`
+  ASTERISK_VERSION_TMP=${ASTERISK_VERSION_TMP:0:2}
+
+  if [[ ${ASTERISK_VERSION_TMP//./} -lt "16" ]]; then
+    echo "**"
+    echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
+    echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
+    echo "** [freepbx] ERROR - To continue using this image switch to using tiredofit/freepbx:14-latest"
+    echo "** [freepbx] ERROR - See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
+    echo "** [freepbx] ERROR - This container will now cease to function"
+    echo "**"
+    exit 1
+  fi
 fi
 
 echo '** [freepbx] Setting File Permissions'
@@ -76,7 +122,7 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-  echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
+    echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
     echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
@@ -105,18 +151,21 @@ Port = $DB_PORT
 option = 3
 
 EOF
-fi
+  fi
 
-    sudo -u asterisk gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9F9169F4B33B4659 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 3DDB2122FE6D84F7 >/dev/null 2>&1
-    sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 86CE877469D2EAD9 >/dev/null 2>&1
+    silent sudo -u asterisk gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80
+    silent sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 9F9169F4B33B4659
+    silent sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 3DDB2122FE6D84F7
+    silent sudo -u asterisk gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 86CE877469D2EAD9
 
     cd /usr/src
-    git clone --depth=1 -b release/14.0 --single-branch https://github.com/FreePBX/framework.git freepbx >/dev/null 2>&1
+    mkdir -p /usr/src/freepbx
+    curl -ssL http://mirror.freepbx.org/modules/packages/freepbx/freepbx-15.0-latest.tgz | tar xfz - --strip 1 -C /usr/src/freepbx
     cd /usr/src/freepbx
     cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
-    ./start_asterisk start 
+    touch /etc/asterisk/{modules,cdr}.conf
+    echo "** [freepbx] Starting Asterisk for the first time.."
+    silent ./start_asterisk start
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
     echo "** [freepbx] Can't seem to start Asterisk.. Exitting"
@@ -129,12 +178,12 @@ fi
     sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
   fi
   
-  echo '** [freepbx] Installing FreePBX'
+  echo '** [freepbx] Installing FreePBX source code'
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
-    ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
+    silent ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
   else
-    ./install -n --webroot=$WEBROOT
+    silent ./install -n --webroot=$WEBROOT
   fi
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
@@ -164,50 +213,82 @@ EOF
   fi
 
   echo '** [freepbx] Enabling Default Modules'
-  fwconsole ma downloadinstall framework --tag 14.0.5.26
-  fwconsole ma downloadinstall core --tag 14.0.18.48
-  fwconsole ma download cdr --tag 14.0.5.18
-
+  echo '** [freepbx] Module Install: framework, core'
+  check_process
+  fwconsole ma downloadinstall framework core 
+  sleep 3
+  check_process
+  sleep 3
+  fwconsole ma download cdr
+  
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then   
     # CDR Hack
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
     cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
-    sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' /www/freepbx/admin/modules/cdr/install.php
-    sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' /www/freepbx/admin/modules/cdr/install.php
+    sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' $WEBROOT/admin/modules/cdr/install.php
+    sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' $WEBROOT/admin/modules/cdr/install.php
+    echo '** [freepbx] Module Install: cdr'
+    check_process
     fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
+    echo '** [freepbx] Module Install: cdr'
+    check_process
     fwconsole ma install cdr
   fi
 
+    echo '** [freepbx] Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail '
+    check_process
     fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
+    echo '** [freepbx] Module Install: certman, userman, pm2'
+    check_process
     fwconsole ma downloadinstall certman userman pm2
-    fwconsole chown 
-    fwconsole reload 
-    chown -R asterisk. /home/asterisk/.npm
-    fwconsole ma downloadinstall ucp
-    fwconsole chown 
-    fwconsole reload
     fwconsole setting SHOWLANGUAGE 1
-    fwconsole chown 
-    fwconsole reload
-    fwconsole restart
-    fwconsole stop
+    fwconsole ma refreshsignatures
+    silent fwconsole chown
+    silent fwconsole reload
+    chown -R asterisk. /home/asterisk/.npm
+    echo '** [freepbx] Module Install: ucp '
+    check_process
+    fwconsole ma downloadinstall ucp
+    if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then   
+      echo '** [freepbx] Starting MongoDB temporarily'
+      mkdir -p /data/var/lib/mongodb
+      mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
+      echo '** [freepbx] Module Install: xmpp'
+      check_process
+      fwconsole ma downloadinstall xmpp
+      echo '** [freepbx] Stopping MongoDB '
+      silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
+    fi
+    silent fwconsole chown 
+    silent fwconsole reload
+    silent fwconsole restart
+    echo "** [freepbx] Finished Installation of FreePBX Modules - Proceeding with next phase of install"
+    silent fwconsole stop
     
     cd / 
     rm -rf /usr/src/freepbx
 
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then     
       ### FOP2 Installation
+      silent fwconsole start
       mkdir -p /data/usr/local/fop2
-      curl -ssL http://download.fop2.com/install_fop2.sh | bash
-      service apache2 stop > /dev/null
-      service fop2 stop > /dev/null
+      cd /usr/src
+      silent wget http://download.fop2.com/install_fop2.sh
+      chmod +x install_fop2.sh 
+      silent ./install_fop2.sh
+      chown -R asterisk. /usr/local/fop2/
+      rm -rf /usr/src/*
+      silent service apache2 stop
+      silent service fop2 stop
+      silent fwconsole stop
       chown -R asterisk. /usr/local/fop2/
   fi
 
     touch /data/.installed
+    echo $ASTERISK_VERSION > /etc/asterisk/.asterisk-version
 fi
 
 ### Data Persistence Workaround
@@ -312,12 +393,13 @@ fi
 echo '** [freepbx] Starting Asterisk'
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
-  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX fails, and usually an upstream error."
   exit 1
 fi
-fwconsole chown > /dev/null 2>&1
-fwconsole start > /dev/null 2>&1
-fwconsole reload > /dev/null 2>&1
+
+silent fwconsole chown
+silent fwconsole start
+silent fwconsole reload
 chown -R asterisk /etc/asterisk/*
 chown -R asterisk:asterisk /etc/amportal.conf
 
@@ -336,11 +418,17 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
       echo "** [freepbx] Installing Operator Panel"
 
         ### FOP2 Installation
+        silent fwconsole start
         mkdir -p /data/usr/local/fop2
-        curl -ssL http://download.fop2.com/install_fop2.sh | bash
-        service apache2 stop > /dev/null
-        service fop2 stop > /dev/null
+        cd /usr/src
+        silent wget http://download.fop2.com/install_fop2.sh
+        chmod +x install_fop2.sh 
+        silent ./install_fop2.sh
         chown -R asterisk. /usr/local/fop2/
+        rm -rf /usr/src/*
+        silent service apache2 stop
+        silent service fop2 stop
+        silent fwconsole stop
     fi
 fi
 
@@ -383,6 +471,9 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
   echo '    Alias "'$FOP_DIRECTORY'" "/var/www/html/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
 fi
 
+### Update CDR Hack Script
+sed -i -e "s#<WEBROOT>#$WEBROOT#g" /usr/sbin/upgrade-cdr
+
 cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
 
   ErrorLog /var/log/apache2/error.log
@@ -421,14 +512,14 @@ emailAddress=selfsigned@example.com
 nsCertType = server   
 EOF
 
-    openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
+    silent openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
     chmod 0600 /certs/key.pem
     rm -rf /tmp/openssl.cnf
     TLS_CERT="cert.pem"
     TLS_KEY="key.pem"
     fi  
 
-    a2enmod ssl >/dev/null
+    silent a2enmod ssl
     cat >> /etc/apache2/sites-enabled/000-default.conf << EOF 
 Listen $HTTPS_PORT
 <VirtualHost *:$HTTPS_PORT>
@@ -477,7 +568,7 @@ Listen $HTTP_PORT
 </IfModule>
 EOF
 
-a2enmod remoteip >/dev/null 
+silent a2enmod remoteip
 
 cat >> /etc/apache2/conf-available/remoteip.conf << EOF 
 RemoteIPHeader X-Real-IP
@@ -486,8 +577,8 @@ RemoteIPTrustedProxy 172.16.0.0/12
 RemoteIPTrustedProxy 192.168.0.0/16
 EOF
 
-a2enconf allowoverride >/dev/null
-a2enconf remoteip.conf >/dev/null
+silent a2enconf allowoverride
+silent a2enconf remoteip.conf
 
 sed -i 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
@@ -498,7 +589,7 @@ chown -R asterisk. /usr/local/fop2
 
 ### Disable Indexes if outside of regular webroot
 if [ "$WEBROOT" != "/var/www/html" ]; then
-  a2dismod autoindex -f
+  silent a2dismod autoindex -f
 fi
 
 ### SMTP Config
@@ -519,7 +610,7 @@ fi
     /usr/local/fop2/fop2_server -d --logdir /var/log/fop
  fi 
 
-service apache2 restart >/dev/null
+silent service apache2 restart
 
 echo '** [freepbx] Web Server Started - Container Initialization Complete'
 

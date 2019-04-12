@@ -1,5 +1,18 @@
 #!/usr/bin/with-contenv bash
 
+silent() {
+  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
+    "$@"
+  else
+    "$@" > /dev/null 2>&1
+  fi
+}
+
+ ### Set Debug Mode
+ if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
+    set -x
+ fi
+
  ## Embedded DB Variance
   if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
      DB_EMBEDDED=TRUE
@@ -8,7 +21,7 @@
   fi
 
   if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then 
-  service mysql stop
+  silent service mysql stop
   mkdir -p /var/lib/mysql
 
      if [ ! -d /var/lib/mysql/mysql ]; then
@@ -17,7 +30,7 @@
      fi
 
   chown -R mysql:mysql /var/lib/mysql 
-  service mysql start
+  silent service mysql start
 fi
 
   mkdir -p /tmp/state
