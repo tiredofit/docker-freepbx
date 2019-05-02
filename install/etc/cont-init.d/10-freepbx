@@ -251,6 +251,10 @@ EOF
     chown -R asterisk. /home/asterisk/.npm
     echo '** [freepbx] Module Install: ucp '
     check_process
+    # ucp fix https://community.freepbx.org/t/ucp-upgrade-error/58273
+    touch /usr/bin/icu-config
+    echo "icuinfo 2>/dev/null|grep \"version\"|sed 's/.*>\(.*\)<.*/\1/g'" > /usr/bin/icu-config
+    chmod +x /usr/bin/icu-config
     fwconsole ma downloadinstall ucp
     if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then   
       echo '** [freepbx] Starting MongoDB temporarily'
