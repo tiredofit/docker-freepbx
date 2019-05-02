@@ -245,7 +245,6 @@ EOF
     check_process
     fwconsole ma downloadinstall certman userman pm2
     fwconsole setting SHOWLANGUAGE 1
-    fwconsole ma refreshsignatures
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
