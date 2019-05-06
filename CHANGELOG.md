@@ -1,3 +1,14 @@
+## 3.5 2019-05-26 <dave at tiredofit dot ca>
+
+* Asterisk 16.3.0
+* Remove unneccessary ADD command
+
+## 3.4 2019-05-02 <sylhero at github>
+
+* Fix for UCP failing
+* Added more Languages
+* Change Module Load Order
+
 ## 3.3.1 2019-02-27 <dave at tiredofit dot ca>
 
 * Downgrade MariaDB Connector to fix CDR Issues

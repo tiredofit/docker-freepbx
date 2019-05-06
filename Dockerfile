@@ -1,13 +1,11 @@
 FROM tiredofit/nodejs:11-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
-### Add Extra Language
-   ADD install/etc/locale.gen /etc
 ### Set Defaults
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=16.2.0 \
+       ASTERISK_VERSION=16.3.0 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
        UCP_FIRST=TRUE
@@ -16,9 +14,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
    RUN set -x && \
        apt-get update && \
        apt-get install -y wget && \
-       wget -q https://packages.sury.xyz/php/apt.gpg && \
+       wget -q https://packages.sury.org/php/apt.gpg && \
        apt-key add apt.gpg && \
-       echo 'deb https://packages.sury.xyz/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
+       echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
        apt-get install -y debconf locales locales-all && \
        apt-get -y upgrade && \
