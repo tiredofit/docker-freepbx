@@ -1,4 +1,8 @@
-## 3.5 2019-05-26 <dave at tiredofit dot ca>
+## 3.5.1 2019-05-06 <dave at tiredofit dot ca>
+
+* NodeJS 12
+
+## 3.5 2019-05-06 <dave at tiredofit dot ca>
 
 * Asterisk 16.3.0
 * Remove unneccessary ADD command
