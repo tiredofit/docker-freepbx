@@ -8,14 +8,14 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ASTERISK_VERSION=16.3.0 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
+       FREEPBX_VERSION=15.0.15.3 \
        UCP_FIRST=TRUE
 
 ### Install Dependencies
    RUN set -x && \
        apt-get update && \
        apt-get install -y wget && \
-       wget -q https://packages.sury.org/php/apt.gpg && \
-       apt-key add apt.gpg && \
+       curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
        apt-get install -y debconf locales locales-all && \
@@ -113,13 +113,13 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
        \
 ### Build SpanDSP
-#       mkdir -p /usr/src/spandsp && \
-#       curl -sSL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C #/usr/src/spandsp && \
-#       cd /usr/src/spandsp && \
-#       ./configure && \
-#       make && \
-#       make install && \
-#
+       mkdir -p /usr/src/spandsp && \
+       curl -kL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
+       cd /usr/src/spandsp && \
+       ./configure && \
+       make && \
+       make install && \
+       \
 ### Build Asterisk
        cd /usr/src && \
        mkdir -p asterisk && \
@@ -131,7 +131,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make menuselect/menuselect menuselect-tree menuselect.makeopts && \
        menuselect/menuselect --disable BUILD_NATIVE \
                              --enable app_confbridge \
-#                             --enable app_fax \
+                             --enable app_fax \
                              --enable app_macro \
                              --enable codec_opus \
                              --enable codec_silk \
@@ -195,6 +195,9 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        mkdir -p /assets/config/var/run/ && \
        mv /var/run/asterisk /assets/config/var/run/ && \
        mv /var/lib/mysql /assets/config/var/lib/ && \
+       mkdir -p /assets/config/var/spool && \
+       mv /var/spool/cron /assets/config/var/spool/ && \
+       ln -s /data/var/spool/cron /var/spool/cron && \
        mkdir -p /var/run/mongodb && \
        rm -rf /var/lib/mongodb && \
        ln -s /data/var/lib/mongodb /var/lib/mongodb && \

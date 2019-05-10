@@ -1,3 +1,11 @@
+## 3.6 2019-05-10 <dave at tiredofit dot ca>
+
+* Reintroduce Fax Capabilities and SpanDSP
+* New way of importing GPG Keys
+* Force Specific FreePBX Version to be installed (Presently 15.0.15.3)
+* Rework hack for seperate DB Host upon install
+* Add /var/spool/cron to the persistent data (Issue #56)
+
 ## 3.5.1 2019-05-06 <dave at tiredofit dot ca>
 
 * NodeJS 12
