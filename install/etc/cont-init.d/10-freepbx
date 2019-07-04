@@ -118,6 +118,10 @@ mkdir -p /data/etc/asterisk
 mkdir -p /data/var/lib/asterisk/{agi-bin,bin,playback}
 mkdir -p /data/var/spool/asterisk/{cache,dictate,meetme,monitor,recording,system,tmp,voicemail}
 mkdir -p /data/var/run/asterisk
+##
+mkdir -p /data/home/asterisk
+mkdir -p /home/asterisk
+ln -s /data/home/asterisk /home/asterisk && \
 chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed

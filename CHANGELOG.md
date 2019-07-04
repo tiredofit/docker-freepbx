@@ -1,3 +1,9 @@
+## 3.7 2019-06-07 <dave at tiredofit dot ca>
+
+* Asterisk 16.4.0
+* Freepbx 15.0.16.2
+* Hack to solve issue #83 re /data/home/asterisk not being created
+
 ## 3.6 2019-05-10 <dave at tiredofit dot ca>
 
 * Reintroduce Fax Capabilities and SpanDSP
