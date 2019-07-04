@@ -8,7 +8,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ASTERISK_VERSION=16.4.0 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
-       FREEPBX_VERSION=15.0.16.2 \
+       FREEPBX_VERSION=15.0.16.6 \
        UCP_FIRST=TRUE
 
 ### Install Dependencies

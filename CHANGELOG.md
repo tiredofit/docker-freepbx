@@ -1,3 +1,7 @@
+## 3.7.1 2019-07-04 <dave at tiredofit dot ca>
+
+* Freepbx 15.0.16.6
+
 ## 3.7 2019-06-07 <dave at tiredofit dot ca>
 
 * Asterisk 16.4.0
