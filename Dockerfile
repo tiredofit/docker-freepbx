@@ -19,7 +19,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
        apt-get install -y debconf locales locales-all && \
-       apt-get -y upgrade && \
+       apt-get -o Dpkg::Options::="--force-confold" upgrade -y && \
        \
 ### Install Development Dependencies
        ASTERISK_BUILD_DEPS=' \
