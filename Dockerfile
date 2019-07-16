@@ -1,4 +1,4 @@
-FROM tiredofit/nodejs:12-debian-latest
+FROM node:12-stretch
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
@@ -14,7 +14,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 ### Install Dependencies
    RUN set -x && \
        apt-get update && \
-       apt-get install -y wget && \
+       apt-get install -y wget apt-transport-https ca-certificates && \
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
@@ -49,7 +49,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libtool-bin \
             libvorbis-dev \
             libxml2-dev \
-            linux-headers-amd64 \
+            linux-headers-`uname -r` \
             pkg-config \
             python-dev \
             subversion \
@@ -99,29 +99,31 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             uuid \
             wget \
             whois \
-            xmlstarlet \
-            && \
-       \
+            xmlstarlet
+
 ### Install MySQL Connector
-       cd /usr/src && \
-       mkdir -p mariadb-connector && \
-       curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-2.0.18/mariadb-connector-odbc-2.0.18-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
-       cp mariadb-connector/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
-       \
+RUN printf "Package: *\nPin: release n=stretch\nPin-Priority: 900\nPackage: *\nPin: release n=jessie\nPin-Priority: 100" >> /etc/apt/preferences.d/jessie \
+        && echo "deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib" >> /etc/apt/sources.list \
+        && curl -s http://archive.raspbian.org/raspbian.public.key | apt-key add - \
+        && apt-get update \
+        && apt-get -y --allow-unauthenticated install libmyodbc \
+        && sed '$d' /etc/apt/sources.list \
+        && rm /etc/apt/preferences.d/jessie
+
 ### Add Users
-       addgroup --gid 2600 asterisk && \
-       adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
-       \
+RUN addgroup --gid 2600 asterisk && \
+       adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk
+
 ### Build SpanDSP
-       mkdir -p /usr/src/spandsp && \
+RUN mkdir -p /usr/src/spandsp && \
        curl -kL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
        cd /usr/src/spandsp && \
        ./configure && \
        make && \
-       make install && \
-       \
+       make install
+      
 ### Build Asterisk
-       cd /usr/src && \
+RUN cd /usr/src && \
        mkdir -p asterisk && \
        curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-${ASTERISK_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk && \
        cd /usr/src/asterisk/ && \
@@ -142,10 +144,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make && \
        make install && \
        make config && \
-       ldconfig && \
-       \
+       ldconfig
+       
 #### Add G729 Codecs
-       git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 && \
+RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 && \
        cd /usr/src/bcg729 && \
        git checkout tags/$BCG729_VERSION && \
        ./autogen.sh && \
@@ -159,20 +161,30 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ./autogen.sh && \
        ./configure --with-bcg729 --with-asterisk160 --enable-penryn&& \
        make && \
-       make install && \
-       \
+       make install
+
+### Install chan_dongle
+RUN cd /usr/src && \
+        git clone https://github.com/wdoekes/asterisk-chan-dongle.git && \
+        cd asterisk-chan-dongle && \
+        ./bootstrap && \
+        ./configure --with-astversion=14.7.5 && \
+        make && \
+        make install && \
+        cp etc/dongle.conf /etc/asterisk/
+
 ### Cleanup 
-       mkdir -p /var/run/fail2ban && \
+RUN mkdir -p /var/run/fail2ban && \
        cd / && \
        rm -rf /usr/src/* /tmp/* /etc/cron* && \
        apt-get purge -y $ASTERISK_BUILD_DEPS libspandsp-dev && \
        apt-get -y autoremove && \
        apt-get clean && \
        apt-get install -y make && \
-       rm -rf /var/lib/apt/lists/* && \
-       \
+       rm -rf /var/lib/apt/lists/*
+       
 ### FreePBX Hacks
-       sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
+RUN sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
        sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/5.6/apache2/php.ini && \
        a2disconf other-vhosts-access-log.conf && \
        a2enmod rewrite && \
@@ -180,13 +192,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        rm -rf /var/log/* && \
        mkdir -p /var/log/asterisk && \
        mkdir -p /var/log/apache2 && \
-       mkdir -p /var/log/httpd && \
-       \
-### Zabbix Setup
-       echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers && \
-       \
+       mkdir -p /var/log/httpd
+
 ### Setup for Data Persistence
-       mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
+RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
        mv /home/asterisk /assets/config/home/ && \
        ln -s /data/home/asterisk /home/asterisk && \
        mv /var/lib/asterisk /assets/config/var/lib/ && \
