@@ -18,7 +18,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
        echo 'deb https://packages.sury.org/php/ stretch main' > /etc/apt/sources.list.d/deb.sury.org.list && \
        apt-get update  && \
-       apt-get install -y debconf locales locales-all && \
+       apt-get install -y debconf locales locales-all cron && \
        apt-get -o Dpkg::Options::="--force-confold" upgrade -y && \
        \
 ### Install Development Dependencies
@@ -49,7 +49,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libtool-bin \
             libvorbis-dev \
             libxml2-dev \
-            linux-headers-`uname -r` \
             pkg-config \
             python-dev \
             subversion \
@@ -77,7 +76,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             locales-all \
             mariadb-client \
             mariadb-server \
-            mongodb \
             mpg123 \
             net-tools \
             php5.6 \
@@ -159,7 +157,7 @@ RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729
        curl https://bitbucket.org/arkadi/asterisk-g72x/get/default.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
        cd /usr/src/asterisk-g72x && \
        ./autogen.sh && \
-       ./configure --with-bcg729 --with-asterisk160 --enable-penryn&& \
+       ./configure CFLAGS='-march=armv7' --with-bcg729 --with-asterisk160 --enable-penryn&& \
        make && \
        make install
 
@@ -207,9 +205,6 @@ RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
        mkdir -p /assets/config/var/spool && \
        mv /var/spool/cron /assets/config/var/spool/ && \
        ln -s /data/var/spool/cron /var/spool/cron && \
-       mkdir -p /var/run/mongodb && \
-       rm -rf /var/lib/mongodb && \
-       ln -s /data/var/lib/mongodb /var/lib/mongodb && \
        ln -s /data/var/run/asterisk /var/run/asterisk && \
        rm -rf /var/spool/asterisk && \
        ln -s /data/var/spool/asterisk /var/spool/asterisk && \
