@@ -9,8 +9,8 @@ services:
      #- 80:80
      #### If you want SSL Support and not using a reverse proxy
      #- 443:443
-      - 5060:5060
-      - 5160:5160
+      - 5060:5060/udp
+      - 5160:5160/udp
       - 18000-18100:18000-18100/udp
      #### Flash Operator Panel
       - 4445:4445
