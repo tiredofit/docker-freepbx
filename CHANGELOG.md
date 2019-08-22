@@ -1,3 +1,40 @@
+## 3.7.2 2019-07-07 <dave at tiredofit dot ca>
+
+* Repair broken upgrade command
+
+## 3.7.1 2019-07-04 <dave at tiredofit dot ca>
+
+* Freepbx 15.0.16.6
+
+## 3.7 2019-06-07 <dave at tiredofit dot ca>
+
+* Asterisk 16.4.0
+* Freepbx 15.0.16.2
+* Hack to solve issue #83 re /data/home/asterisk not being created
+
+## 3.6 2019-05-10 <dave at tiredofit dot ca>
+
+* Reintroduce Fax Capabilities and SpanDSP
+* New way of importing GPG Keys
+* Force Specific FreePBX Version to be installed (Presently 15.0.15.3)
+* Rework hack for seperate DB Host upon install
+* Add /var/spool/cron to the persistent data (Issue #56)
+
+## 3.5.1 2019-05-06 <dave at tiredofit dot ca>
+
+* NodeJS 12
+
+## 3.5 2019-05-06 <dave at tiredofit dot ca>
+
+* Asterisk 16.3.0
+* Remove unneccessary ADD command
+
+## 3.4 2019-05-02 <sylhero at github>
+
+* Fix for UCP failing
+* Added more Languages
+* Change Module Load Order
+
 ## 3.3.1 2019-02-27 <dave at tiredofit dot ca>
 
 * Downgrade MariaDB Connector to fix CDR Issues
