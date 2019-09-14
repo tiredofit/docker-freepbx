@@ -1,3 +1,11 @@
+## 3.8 2019-09-13 <dave at tiredofit dot ca> + <ivanfillipov@github>
+
+* Pinned LibXML2 to older version due to an upstream change and Asterisk can no longer detect 
+* Updated Asterisk to 16.5.1
+* Updated Freepbx to 15.0.16.15
+* Changed Download Location of SpanDSP
+* Downgrade Node to 10
+
 ## 3.7.2 2019-07-07 <dave at tiredofit dot ca>
 
 * Repair broken upgrade command

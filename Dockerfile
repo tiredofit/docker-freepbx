@@ -1,14 +1,14 @@
-FROM tiredofit/nodejs:12-debian-latest
+FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=16.4.0 \
+       ASTERISK_VERSION=16.5.1 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
-       FREEPBX_VERSION=15.0.16.6 \
+       FREEPBX_VERSION=15.0.16.15 \
        UCP_FIRST=TRUE
 
 ### Pin libxml2 packages to Debian repositories
@@ -119,7 +119,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        \
 ### Build SpanDSP
        mkdir -p /usr/src/spandsp && \
-       curl -kL https://www.soft-switch.org/downloads/spandsp/snapshots/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
+       curl -kL http://sources.buildroot.net/spandsp/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
        cd /usr/src/spandsp && \
        ./configure && \
        make && \
