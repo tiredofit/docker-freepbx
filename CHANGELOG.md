@@ -1,3 +1,8 @@
+## 3.8.1 2019-10-28 <ferow2k@github> 
+
+* Add php56-intl
+
+
 ## 3.8 2019-09-13 <dave at tiredofit dot ca> + <ivanfillipov@github>
 
 * Pinned LibXML2 to older version due to an upstream change and Asterisk can no longer detect 
