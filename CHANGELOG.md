@@ -1,7 +1,12 @@
+## 3.8.2 2019-10-28 <dave at tiredofit dot ca>
+
+* Asterisk 16.61
+* FreePBX 15.0.16.21
+
+
 ## 3.8.1 2019-10-28 <ferow2k@github> 
 
 * Add php56-intl
-
 
 ## 3.8 2019-09-13 <dave at tiredofit dot ca> + <ivanfillipov@github>
 
