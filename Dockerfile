@@ -95,6 +95,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             php5.6-sqlite \
             php5.6-xml \
             php5.6-zip \
+            php5.6-intl \
             php-pear \
             procps \
             sox \
