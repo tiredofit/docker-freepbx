@@ -1,3 +1,13 @@
+## 3.8.3 2019-11-29 <dave at tiredofit dot ca>
+
+   ### Added
+      - Asterisk 16.6.2
+      - FreePBX 15.0.16.28
+
+   ### Changed
+      - Changed source location to continue building g72x codecs
+
+
 ## 3.8.2 2019-10-28 <dave at tiredofit dot ca>
 
 * Asterisk 16.61

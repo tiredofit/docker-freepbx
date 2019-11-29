@@ -5,10 +5,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=16.6.1 \
+       ASTERISK_VERSION=16.6.2 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
-       FREEPBX_VERSION=15.0.16.21 \
+       FREEPBX_VERSION=15.0.16.28 \
        UCP_FIRST=TRUE
 
 ### Pin libxml2 packages to Debian repositories
@@ -160,7 +160,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        make install && \
        \
        mkdir -p /usr/src/asterisk-g72x && \
-       curl https://bitbucket.org/arkadi/asterisk-g72x/get/default.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
+       curl https://bitbucket.org/arkadi/asterisk-g72x/get/master.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
        cd /usr/src/asterisk-g72x && \
        ./autogen.sh && \
        ./configure --with-bcg729 --with-asterisk160 --enable-penryn&& \
