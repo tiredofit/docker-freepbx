@@ -1,3 +1,11 @@
+## 3.9.0 2020-01-12 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update to support new tiredofit/debian base images
+      - Asterisk 16.7.0
+      - FreePBX Framework 15.0.16.39
+
+
 ## 3.8.3 2019-11-29 <dave at tiredofit dot ca>
 
    ### Added

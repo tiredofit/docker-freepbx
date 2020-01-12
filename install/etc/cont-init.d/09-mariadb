@@ -1,17 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-silent() {
-  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
-    "$@"
-  else
-    "$@" > /dev/null 2>&1
-  fi
-}
-
- ### Set Debug Mode
- if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
-    set -x
- fi
+for s in /assets/functions/*; do source $s; done
+PROCESS_NAME="mariadb"
 
  ## Embedded DB Variance
   if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
@@ -25,7 +15,7 @@ silent() {
   mkdir -p /var/lib/mysql
 
      if [ ! -d /var/lib/mysql/mysql ]; then
-        echo '** [mysql] New Embedded Database Detected, setting up..'
+        print_info "New Embedded Database Detected, setting up.."
         cp -R /assets/config/var/lib/mysql/* /var/lib/mysql
      fi
 
@@ -33,5 +23,4 @@ silent() {
   silent service mysql start
 fi
 
-  mkdir -p /tmp/state
-  touch /tmp/state/09-mariadb-init
+liftoff

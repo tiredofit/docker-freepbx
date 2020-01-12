@@ -5,10 +5,10 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
    ENV DB_EMBEDDED=TRUE \
        ENABLE_CRON=TRUE \
        ENABLE_SMTP=TRUE \
-       ASTERISK_VERSION=16.6.2 \
+       ASTERISK_VERSION=16.7.0 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
-       FREEPBX_VERSION=15.0.16.28 \
+       FREEPBX_VERSION=15.0.16.39 \
        UCP_FIRST=TRUE
 
 ### Pin libxml2 packages to Debian repositories

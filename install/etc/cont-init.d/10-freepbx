@@ -1,12 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-silent() {
-  if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ];  then
-    "$@"
-  else
-    "$@" > /dev/null 2>&1
-  fi
-}
+for s in /assets/functions/*; do source $s; done
+PROCESS_NAME="freepbx"
 
 check_process() {
   while [ true ]; do
@@ -20,79 +15,24 @@ check_process() {
   done
 }
 
-### Set Debug Mode
-if [ "$DEBUG_MODE" = "TRUE" ] || [ "$DEBUG_MODE" = "true" ]; then
-    set -x
+## Embedded DB Variance
+if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+   DB_EMBEDDED=TRUE
+else
+   DB_EMBEDDED=FALSE      
 fi
-
- ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
-     DB_EMBEDDED=TRUE
-  else
-     DB_EMBEDDED=FALSE      
-  fi
 
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
-    ### Sanity Test
-    if [ ! -n "$DB_HOST" ]; then
-        echo '** [freepbx] ERROR: No Database Host Entered! '
-        exit 1
-    else 
-        DB_EMBEDDED=FALSE
-    fi
-
-    if [ ! -n "$DB_NAME" ]; then
-        echo '** [freepbx] ERROR: No Database Pass Entered! '
-        exit 1
-    else 
-        DB_EMBEDDED=FALSE
-    fi
-
-    if [ ! -n "$DB_USER" ]; then
-        echo '** [freepbx] ERROR: No Database User Entered! '
-        exit 1
-    else 
-        DB_EMBEDDED=FALSE
-    fi
-
-    if [ ! -n "$DB_PASS" ]; then
-        echo '** [freepbx] ERROR: No Database Pass Entered! '
-        exit 1
-    else 
-        DB_EMBEDDED=FALSE
-    fi
+  sanity_db
 fi
 
-### Set Defaults
-ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
-DB_PORT=${DB_PORT:-3306}
-ENABLE_FOP=${ENABLE_FOP:-"TRUE"}
-FOP_DIRECTORY=${FOP_DIRECTORY:-"/fop"}
-HTTP_PORT=${HTTP_PORT:-80}
-HTTPS_PORT=${HTTPS_PORT:-443}
-RTP_FINISH=${RTP_FINISH:-20000}
-RTP_START=${RTP_START:-18000}
-UCP_FIRST=${UCP_FIRST:-"TRUE"}
-WEBROOT=${WEBROOT:-"/var/www/html"}
-
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
-    ### Make sure that DB is accessible
-    while true; do
-      mysqlcmd="mysql -u$DB_USER -h$DB_HOST -p$DB_PASS -P$DB_PORT"
-      out="`$mysqlcmd -e "SELECT COUNT(*) FROM information_schema.FILES;" 2>&1`"
-      echo "$out" | grep -E "COUNT|Enter" 2>&1 > /dev/null
-      if [ $? -eq 0 ]; then
-          echo "** [freepbx] MariaDB Server '"$DB_HOST"' is available"
-          break
-      fi
-      echo "** [freepbx] MariaDB Server '"$DB_HOST"' unavailable. Sleeping a little bit ..."
-      sleep 5
-    done
+  db_check mariadb
 fi
 
 ### Startup
 if [ ! -f /data/.installed ]; then
-  echo '** [freepbx] Creating Default Configuration Files'
+  print_ntoice "Creating Default Configuration Files"
   cp -R /assets/config/* /data/
 fi
 
@@ -102,18 +42,18 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
   ASTERISK_VERSION_TMP=${ASTERISK_VERSION_TMP:0:2}
 
   if [[ ${ASTERISK_VERSION_TMP//./} -lt "16" ]]; then
-    echo "**"
-    echo "** [freepbx] ERROR - This container has been detected to have FreePBX 14 installed"
-    echo "** [freepbx] ERROR - You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
-    echo "** [freepbx] ERROR - To continue using this image switch to using tiredofit/freepbx:14-latest"
-    echo "** [freepbx] ERROR - See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
-    echo "** [freepbx] ERROR - This container will now cease to function"
-    echo "**"
+    print_error "****"
+    print_error "***** This container has been detected to have FreePBX 14 installed"
+    print_error "***** You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
+    print_error "***** To continue using this image switch to using tiredofit/freepbx:14-latest"
+    print_error "***** See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
+    print_error "***** This container will now cease to function"
+    print_error "****"
     exit 1
   fi
 fi
 
-echo '** [freepbx] Setting File Permissions'
+print_notice "Setting File Permissions"
 mkdir -p /data/etc/asterisk
 mkdir -p /data/var/lib/asterisk/{agi-bin,bin,playback}
 mkdir -p /data/var/spool/asterisk/{cache,dictate,meetme,monitor,recording,system,tmp,voicemail}
@@ -126,10 +66,10 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-    echo '** [freepbx] New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!'
+    print_info "New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!"
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
-    echo '** [freepbx] Custom Installation Webroot Defined: '$WEBROOT
+    print_notice "Custom Installation Webroot Defined: '${WEBROOT}'"
   fi
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
@@ -169,11 +109,11 @@ EOF
     cd /usr/src/freepbx
     cp -R /etc/odbc.ini /usr/src/freepbx/installlib/files/odbc.ini
     touch /etc/asterisk/{modules,cdr}.conf
-    echo "** [freepbx] Starting Asterisk for the first time.."
+    print_notice "Starting Asterisk ${ASTERISK_VERSION} for the first time"
     silent ./start_asterisk start
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
-    echo "** [freepbx] Can't seem to start Asterisk.. Exitting"
+    print_error "Can't seem to start Asterisk.. Exitting"
     exit 1
   fi
 
@@ -183,7 +123,7 @@ EOF
     sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
   fi
   
-  echo '** [freepbx] Installing FreePBX source code'
+  print_notice "Installing FreePBX source code"
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
     silent ./install -n --dbuser=$DB_USER --dbpass=$DB_PASS --dbname=$DB_NAME --cdrdbname=$DB_NAME --webroot=$WEBROOT
@@ -213,12 +153,12 @@ EOF
   fi
 
   if [ ! -f "/usr/sbin/fwconsole" ]; then
-    echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+    print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting"
     exit 1
   fi
 
-  echo '** [freepbx] Enabling Default Modules'
-  echo '** [freepbx] Module Install: framework, core'
+  print_notice "Enabling Default Modules"
+  print_notice "Module Install: framework, core"
   check_process
   fwconsole ma downloadinstall framework core 
   sleep 3
@@ -238,22 +178,22 @@ EOF
     fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
-    echo '** [freepbx] Module Install: cdr'
+    print_notice "Module Install: cdr"
     check_process
     fwconsole ma install cdr
   fi
 
-    echo '** [freepbx] Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail '
+    print_notice "Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, msuic, sipsettings, voicemail "
     check_process
     fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
-    echo '** [freepbx] Module Install: certman, userman, pm2'
+    print_notice "Module Install: certman, userman, pm2"
     check_process
     fwconsole ma downloadinstall certman userman pm2
     fwconsole setting SHOWLANGUAGE 1
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
-    echo '** [freepbx] Module Install: ucp '
+    print_notice "Module Install: ucp"
     check_process
     # ucp fix https://community.freepbx.org/t/ucp-upgrade-error/58273
     touch /usr/bin/icu-config
@@ -261,19 +201,19 @@ EOF
     chmod +x /usr/bin/icu-config
     fwconsole ma downloadinstall ucp
     if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then   
-      echo '** [freepbx] Starting MongoDB temporarily'
+      print_notice "Starting MongoDB temporarily"
       mkdir -p /data/var/lib/mongodb
       mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
-      echo '** [freepbx] Module Install: xmpp'
+      print_notice "Module Install: xmpp"
       check_process
       fwconsole ma downloadinstall xmpp
-      echo '** [freepbx] Stopping MongoDB '
+      print_notice "Stopping MongoDB"
       silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
     fi
     silent fwconsole chown 
     silent fwconsole reload
     silent fwconsole restart
-    echo "** [freepbx] Finished Installation of FreePBX Modules - Proceeding with next phase of install"
+    print_info "Finished Installation of FreePBX Modules - Proceeding with next phase of install"
     silent fwconsole stop
     
     cd / 
@@ -336,7 +276,7 @@ fi
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then 
 ### Setup Dynamic Configuration
-  echo '** [freepbx] Setting Configuration'
+  print_notice "Setting Configuration"
   cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
@@ -392,16 +332,16 @@ chown asterisk:asterisk /etc/freepbx.conf
 
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then 
   ### Set RTP Ports
-  echo '** [freepbx] Setting RTP Ports - Start: '$RTP_START' Finish: '$RTP_FINISH 
+  print_notice "Setting RTP Ports - Start: '${RTP_START}' Finish: '{$RTP_FINISH}'"
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
   ### Fix a Freepbx bug with upgrades
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
 fi
 
-echo '** [freepbx] Starting Asterisk'
+print_info "Starting Asterisk"
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
-  echo "** [freepbx] Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX fails, and usually an upstream error."
+  print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX fails, and usually an upstream error."
   exit 1
 fi
 
@@ -413,7 +353,7 @@ chown -R asterisk:asterisk /etc/amportal.conf
 
 ### Custom File Support
   if [ -d /assets/custom ] ; then
-     echo "** [freepbx] Custom Files Found, Copying over top of Master.."
+     print_warn "Custom Files Found, Copying over top of Master.."
      cp -R /assets/custom/* /
      chown -R asterisk. /var/www/html/
      chown -R asterisk. /var/lib/asterisk
@@ -423,7 +363,7 @@ chown -R asterisk:asterisk /etc/amportal.conf
 ### Check to see if FOP Enabled and exists (Upgrade Catcher)
 if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
     if [ ! -f /usr/local/fop2/fop2_server ] ; then
-      echo "** [freepbx] Installing Operator Panel"
+      print_info "Installing Operator Panel"
 
         ### FOP2 Installation
         silent fwconsole start
@@ -495,10 +435,10 @@ cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
 EOF
 
 if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SSL" = "TRUE" ] ;  then 
-    echo '** [freepbx] Enabling SSL'
+    print_notice "Enabling SSL"
 
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
-            echo '** [freepbx] No SSL Certs found, Autogenerating SelfSigned - WebRTC will not work with a SelfSigned Certificate!'
+            print_warn "No SSL Certs found, Autogenerating SelfSigned - WebRTC will not work with a SelfSigned Certificate!"
             cat <<EOF > /tmp/openssl.cnf
 [ req ]
 default_bits = 2048
@@ -610,7 +550,7 @@ fi
 
 ### FOP2 Setup
  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then 
-    echo '[freepbx] Starting Operator Panel'
+    print_info "Starting Operator Panel"
     rm -rf /var/run/fop2.*
     mkdir -p /var/log/fop
     chown -R asterisk. /var/log/fop
@@ -620,7 +560,6 @@ fi
 
 silent service apache2 restart
 
-echo '** [freepbx] Web Server Started - Container Initialization Complete'
+print_info "Web Server Started - Container Initialization Complete"
 
-mkdir -p /tmp/state
-touch /tmp/state/10-freepbx-init
+liftoff

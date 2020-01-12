@@ -1,5 +1,8 @@
 #!/usr/bin/with-contenv bash
 
+for s in /assets/functions/*; do source $s; done
+PROCESS_NAME="fail2ban"
+
 ENABLE_FAIL2BAN=${ENABLE_FAIL2BAN:-"TRUE"}
 
 if [[ "$ENABLE_FAIL2BAN" = "TRUE" ]] || [[ "$ENABLE_FAIL2BAN" = "true" ]];  then
@@ -45,12 +48,11 @@ action   = iptables-allports[name=ASTERISK, protocol=all]
 ignoreip = 127.0.0.1/8
 EOF
 
-	echo '** [fail2ban] Starting Fail2ban'
+	print_info "Starting Fail2ban"
 	service fail2ban start
    
 else
-    echo '** [freepbx] Disabling Fail2ban'
+    print_notice "Disabling Fail2ban"
 fi
 
-mkdir -p /tmp/state
-touch /tmp/state/04-fail2ban-init
+liftoff
