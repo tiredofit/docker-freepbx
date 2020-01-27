@@ -32,7 +32,7 @@ fi
 
 ### Startup
 if [ ! -f /data/.installed ]; then
-  print_ntoice "Creating Default Configuration Files"
+  print_notice "Creating Default Configuration Files"
   cp -R /assets/config/* /data/
 fi
 

@@ -1,3 +1,9 @@
+## 3.9.1 2020-01-27 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fix spelling mistake in container startup script
+
+
 ## 3.9.0 2020-01-12 <dave at tiredofit dot ca>
 
    ### Added
