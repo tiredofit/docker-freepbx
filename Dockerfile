@@ -8,7 +8,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
        ASTERISK_VERSION=16.7.0 \
        BCG729_VERSION=1.0.4 \
        SPANDSP_VERSION=20180108 \
-       FREEPBX_VERSION=15.0.16.39 \
+       FREEPBX_VERSION=15.0.16.42 \
        UCP_FIRST=TRUE
 
 ### Pin libxml2 packages to Debian repositories
@@ -55,7 +55,6 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             libvorbis-dev \
             libxml2-dev \
             linux-headers-amd64 \
-            pkg-config \
             python-dev \
             subversion \
             unixodbc-dev \
@@ -77,6 +76,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             iptables \
             lame \
             libiodbc2 \
+            libicu57 \
             libicu-dev \
             libsrtp0 \
             locales-all \
@@ -97,6 +97,7 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             php5.6-zip \
             php5.6-intl \
             php-pear \
+            pkg-config \
             procps \
             sox \
             sqlite3 \

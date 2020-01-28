@@ -1,3 +1,12 @@
+## 3.9.2 2020-01-28 <dave at tiredofit dot ca>
+
+   ### Added
+      - Freepbx Framework 15.0.16.42
+
+   ### Changed
+      - Fix to allow UCP to build properly
+
+
 ## 3.9.1 2020-01-27 <dave at tiredofit dot ca>
 
    ### Changed
