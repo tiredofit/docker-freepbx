@@ -1,3 +1,11 @@
+## 3.9.3 2020-02-01 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Spelling mistake fix for Log display
+      - Fixed wrong function being called for checking is DB was available for External DB Container installs
+      - Reworked CDR Hack for Single DB (external DB Container) installation (Thanks barhom@github)
+
+
 ## 3.9.2 2020-01-28 <dave at tiredofit dot ca>
 
    ### Added
