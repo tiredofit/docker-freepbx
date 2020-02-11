@@ -1,3 +1,10 @@
+## 3.9.4 2020-02-10 <dave at tiredofit dot ca>
+
+   ### Added
+      - Move more defaults into functions files
+      - Fix error with Cron starting before it Freepbx installs causing errors with persistent storage
+
+
 ## 3.9.3 2020-02-01 <dave at tiredofit dot ca>
 
    ### Changed

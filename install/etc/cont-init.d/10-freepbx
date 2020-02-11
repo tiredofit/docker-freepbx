@@ -3,18 +3,6 @@
 for s in /assets/functions/*; do source $s; done
 PROCESS_NAME="freepbx"
 
-check_process() {
-  while [ true ]; do
-    pid=`pgrep php | wc -l`
-    if [ "$pid" = "1" ]; then
-      sleep 3
-    else
-      sleep 1
-      break
-    fi
-  done
-}
-
 ## Embedded DB Variance
 if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
    DB_EMBEDDED=TRUE
@@ -33,6 +21,7 @@ fi
 ### Startup
 if [ ! -f /data/.installed ]; then
   print_notice "Creating Default Configuration Files"
+  mkdir -p /data/
   cp -R /assets/config/* /data/
 fi
 
@@ -120,9 +109,7 @@ EOF
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
     sed -i "s/'default' => 'localhost',/'default' => '$DB_HOST',/g" /usr/src/freepbx/installlib/installcommand.class.php
     sed -i -e "s/'default' => 'asteriskcdrdb',/'default' => '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
-    #sed -i -e "s/\$amp_conf\['CDRDBNAME'\] : 'asteriskcdrdb',/\$amp_conf\['CDRDBNAME'\] : '$DB_NAME',/g" /usr/src/freepbx/amp_conf/htdocs/admin/bootstrap.php
     sed -i -e "s#\$amp_conf\['CDRDBNAME'\] = \$answers\['cdrdbname'\];#\$amp_conf\['CDRDBNAME'\] = '$DB_NAME';#g" /usr/src/freepbx/installlib/installcommand.class.php
-
   fi
 
   print_notice "Installing FreePBX source code"
@@ -334,7 +321,7 @@ chown asterisk:asterisk /etc/freepbx.conf
 
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
   ### Set RTP Ports
-  print_notice "Setting RTP Ports - Start: '${RTP_START}' Finish: '{$RTP_FINISH}'"
+  print_notice "Setting RTP Ports - Start: '${RTP_START}' Finish: '${RTP_FINISH}'"
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
   ### Fix a Freepbx bug with upgrades
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'

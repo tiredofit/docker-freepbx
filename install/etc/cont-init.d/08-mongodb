@@ -5,8 +5,6 @@ PROCESS_NAME="mongo"
 
 s6-svc -d /var/run/s6/services/08-mongodb
 
-ENABLE_XMPP=${ENABLE_XMPP:-"FALSE"}
-
 if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
 	print_notice "Enabling MongoDB for XMPP support"
         mkdir -p /var/log/mongodb
