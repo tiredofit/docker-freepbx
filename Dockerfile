@@ -108,6 +108,8 @@ LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
             whois \
             xmlstarlet \
             && \
+### Fixes UCP build error
+       apt-get install -y pkgconf && \
        \
 ### Install MySQL Connector
        cd /usr/src && \
