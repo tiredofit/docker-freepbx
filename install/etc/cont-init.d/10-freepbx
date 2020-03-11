@@ -341,7 +341,7 @@ fi
 print_info "Starting Asterisk"
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
-  print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX fails, and usually an upstream error."
+  print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX failed, and usually an upstream error. Try again by deleting all volumes and databases and starting from scratch before submitting an issue."
   exit 1
 fi
 
