@@ -1,3 +1,24 @@
+## 4.0.0 2020-03-11 <dave at tiredofit dot ca>
+
+   ## Added
+      - Option to Install Additional Modules on First Container Start
+
+   ## Changed
+      - Switch to Debian Buster
+      - Asterisk 17.2.0
+      - Freepbx Framework 15.0.16.45 
+      - Reworked package install in Dockerfile
+      - Reduced errors being shown re MongoDB/XMPP Module
+      - Changed verbosity when installing modules
+      - Other code optimizations
+      - MariaDB ODBC Connector 2.0.19
+
+## 3.9.5 2020-03-03 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fixed issues with SMTP configuration
+      - Created temporary log directory for Flash Operator Panel installation
+      
 ## 3.9.4 2020-02-10 <dave at tiredofit dot ca>
 
    ### Added

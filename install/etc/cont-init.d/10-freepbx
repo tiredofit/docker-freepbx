@@ -47,10 +47,9 @@ mkdir -p /data/etc/asterisk
 mkdir -p /data/var/lib/asterisk/{agi-bin,bin,playback}
 mkdir -p /data/var/spool/asterisk/{cache,dictate,meetme,monitor,recording,system,tmp,voicemail}
 mkdir -p /data/var/run/asterisk
-##
 mkdir -p /data/home/asterisk
 mkdir -p /home/asterisk
-ln -s /data/home/asterisk /home/asterisk && \
+ln -sf /data/home/asterisk /home/asterisk && \
 chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
@@ -149,9 +148,9 @@ EOF
   print_notice "Enabling Default Modules"
   print_notice "Module Install: framework, core"
   check_process
-  fwconsole ma downloadinstall framework core
+  silent fwconsole ma downloadinstall framework core
   sleep 3
-  check_process
+  silent check_process
   sleep 3
   fwconsole ma download cdr
 
@@ -164,21 +163,20 @@ EOF
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' $WEBROOT/admin/modules/cdr/install.php
     print_notice '** [freepbx] Module Install: cdr'
     check_process
-    fwconsole ma install cdr
+    silent fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
     print_notice "Module Install: cdr"
     check_process
-    fwconsole ma install cdr
+    silent fwconsole ma install cdr
   fi
-
     print_notice "Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, music, sipsettings, voicemail "
     check_process
-    fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
+    silent fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
     print_notice "Module Install: certman, userman, pm2"
     check_process
-    fwconsole ma downloadinstall certman userman pm2
-    fwconsole setting SHOWLANGUAGE 1
+    silent fwconsole ma downloadinstall certman userman pm2
+    silent fwconsole setting SHOWLANGUAGE 1
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
@@ -188,30 +186,43 @@ EOF
     touch /usr/bin/icu-config
     echo "icuinfo 2>/dev/null|grep \"version\"|sed 's/.*>\(.*\)<.*/\1/g'" > /usr/bin/icu-config
     chmod +x /usr/bin/icu-config
-    fwconsole ma downloadinstall ucp
+    silent fwconsole ma downloadinstall ucp
     if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
       print_notice "Starting MongoDB temporarily"
       mkdir -p /data/var/lib/mongodb
+      mkdir -p /var/log/mongodb
+      touch /var/log/mongodb/mongodb.log
+      chown -R 777 /var/log/mongodb/mongodb.log
       mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
       print_notice "Module Install: xmpp"
       check_process
-      fwconsole ma downloadinstall xmpp
+      silent fwconsole ma downloadinstall xmpp
       print_notice "Stopping MongoDB"
       silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
+    fi
+    if [[ -v INSTALL_ADDITIONAL_MODULES ]] ; then
+      print_notice "Attempting to Install additional FreePBX Modules '${INSTALL_ADDITIONAL_MODULES}'"
+      modules=$(echo ${INSTALL_ADDITIONAL_MODULES} | tr "," "\n")
+      for module in $modules
+      do
+        print_notice "Module Install ${module}"
+        silent fwconsole ma downloadinstall $module
+      done
     fi
     silent fwconsole chown
     silent fwconsole reload
     silent fwconsole restart
     print_info "Finished Installation of FreePBX Modules - Proceeding with next phase of install"
     silent fwconsole stop
-
     cd /
     rm -rf /usr/src/freepbx
 
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
       ### FOP2 Installation
+      print_info "Starting Installation of Flash Operator Panel 2"
       silent fwconsole start
       mkdir -p /data/usr/local/fop2
+      mkdir -p /var/log/apache2
       cd /usr/src
       silent wget http://download.fop2.com/install_fop2.sh
       chmod +x install_fop2.sh
@@ -357,6 +368,7 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
         ### FOP2 Installation
         silent fwconsole start
         mkdir -p /data/usr/local/fop2
+        mkdir -p /var/log/apache2
         cd /usr/src
         silent wget http://download.fop2.com/install_fop2.sh
         chmod +x install_fop2.sh
@@ -531,10 +543,10 @@ fi
 
 ### SMTP Config
  if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
-   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
-   chown asterisk:asterisk /etc/msmtprc
-   chmod 600 /etc/msmtprc
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
+   echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtp -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
+   chown asterisk:asterisk /etc/msmtp
+   chmod 600 /etc/msmtp
  fi
 
 ### FOP2 Setup

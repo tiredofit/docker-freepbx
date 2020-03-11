@@ -9,9 +9,10 @@ ENABLE_CRON=${ENABLE_CRON:-"TRUE"}
 ### Check to see if Enabled/Disabled
 if [ "$ENABLE_CRON" = "FALSE" ] || [ "$ENABLE_CRON" = "false" ];  then
         print_notice "Disabling Cron"
-        s6-svc -d /var/run/s6/services/`basename $0`
+        service_stop `basename $0`
 fi
 
-mkdir -p /var/spool/cron
+print_debug "Creating Cron Folder"
+silent mkdir -p /var/spool/cron
 
 liftoff

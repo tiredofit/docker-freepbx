@@ -12,17 +12,17 @@
 This will build a container for [FreePBX](https://www.freepbx.org) - A Voice over IP Manager for Asterisk. Upon starting this image it will give you a turn-key PBX system for SIP calling. 
 
 * Latest release Version 15
-* Compiles and Installs Asterisk 16
-* Choice of running embedded database or Modifies to support external MySQL Database and only require one DB.
+* Compiles and Installs Asterisk 17
+* Choice of running embedded database or Modifies to support external MariaDB Database and only require one DB.
 * Supports Data Persistence
 * Fail2Ban installed to block brute force attacks
-* Debian Stretch Base w/ Apache2
-* NodeJS 11.x
+* Debian Buster Base w/ Apache2
+* NodeJS 10.x
 * Automatically Installs User Control Panel and displays at first page
 * Option to Install [Flash Operator Panel 2](https://www.fop2.com/)
 * Customizable FOP and Admin URLs
 
-This Container uses [tiredofit/debian:stretch](https://hub.docker.com/r/tiredofit/debian) as a base.
+This Container uses [tiredofit/debian:buster](https://hub.docker.com/r/tiredofit/debian) as a base.
         
 **If you are presently running this image when it utilized FreePBX 14 and 
 Asterisk 14 and can no longer use your image, please see [this post](https://github.com/tiredofit/docker-freepbx/issues/51)**
@@ -69,9 +69,9 @@ docker pull tiredofit/freepbx:(imagetag)
 ```
 The following image tags are available:
 
-* `15` - Asterisk 16, Freepbx 15 - Debian Stretch (latest build)
+* `15` - Asterisk 16, Freepbx 15 - Debian Buster (latest build)
 * `14` - Asterisk 14, Freepbx 14 - Debian Stretch (latest build)
-* `latest` - Asterisk 16, Freepbx 15 - Debian Stretch (Same as `15`)
+* `latest` - Asterisk 16, Freepbx 15 - Debian Buster (Same as `15`)
 
 You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
 
@@ -107,7 +107,7 @@ The following directories are used for configuration and can be mapped for persi
 ### Environment Variables
 
 
-Along with the Environment Variables from the [Base image](https://hub.docker.com/r/tiredofit/alpine), below is the complete list of available options that can be used to customize your installation.
+Along with the Environment Variables from the [Base image](https://hub.docker.com/r/tiredofit/debian), below is the complete list of available options that can be used to customize your installation.
 
 | Parameter        | Description                            |
 |------------------|----------------------------------------|
@@ -122,9 +122,10 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `ENABLE_FOP` | Enable Flash Operator Panel - Default `TRUE` |
 | `ENABLE_SSL` | Enable HTTPd to serve SSL requests - Default `FALSE`|
 | `ENABLE_XMPP` | Enable XMPP Module with MongoDB - Default `FALSE` |
+| `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
 | `HTTP_PORT`  | HTTP Listening Port - Default `80` |
 | `HTTPS_PORT`  | HTTPS Listening Port - Default `443` |
-| `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
+| `INSTALL_ADDITIONAL_MODULES` | Comma seperated list of modules to additionally install on first container startup |
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
 | `UCP_FIRST` | Load UCP as web frontpage `TRUE/FALSE` - Default `TRUE` |
