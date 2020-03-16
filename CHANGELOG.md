@@ -1,3 +1,9 @@
+## 4.0.1 2020-03-16 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fixup for internal mailing via msmtp
+
+
 ## 4.0.0 2020-03-11 <dave at tiredofit dot ca>
 
    ## Added
