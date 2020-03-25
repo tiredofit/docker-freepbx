@@ -1,3 +1,8 @@
+## 4.0.2 2020-03-25 <dave at tiredofit dot ca>
+
+   ### Added
+      - Added sngrep, sipsak, tcpflow, tcpdump to image for troubleshooting SIP issues on request
+
 ## 4.0.1 2020-03-16 <dave at tiredofit dot ca>
 
    ### Changed

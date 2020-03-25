@@ -95,8 +95,12 @@ RUN set -x && \
                     php5.6-intl \
                     php-pear \
                     pkg-config \
+                    sipsak \
+                    sngrep \
                     sox \
                     sqlite3 \
+                    tcpdump \
+                    tcpflow \
                     unixodbc \
                     uuid \
                     wget \
