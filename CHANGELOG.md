@@ -1,3 +1,9 @@
+## 4.0.3 2020-03-29 <jwhostet@github>
+
+   ### Changed
+      - Fix Apache for duplicate Listen statement if using `ENABLE_SSL=TRUE`
+
+
 ## 4.0.2 2020-03-25 <dave at tiredofit dot ca>
 
    ### Added
