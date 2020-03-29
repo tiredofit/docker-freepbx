@@ -470,7 +470,6 @@ EOF
 
     silent a2enmod ssl
     cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
-Listen $HTTPS_PORT
 <VirtualHost *:$HTTPS_PORT>
     SSLEngine on
     SSLCertificateFile "/certs/$TLS_CERT"
