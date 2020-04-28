@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-ENABLE_FAIL2BAN=${ENABLE_FAIL2BAN:-"TRUE"}
+for s in /assets/functions/*; do source $s; done
+PROCESS_NAME="fail2ban"
 
 if [[ "$ENABLE_FAIL2BAN" = "TRUE" ]] || [[ "$ENABLE_FAIL2BAN" = "true" ]];  then
 	sed -i -e "s/logtarget = \/var\/log\/fail2ban.log/logtarget = \/var\/log\/fail2ban\/fail2ban.log/g" /etc/fail2ban/fail2ban.conf
@@ -45,12 +46,8 @@ action   = iptables-allports[name=ASTERISK, protocol=all]
 ignoreip = 127.0.0.1/8
 EOF
 
-	echo '** [fail2ban] Starting Fail2ban'
-	service fail2ban start
-   
-else
-    echo '** [freepbx] Disabling Fail2ban'
+	print_info "Starting Fail2ban"
+	silent service fail2ban start
 fi
 
-mkdir -p /tmp/state
-touch /tmp/state/04-fail2ban-init
+liftoff

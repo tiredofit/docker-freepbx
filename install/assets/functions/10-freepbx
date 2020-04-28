@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bash
+
+ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
+DB_PORT=${DB_PORT:-3306}
+ENABLE_FAIL2BAN=${ENABLE_FAIL2BAN:-"TRUE"}
+ENABLE_FOP=${ENABLE_FOP:-"TRUE"}
+ENABLE_XMPP=${ENABLE_XMPP:-"FALSE"}
+FOP_DIRECTORY=${FOP_DIRECTORY:-"/fop"}
+HTTP_PORT=${HTTP_PORT:-80}
+HTTPS_PORT=${HTTPS_PORT:-443}
+RTP_FINISH=${RTP_FINISH:-20000}
+RTP_START=${RTP_START:-18000}
+UCP_FIRST=${UCP_FIRST:-"TRUE"}
+WEBROOT=${WEBROOT:-"/var/www/html"}
+
+check_process() {
+  while [ true ]; do
+    pid=`pgrep php | wc -l`
+    if [ "$pid" = "1" ]; then
+      sleep 3
+    else
+      sleep 1
+      break
+    fi
+  done
+}

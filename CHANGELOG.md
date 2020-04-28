@@ -1,3 +1,107 @@
+## 4.0.3 2020-03-29 <jwhostet@github>
+
+   ### Changed
+      - Fix Apache for duplicate Listen statement if using `ENABLE_SSL=TRUE`
+
+
+## 4.0.2 2020-03-25 <dave at tiredofit dot ca>
+
+   ### Added
+      - Added sngrep, sipsak, tcpflow, tcpdump to image for troubleshooting SIP issues on request
+
+## 4.0.1 2020-03-16 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fixup for internal mailing via msmtp
+
+
+## 4.0.0 2020-03-11 <dave at tiredofit dot ca>
+
+   ## Added
+      - Option to Install Additional Modules on First Container Start
+
+   ## Changed
+      - Switch to Debian Buster
+      - Asterisk 17.2.0
+      - Freepbx Framework 15.0.16.45 
+      - Reworked package install in Dockerfile
+      - Reduced errors being shown re MongoDB/XMPP Module
+      - Changed verbosity when installing modules
+      - Other code optimizations
+      - MariaDB ODBC Connector 2.0.19
+
+## 3.9.5 2020-03-03 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fixed issues with SMTP configuration
+      - Created temporary log directory for Flash Operator Panel installation
+      
+## 3.9.4 2020-02-10 <dave at tiredofit dot ca>
+
+   ### Added
+      - Move more defaults into functions files
+      - Fix error with Cron starting before it Freepbx installs causing errors with persistent storage
+
+
+## 3.9.3 2020-02-01 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Spelling mistake fix for Log display
+      - Fixed wrong function being called for checking is DB was available for External DB Container installs
+      - Reworked CDR Hack for Single DB (external DB Container) installation (Thanks barhom@github)
+
+
+## 3.9.2 2020-01-28 <dave at tiredofit dot ca>
+
+   ### Added
+      - Freepbx Framework 15.0.16.42
+
+   ### Changed
+      - Fix to allow UCP to build properly
+
+
+## 3.9.1 2020-01-27 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fix spelling mistake in container startup script
+
+
+## 3.9.0 2020-01-12 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update to support new tiredofit/debian base images
+      - Asterisk 16.7.0
+      - FreePBX Framework 15.0.16.39
+
+
+## 3.8.3 2019-11-29 <dave at tiredofit dot ca>
+
+   ### Added
+      - Asterisk 16.6.2
+      - FreePBX 15.0.16.28
+
+   ### Changed
+      - Changed source location to continue building g72x codecs
+
+
+## 3.8.2 2019-10-28 <dave at tiredofit dot ca>
+
+* Asterisk 16.61
+* FreePBX 15.0.16.21
+
+
+## 3.8.1 2019-10-28 <ferow2k@github> 
+
+* Add php56-intl
+
+## 3.8 2019-09-13 <dave at tiredofit dot ca> + <ivanfillipov@github>
+
+* Pinned LibXML2 to older version due to an upstream change and Asterisk can no longer detect 
+* Updated Asterisk to 16.5.1
+* Updated Freepbx to 15.0.16.15
+* Changed Download Location of SpanDSP
+* Downgrade Node to 10
+
 ## 3.7.2 2019-07-07 <dave at tiredofit dot ca>
 
 * Repair broken upgrade command
