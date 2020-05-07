@@ -86,7 +86,7 @@ You can also visit the image tags section on Docker hub to pull a version that f
 
 *The first boot can take from 3 minutes - 30 minutes depending on your internet connection as there is a considerable amount of downloading to do!*
 
-Login to the web server and enter in your admin username, admin password, and email address and start configuring the system!
+Login to the web server's admin URL (default /admin) and enter in your admin username, admin password, and email address and start configuring the system!
 
 # Configuration
 
