@@ -2,7 +2,7 @@ FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set Defaults
-ENV ASTERISK_VERSION=17.2.0 \
+ENV ASTERISK_VERSION=16.9.0 \
     FREEPBX_VERSION=15.0.16.45 \
     MARIAODBC_VERSION=2.0.19 \
     BCG729_VERSION=1.0.4 \

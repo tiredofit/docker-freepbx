@@ -1,3 +1,9 @@
+## 4.0.4 2020-05-07 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update Console command to advise how to access admin panel upon container has finished initializing
+
+
 ## 4.0.3 2020-03-29 <jwhostet@github>
 
    ### Changed

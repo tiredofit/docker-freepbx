@@ -560,6 +560,10 @@ fi
 
 silent service apache2 restart
 
-print_info "Web Server Started - Container Initialization Complete"
+if [ "$UCP_FIRST" = "TRUE ] ; then
+   print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/${ADMIN_DIRECTORY} to administer"
+else
+   print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/ to administer"
+fi
 
 liftoff
