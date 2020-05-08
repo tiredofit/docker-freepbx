@@ -1,3 +1,9 @@
+## 4.0.5.1 2020-05-08 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Patchup for 4.0.5
+
+
 ## 4.0.4 2020-05-07 <dave at tiredofit dot ca>
 
    ### Added
