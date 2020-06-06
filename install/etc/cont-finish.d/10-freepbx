@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-## Embedded DB Variance
+## Embedded DB variance
   if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
      DB_EMBEDDED=TRUE
   else

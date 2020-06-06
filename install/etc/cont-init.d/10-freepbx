@@ -20,7 +20,7 @@ fi
 
 ### Startup
 if [ ! -f /data/.installed ]; then
-  print_notice "Creating Default Configuration Files"
+  print_notice "Creating default configuration files"
   mkdir -p /data/
   cp -R /assets/config/* /data/
 fi
@@ -33,7 +33,7 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
   if [[ ${ASTERISK_VERSION_TMP//./} -lt "16" ]]; then
     print_error "****"
     print_error "***** This container has been detected to have FreePBX 14 installed"
-    print_error "***** You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 16"
+    print_error "***** You cannot perform an inplace upgrade to FreePBX 15 and Asterisk 17"
     print_error "***** To continue using this image switch to using tiredofit/freepbx:14-latest"
     print_error "***** See https://github.com/tiredofit/docker-freepbx/issues/51 for more details"
     print_error "***** This container will now cease to function"
@@ -42,7 +42,7 @@ if [ -f /data/etc/asterisk/.asterisk_version ]; then
   fi
 fi
 
-print_notice "Setting File Permissions"
+print_notice "Setting file permissions"
 mkdir -p /data/etc/asterisk
 mkdir -p /data/var/lib/asterisk/{agi-bin,bin,playback}
 mkdir -p /data/var/spool/asterisk/{cache,dictate,meetme,monitor,recording,system,tmp,voicemail}
@@ -54,10 +54,10 @@ chown -R asterisk:asterisk /data
 
 ### Check if FreePBX Installed
 if [ ! -f $WEBROOT/admin/index.php ]; then
-    print_info "New Install Detected - Please wait while we fetch FreePBX - Will take 3 to 30 minutes!"
+    print_info "New install detected - please wait while we fetch FreePBX - Will take 3 to 30 minutes!"
 
   if [ "$WEBROOT" != "/var/www/html" ]; then
-    print_notice "Custom Installation Webroot Defined: '${WEBROOT}'"
+    print_notice "Custom installation webroot defined: '${WEBROOT}'"
   fi
 
   if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
@@ -101,7 +101,7 @@ EOF
     silent ./start_asterisk start
 
   if [ ! -f "/var/run/asterisk/asterisk.pid" ]; then
-    print_error "Can't seem to start Asterisk.. Exitting"
+    print_error "Can't seem to start Asterisk.. exiting"
     exit 1
   fi
 
@@ -141,12 +141,12 @@ EOF
   fi
 
   if [ ! -f "/usr/sbin/fwconsole" ]; then
-    print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting"
+    print_error "Can't seem to locate /usr/sbin/fwconsole.. exiting"
     exit 1
   fi
 
-  print_notice "Enabling Default Modules"
-  print_notice "Module Install: framework, core"
+  print_notice "Enabling default modules"
+  print_notice "Module install: framework, core"
   check_process
   silent fwconsole ma downloadinstall framework core
   sleep 3
@@ -161,26 +161,26 @@ EOF
     cp -R $WEBROOT/admin/modules/cdr/install.php $WEBROOT/admin/modules/cdr/.install.php
     sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' $WEBROOT/admin/modules/cdr/install.php
     sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' $WEBROOT/admin/modules/cdr/install.php
-    print_notice '** [freepbx] Module Install: cdr'
+    print_notice '** [freepbx] Module install: cdr'
     check_process
     silent fwconsole ma install cdr
     cp -R $WEBROOT/admin/modules/cdr/.install.php $WEBROOT/admin/modules/cdr/install.php
   else
-    print_notice "Module Install: cdr"
+    print_notice "Module install: cdr"
     check_process
     silent fwconsole ma install cdr
   fi
-    print_notice "Module Install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, music, sipsettings, voicemail "
+    print_notice "Module install: callrecordings, conferences, dashboard, featurecodeadmin, infoservices, logfiles, music, sipsettings, voicemail "
     check_process
     silent fwconsole ma downloadinstall soundlang recordings voicemail sipsettings infoservices featurecodeadmin logfiles conferences callrecording dashboard music
-    print_notice "Module Install: certman, userman, pm2"
+    print_notice "Module install: certman, userman, pm2"
     check_process
     silent fwconsole ma downloadinstall certman userman pm2
     silent fwconsole setting SHOWLANGUAGE 1
     silent fwconsole chown
     silent fwconsole reload
     chown -R asterisk. /home/asterisk/.npm
-    print_notice "Module Install: ucp"
+    print_notice "Module install: ucp"
     check_process
     # ucp fix https://community.freepbx.org/t/ucp-upgrade-error/58273
     touch /usr/bin/icu-config
@@ -194,32 +194,32 @@ EOF
       touch /var/log/mongodb/mongodb.log
       chown -R 777 /var/log/mongodb/mongodb.log
       mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run &
-      print_notice "Module Install: xmpp"
+      print_notice "Module install: xmpp"
       check_process
       silent fwconsole ma downloadinstall xmpp
       print_notice "Stopping MongoDB"
       silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
     fi
     if [[ -v INSTALL_ADDITIONAL_MODULES ]] ; then
-      print_notice "Attempting to Install additional FreePBX Modules '${INSTALL_ADDITIONAL_MODULES}'"
+      print_notice "Attempting to install additional FreePBX modules '${INSTALL_ADDITIONAL_MODULES}'"
       modules=$(echo ${INSTALL_ADDITIONAL_MODULES} | tr "," "\n")
       for module in $modules
       do
-        print_notice "Module Install ${module}"
+        print_notice "Module install ${module}"
         silent fwconsole ma downloadinstall $module
       done
     fi
     silent fwconsole chown
     silent fwconsole reload
     silent fwconsole restart
-    print_info "Finished Installation of FreePBX Modules - Proceeding with next phase of install"
+    print_info "Finished installation of FreePBX modules - proceeding with next phase of install"
     silent fwconsole stop
     cd /
     rm -rf /usr/src/freepbx
 
   if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
       ### FOP2 Installation
-      print_info "Starting Installation of Flash Operator Panel 2"
+      print_info "Starting installation of Flash Operator Panel 2"
       silent fwconsole start
       mkdir -p /data/usr/local/fop2
       mkdir -p /var/log/apache2
@@ -276,7 +276,7 @@ fi
 
 if [ "$DB_EMBEDDED" = "FALSE" ];  then
 ### Setup Dynamic Configuration
-  print_notice "Setting Configuration"
+  print_notice "Setting configuration"
   cat <<EOF > /etc/freepbx.conf
 <?php
 \$amp_conf['AMPDBUSER'] = '$DB_USER';
@@ -332,7 +332,7 @@ chown asterisk:asterisk /etc/freepbx.conf
 
 if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
   ### Set RTP Ports
-  print_notice "Setting RTP Ports - Start: '${RTP_START}' Finish: '${RTP_FINISH}'"
+  print_notice "Setting RTP ports - start: '${RTP_START}' finish: '${RTP_FINISH}'"
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
   ### Fix a Freepbx bug with upgrades
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; ALTER TABLE featurecodes CHANGE column helptext helptext VARCHAR(10000);'
@@ -341,7 +341,7 @@ fi
 print_info "Starting Asterisk"
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
-  print_error "Can't seem to locate /usr/sbin/fwconsole.. Exitting. This is likely because the initial installation of FreePBX failed, and usually an upstream error. Try again by deleting all volumes and databases and starting from scratch before submitting an issue."
+  print_error "Can't seem to locate /usr/sbin/fwconsole.. Exiting. This is likely because the initial installation of FreePBX failed, and usually an upstream error. Try again by deleting all volumes and databases and starting from scratch before submitting an issue."
   exit 1
 fi
 
@@ -353,17 +353,17 @@ chown -R asterisk:asterisk /etc/amportal.conf
 
 ### Custom File Support
   if [ -d /assets/custom ] ; then
-     print_warn "Custom Files Found, Copying over top of Master.."
+     print_warn "Custom files found, copying over top of original.."
      cp -R /assets/custom/* /
      chown -R asterisk. /var/www/html/
      chown -R asterisk. /var/lib/asterisk
      chown -R asterisk. /var/spool/asterisk
   fi
 
-### Check to see if FOP Enabled and exists (Upgrade Catcher)
+### Check to see if FOP Enabled and exists (upgrade catcher)
 if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
     if [ ! -f /usr/local/fop2/fop2_server ] ; then
-      print_info "Installing Operator Panel"
+      print_info "Installing operator panel"
 
         ### FOP2 Installation
         silent fwconsole start
@@ -420,7 +420,7 @@ if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
   echo '    Alias "'$FOP_DIRECTORY'" "/var/www/html/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
 fi
 
-### Update CDR Hack Script
+### Update CDR hack script
 sed -i -e "s#<WEBROOT>#$WEBROOT#g" /usr/sbin/upgrade-cdr
 
 cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
@@ -439,7 +439,7 @@ if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SS
     print_notice "Enabling SSL"
 
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
-            print_warn "No SSL Certs found, Autogenerating SelfSigned - WebRTC will not work with a SelfSigned Certificate!"
+            print_warn "No SSL certs found, autogenerating self-signed - WebRTC will not work with a self-signed certificate!"
             cat <<EOF > /tmp/openssl.cnf
 [ req ]
 default_bits = 2048
@@ -550,7 +550,7 @@ fi
 
 ### FOP2 Setup
  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
-    print_info "Starting Operator Panel"
+    print_info "Starting operator panel"
     rm -rf /var/run/fop2.*
     mkdir -p /var/log/fop
     chown -R asterisk. /var/log/fop
@@ -561,9 +561,9 @@ fi
 silent service apache2 restart
 
 if [ "$UCP_FIRST" = "TRUE" ] ; then
-   print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/${ADMIN_DIRECTORY} to administer"
+   print_info "Web server started - container initialization completed - visit your http(s)://yoursite/${ADMIN_DIRECTORY} to administer"
 else
-   print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/ to administer"
+   print_info "Web server started - container initialization completed - visit your http(s)://yoursite/ to administer"
 fi
 
 liftoff

@@ -1,4 +1,3 @@
-
 # hub.docker.com/r/tiredofit/freepbx
 
 [![Build Status](https://img.shields.io/docker/build/tiredofit/freepbx.svg)](https://hub.docker.com/r/tiredofit/freepbx)
@@ -9,20 +8,21 @@
 
 # Introduction
 
-This will build a container for [FreePBX](https://www.freepbx.org) - A Voice over IP Manager for Asterisk. Upon starting this image it will give you a turn-key PBX system for SIP calling. 
+This will build a container for [FreePBX](https://www.freepbx.org) - A Voice over IP manager for Asterisk. 
+Upon starting this image it will give you a turn-key PBX system for SIP calling. 
 
-* Latest release Version 15
-* Compiles and Installs Asterisk 17
-* Choice of running embedded database or Modifies to support external MariaDB Database and only require one DB.
-* Supports Data Persistence
+* Latest release FreePBX 15
+* Latest release Asterisk 17
+* Choice of running embedded database or modifies to support external MariaDB Database and only require one DB.
+* Supports data persistence
 * Fail2Ban installed to block brute force attacks
-* Debian Buster Base w/ Apache2
+* Debian Buster base w/ Apache2
 * NodeJS 10.x
-* Automatically Installs User Control Panel and displays at first page
+* Automatically installs User Control Panel and displays at first page
 * Option to Install [Flash Operator Panel 2](https://www.fop2.com/)
 * Customizable FOP and Admin URLs
 
-This Container uses [tiredofit/debian:buster](https://hub.docker.com/r/tiredofit/debian) as a base.
+This container uses [tiredofit/debian:buster](https://hub.docker.com/r/tiredofit/debian) as a base.
         
 **If you are presently running this image when it utilized FreePBX 14 and 
 Asterisk 14 and can no longer use your image, please see [this post](https://github.com/tiredofit/docker-freepbx/issues/51)**
@@ -53,11 +53,10 @@ Asterisk 14 and can no longer use your image, please see [this post](https://git
 
 This image assumes that you are using a reverse proxy such as 
 [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) and optionally the [Let's Encrypt Proxy 
-Companion @ 
-https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) 
+Companion @ https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) 
 in order to serve your pages. However, it will run just fine on it's own if you map appropriate ports.
 
-You will also need an external MySQL/MariaDB Container, athough it can use an internally provided service (not recommended).
+You will also need an external MySQL/MariaDB container, although it can use an internally provided service (not recommended).
 
 # Installation
 
@@ -69,16 +68,17 @@ docker pull tiredofit/freepbx:(imagetag)
 ```
 The following image tags are available:
 
-* `15` - Asterisk 16, Freepbx 15 - Debian Buster (latest build)
+* `15` - Asterisk 17, Freepbx 15 - Debian Buster (latest build)
 * `14` - Asterisk 14, Freepbx 14 - Debian Stretch (latest build)
-* `latest` - Asterisk 16, Freepbx 15 - Debian Buster (Same as `15`)
+* `latest` - Asterisk 17, Freepbx 15 - Debian Buster (Same as `15`)
 
 You can also visit the image tags section on Docker hub to pull a version that follows the CHANGELOG.
 
 
 # Quick Start
 
-* The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working [docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use.
+* The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). 
+See the example's folder for a working [docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use.
 
 * Set various [environment variables](#environment-variables) to understand the capabilities of this image.
 * Map [persistent storage](#data-volumes) for access to configuration and data files for backup.
@@ -92,22 +92,26 @@ Login to the web server's admin URL (default /admin) and enter in your admin use
 
 ### Data-Volumes
 
-The container supports data persistence and during Dockerfile Build creates symbolic links for `/var/lib/asterisk`, `/var/spool/asterisk`, `/home/asterisk`, and `/etc/asterisk`. Upon startup configuration files are copied and generated to support portability.
+The container supports data persistence and during Dockerfile build creates symbolic links for 
+`/var/lib/asterisk`, `/var/spool/asterisk`, `/home/asterisk`, and `/etc/asterisk`. 
+Upon startup configuration files are copied and generated to support portability.
 
-The following directories are used for configuration and can be mapped for persistent storage.
+The following directories are used for configure and can be mapped for persistent storage.
 
 | Directory    | Description                                                 |
 |--------------|-------------------------------------------------------------|
-|  `/certs`    | Drop your Certificates here for TLS w/PJSIP / UCP / HTTPd/ FOP |
+|  `/certs`    | Drop your certificates here for TLS w/PJSIP / UCP / HTTPd/ FOP |
 |  `/var/www/html` | FreePBX web files |
 |  `/var/log/` | Apache, Asterisk and FreePBX Log Files |
-|  `/data`      | Data Persistence for Asterisk and Freepbx and FOP
-|  `/assets/custom` | *OPTIONAL* - If you would like to overwrite some files in the container, put them here following the same folder structure for anything underneath the /var/www/html directory |
+|  `/data`      | Data persistence for Asterisk and FreePBX and FOP
+|  `/assets/custom` | *OPTIONAL* - If you would like to overwrite some files in the container, 
+put them here following the same folder structure for anything underneath the /var/www/html directory |
 
 ### Environment Variables
 
 
-Along with the Environment Variables from the [Base image](https://hub.docker.com/r/tiredofit/debian), below is the complete list of available options that can be used to customize your installation.
+Along with the environment variables from the [Base image](https://hub.docker.com/r/tiredofit/debian), 
+below is the complete list of available options that can be used to customize your installation.
 
 | Parameter        | Description                            |
 |------------------|----------------------------------------|
@@ -116,20 +120,20 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `DB_HOST` | Host or container name of MySQL Server e.g. `freepbx-db` |
 | `DB_PORT` | MySQL Port - Default `3306` |
 | `DB_NAME` | MySQL Database name e.g. `asterisk` |
-| `DB_USER` | MySQL Username for above Database e.g. `asterisk` |
-| `DB_PASS` | MySQL Password for above Database e.g. `password`|
-| `ENABLE_FAIL2BAN` | Enable Fail2ban to block the bad guys - Default `TRUE`|
+| `DB_USER` | MySQL Username for above database e.g. `asterisk` |
+| `DB_PASS` | MySQL Password for above database e.g. `password`|
+| `ENABLE_FAIL2BAN` | Enable Fail2ban to block the "bad guys" - Default `TRUE`|
 | `ENABLE_FOP` | Enable Flash Operator Panel - Default `TRUE` |
 | `ENABLE_SSL` | Enable HTTPd to serve SSL requests - Default `FALSE`|
 | `ENABLE_XMPP` | Enable XMPP Module with MongoDB - Default `FALSE` |
 | `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
-| `HTTP_PORT`  | HTTP Listening Port - Default `80` |
-| `HTTPS_PORT`  | HTTPS Listening Port - Default `443` |
+| `HTTP_PORT`  | HTTP listening port - Default `80` |
+| `HTTPS_PORT`  | HTTPS listening port - Default `443` |
 | `INSTALL_ADDITIONAL_MODULES` | Comma separated list of modules to additionally install on first container startup |
-| `RTP_START` | What port to start RTP Transmissions - Default `18000` |
-| `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
+| `RTP_START` | What port to start RTP transmissions - Default `18000` |
+| `RTP_FINISH` | What port to start RTP transmissions - Default `20000` |
 | `UCP_FIRST` | Load UCP as web frontpage `TRUE/FALSE` - Default `TRUE` |
-| `TLS_CERT` | TLS Certificate to drop in /certs for HTTPS if no reverse proxy |
+| `TLS_CERT` | TLS certificate to drop in /certs for HTTPS if no reverse proxy |
 | `TLS_KEY` | TLS Key to drop in /certs for HTTPS if no reverse proxy |
 | `WEBROOT` | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx` Default '/var/www/html'
 
@@ -151,16 +155,21 @@ The following ports are exposed.
 | `8003`    | UCP SSL     |
 | `8008`    | UCP         |
 | `8009`    | UCP SSL     |
-| `18000-20000/udp` | RTP Ports |
+| `18000-20000/udp` | RTP ports |
 
 # Maintenance
 
-* There seems to be a problem with the CDR Module when updating where it refuses to update when using an external DB Server. If that happens, simply enter the container (as shown below) and execute `upgrade-cdr`, which will download the latest CDR module, apply a tweak, install, and reload the system for you.
+* There seems to be a problem with the CDR Module when updating where it refuses to update when using an external DB Server. 
+If that happens, simply enter the container (as shown below) and execute `upgrade-cdr`, which will download the latest CDR module, 
+apply a tweak, install, and reload the system for you.
 
 # Known Bugs
 
-* When installing Parking Lot or Feature Codes you sometimes get `SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'helptext' at row 1`. To resolve login to your SQL server and issue this statement: `alter table featurecodes modify column helptext varchar(500);`
-* If you find yourself needing to update the framework or core modules and experience issues, enter the container and run `upgrade-core` which will truncate the column and auto upgrade the core and framework modules.
+* When installing Parking Lot or Feature Codes you sometimes get `SQLSTATE[22001]: String data, right truncated: 
+1406 Data too long for column 'helptext' at row 1`. To resolve login to your SQL server and issue this statement: 
+`alter table featurecodes modify column helptext varchar(500);`
+* If you find yourself needing to update the framework or core modules and experience issues, enter the container and 
+run `upgrade-core` which will truncate the column and auto upgrade the core and framework modules.
 
 #### Shell Access
 

@@ -1,10 +1,10 @@
 FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
-### Set Defaults
-ENV ASTERISK_VERSION=16.9.0 \
-    FREEPBX_VERSION=15.0.16.45 \
-    MARIAODBC_VERSION=2.0.19 \
+### Set defaults
+ENV ASTERISK_VERSION=17.4.0 \
+    FREEPBX_VERSION=15.0.16.55 \
+    MARIAODBC_VERSION=3.1.7 \
     BCG729_VERSION=1.0.4 \
     SPANDSP_VERSION=20180108 \
     DB_EMBEDDED=TRUE \
@@ -15,7 +15,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     echo "Pin: release o=Debian,n=buster" >> /etc/apt/preferences.d/libxml2 && \
     echo "Pin-Priority: 501" >> /etc/apt/preferences.d/libxml2
 
-### Install Dependencies
+### Install dependencies
 RUN set -x && \
     curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/deb.sury.org.list && \
@@ -24,7 +24,7 @@ RUN set -x && \
     apt-get update  && \
     apt-get -o Dpkg::Options::="--force-confold" upgrade -y && \
     \
-### Install Development Dependencies
+### Install development dependencies
     \
     ASTERISK_BUILD_DEPS='\
                         autoconf \
@@ -60,7 +60,7 @@ RUN set -x && \
                         uuid-dev \
                         ' && \
     \
-### Install Runtime Dependencies
+### Install runtime dependencies
     apt-get install --no-install-recommends -y \
                     $ASTERISK_BUILD_DEPS \
                     apache2 \
@@ -108,13 +108,13 @@ RUN set -x && \
                     xmlstarlet \
                     && \
     \
-### Install MariaDB ODBC Connector
+### Install MariaDB ODBC connector
     cd /usr/src && \
     mkdir -p mariadb-connector && \
     curl -sSL  https://downloads.mariadb.com/Connectors/odbc/connector-odbc-${MARIAODBC_VERSION}/mariadb-connector-odbc-${MARIAODBC_VERSION}-ga-debian-x86_64.tar.gz | tar xvfz - -C /usr/src/mariadb-connector && \
     cp mariadb-connector/lib/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/ && \
     \
-### Add Users
+### Add users
     addgroup --gid 2600 asterisk && \
     adduser --uid 2600 --gid 2600 --gecos "Asterisk User" --disabled-password asterisk && \
     \
@@ -151,7 +151,7 @@ RUN set -x && \
     make config && \
     ldconfig && \
     \
-#### Add G729 Codecs
+#### Add G729 codecs
     git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 && \
     cd /usr/src/bcg729 && \
     git checkout tags/$BCG729_VERSION && \
@@ -168,7 +168,7 @@ RUN set -x && \
     make && \
     make install && \
     \
-### Cleanup 
+### Cleanup
     mkdir -p /var/run/fail2ban && \
     cd / && \
     rm -rf /usr/src/* /tmp/* /etc/cron* && \
@@ -178,7 +178,7 @@ RUN set -x && \
     apt-get install -y make && \
     rm -rf /var/lib/apt/lists/* && \
     \
-### FreePBX Hacks
+### FreePBX hacks
     sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/5.6/apache2/php.ini && \
     sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/5.6/apache2/php.ini && \
     a2disconf other-vhosts-access-log.conf && \
@@ -189,10 +189,10 @@ RUN set -x && \
     mkdir -p /var/log/apache2 && \
     mkdir -p /var/log/httpd && \
     \
-### Zabbix Setup
+### Zabbix setup
     echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers && \
     \
-### Setup for Data Persistence
+### Setup for data persistence
     mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
     mv /home/asterisk /assets/config/home/ && \
     ln -s /data/home/asterisk /home/asterisk && \
@@ -214,8 +214,8 @@ RUN set -x && \
     rm -rf /etc/asterisk && \
     ln -s /data/etc/asterisk /etc/asterisk
 
-### Networking Configuration
+### Networking configuration
 EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8008 8009 18000-20000/udp
 
-### Files Add
+### Files add
 ADD install /

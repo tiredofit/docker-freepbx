@@ -9,4 +9,3 @@ fwconsole ma upgrade core
 fwconsole chown 
 fwconsole reload
 chown -R asterisk /etc/asterisk
-
