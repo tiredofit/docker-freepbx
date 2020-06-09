@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+source /assets/functions/00-container
+prepare_service
 PROCESS_NAME="freepbx"
 
 ## Embedded DB Variance
@@ -8,14 +9,8 @@ if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
    DB_EMBEDDED=TRUE
 else
    DB_EMBEDDED=FALSE
-fi
-
-if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
-  sanity_db
-fi
-
-if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
-  db_ready mariadb
+   sanity_db
+   db_ready mariadb
 fi
 
 ### Startup
@@ -154,7 +149,7 @@ EOF
   sleep 3
   fwconsole ma download cdr
 
-  if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
+  if var_false $DB_EMBEDDED ; then
     # CDR Hack
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT $DB_NAME < /usr/src/freepbx/installlib/SQL/cdr.sql
     mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; UPDATE freepbx_settings SET `value` = "'$DB_HOST'" WHERE keyword = "CDRDBHOST"; UPDATE freepbx_settings SET `value` = "'$DB_NAME'" WHERE keyword = "CDRDBNAME"; UPDATE freepbx_settings SET `value` = "'$DB_PASS'" WHERE keyword = "CDRDBPASS"; UPDATE freepbx_settings SET `value` = "'$DB_USER'" WHERE keyword = "CDRDBUSER"; UPDATE freepbx_settings SET `value` = "mysql" WHERE keyword = "CDRDBTYPE"; UPDATE freepbx_settings SET `value` = "'$DB_PORT'" WHERE keyword = "CDRDBPORT"; UPDATE freepbx_settings SET `value` = "cdr" WHERE keyword = "CDRDBTABLENAME";'
@@ -217,7 +212,7 @@ EOF
     cd /
     rm -rf /usr/src/freepbx
 
-  if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
+  if var_true $ENABLE_FOP ; then
       ### FOP2 Installation
       print_info "Starting Installation of Flash Operator Panel 2"
       silent fwconsole start
@@ -260,7 +255,7 @@ fi
       touch /data/etc/amportal.conf
   fi
 
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+  if var_true $DB_EMBEDDED ; then
       if [ ! -f /data/etc/freepbx.conf ]; then
          mkdir -p /data/etc/
          cp -R /etc/freepbx.conf /data/etc/
@@ -274,7 +269,7 @@ fi
       fi
   fi
 
-if [ "$DB_EMBEDDED" = "FALSE" ];  then
+if var_false $DB_EMBEDDED ; then
 ### Setup Dynamic Configuration
   print_notice "Setting Configuration"
   cat <<EOF > /etc/freepbx.conf
@@ -330,7 +325,7 @@ fi
 
 chown asterisk:asterisk /etc/freepbx.conf
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then
+if var_false $DB_EMBEDDED ; then
   ### Set RTP Ports
   print_notice "Setting RTP Ports - Start: '${RTP_START}' Finish: '${RTP_FINISH}'"
   mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'USE '$DB_NAME'; INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpstart","'$RTP_START'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_START'";INSERT INTO sipsettings (keyword, data, seq, type) VALUES ("rtpend","'$RTP_FINISH'",1,0) ON DUPLICATE KEY UPDATE data="'$RTP_FINISH'";'
@@ -361,7 +356,7 @@ chown -R asterisk:asterisk /etc/amportal.conf
   fi
 
 ### Check to see if FOP Enabled and exists (Upgrade Catcher)
-if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
+if var_true $ENABLE_FOP ; then
     if [ ! -f /usr/local/fop2/fop2_server ] ; then
       print_info "Installing Operator Panel"
 
@@ -435,7 +430,7 @@ cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
 </VirtualHost>
 EOF
 
-if [ "$VIRTUAL_PROTO" = "https" ] || [ "$ENABLE_SSL" = "true" ] || [ "$ENABLE_SSL" = "TRUE" ] ;  then
+if [ "$VIRTUAL_PROTO" = "https" ] || var_true $ENABLE_SSL ; then
     print_notice "Enabling SSL"
 
     if [ ! -f /certs/${TLS_CERT} ] && [ ! -f /certs/${TLS_KEY} ]; then
@@ -478,7 +473,7 @@ EOF
     CustomLog /var/log/apache2/access.log common
 EOF
 
-if [ "$UCP_FIRST" = "TRUE" ] || [ "$UCP_FIRST" = "true" ] ; then
+if var_true $UCP_FIRST ; then
   echo "    DocumentRoot "$WEBROOT"/ucp" >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "'$ADMIN_DIRECTORY'" "'$WEBROOT'/admin"' >> /etc/apache2/sites-enabled/000-default.conf
   echo '    Alias "/ucp" "'$WEBROOT'/ucp"' >> /etc/apache2/sites-enabled/000-default.conf
@@ -486,7 +481,7 @@ else
   echo "    DocumentRoot $WEBROOT" >> /etc/apache2/sites-enabled/000-default.conf
 fi
 
-if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
+if var_true $ENABLE_FOP ; then
   echo '    Alias "'$FOP_DIRECTORY'" "'$WEBROOT'/fop2"' >>/etc/apache2/sites-enabled/000-default.conf
   sed -i -e 's#ssl_certificate_file=.*#ssl_certificate_file=/certs/'$TLS_CERT'#g' /usr/local/fop2/fop2.cfg
   sed -i -e 's#ssl_certificate_key_file=.*#ssl_certificate_key_file=/certs/'$TLS_KEY'#g' /usr/local/fop2/fop2.cfg
@@ -541,7 +536,7 @@ if [ "$WEBROOT" != "/var/www/html" ]; then
 fi
 
 ### SMTP Config
- if [ "$ENABLE_SMTP" = "TRUE" ] || [ "$ENABLE_SMTP" = "true" ];  then
+ if var_true $ENABLE_SMTP ; then
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/apache2/conf.d/smtp.ini
    echo 'sendmail_path="/usr/bin/msmtp -C /etc/msmtprc -t "' > /etc/php/5.6/cli/conf.d/smtp.ini
    chown asterisk:asterisk /etc/msmtprc
@@ -549,7 +544,7 @@ fi
  fi
 
 ### FOP2 Setup
- if [ "$ENABLE_FOP" = "TRUE" ] || [ "$ENABLE_FOP" = "true" ];  then
+ if var_true $ENABLE_FOP ; then
     print_info "Starting Operator Panel"
     rm -rf /var/run/fop2.*
     mkdir -p /var/log/fop
@@ -560,7 +555,7 @@ fi
 
 silent service apache2 restart
 
-if [ "$UCP_FIRST" = "TRUE" ] ; then
+if var_true $ENABLE_UCP ; then
    print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/${ADMIN_DIRECTORY} to administer"
 else
    print_info "Web Server Started - Container Initialization Complete - Visit your http(s)://yoursite/ to administer"

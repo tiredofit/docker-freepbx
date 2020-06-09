@@ -1,9 +1,11 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+source /assets/functions/00-container
+prepare_service single
+
 PROCESS_NAME="mongo"
 
-if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
+if var_true $ENABLE_XMPP ; then
 	print_notice "Enabling MongoDB for XMPP support"
     mkdir -p /var/log/mongodb
     touch /var/log/mongodb/mongodb.log

@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+source /assets/functions/00-container
+
 PROCESS_NAME="mongo"
 check_container_initialized
 check_service_initialized init

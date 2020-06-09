@@ -1,3 +1,9 @@
+## 4.0.6 2020-06-08 <dave at tiredofit dot ca>
+
+   ### Added
+      - Support changes to tiredofit/debian base image
+
+
 ## 4.0.5.1 2020-05-08 <dave at tiredofit dot ca>
 
    ### Changed

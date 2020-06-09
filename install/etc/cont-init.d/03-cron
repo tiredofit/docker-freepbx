@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
-PROCESS_NAME="cron"
+source /assets/functions/00-container
+prepare_service single
 
 ### Set Defaults
 ENABLE_CRON=${ENABLE_CRON:-"TRUE"}

@@ -1,16 +1,17 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+source /assets/functions/00-container
+prepare_service
 PROCESS_NAME="mariadb"
 
  ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+if var_true $DB_EMBEDDED ; then
      DB_EMBEDDED=TRUE
   else
      DB_EMBEDDED=FALSE
-  fi
+fi
 
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+if var_true $DB_EMBEDDED ; then
   silent service mysql stop
   mkdir -p /var/lib/mysql
 
