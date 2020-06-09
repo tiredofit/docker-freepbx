@@ -125,7 +125,7 @@ Along with the Environment Variables from the [Base image](https://hub.docker.co
 | `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`
 | `HTTP_PORT`  | HTTP Listening Port - Default `80` |
 | `HTTPS_PORT`  | HTTPS Listening Port - Default `443` |
-| `INSTALL_ADDITIONAL_MODULES` | Comma seperated list of modules to additionally install on first container startup |
+| `INSTALL_ADDITIONAL_MODULES` | Comma separated list of modules to additionally install on first container startup |
 | `RTP_START` | What port to start RTP Transmissions - Default `18000` |
 | `RTP_FINISH` | What port to start RTP Transmissions - Default `20000` |
 | `UCP_FIRST` | Load UCP as web frontpage `TRUE/FALSE` - Default `TRUE` |
