@@ -373,14 +373,14 @@ chown asterisk. /etc/amportal.conf
      print_warn "Custom files found, copying over top of original.."
      cp -R /assets/custom/* /
      chown -R asterisk. /var/www/html
-     chown -R asterisk. /var/lib/asterisk
-     chown -R asterisk. /var/spool/asterisk
+     chown -RH asterisk. /var/lib/asterisk
+     chown -RH asterisk. /var/spool/asterisk
   fi
 
 ### Check to see if FOP enabled and exists (upgrade catcher)
 if var_true "$ENABLE_FOP" ;  then
   if [ ! -f /usr/local/fop2/fop2_server ] ; then
-    print_info "Installing operator panel"
+    print_info "Installing FOP"
 
 ### FOP2 installation
     silent fwconsole start
@@ -390,7 +390,7 @@ if var_true "$ENABLE_FOP" ;  then
     silent wget http://download.fop2.com/install_fop2.sh
     chmod +x install_fop2.sh
     silent ./install_fop2.sh
-    chown -R asterisk. /usr/local/fop2
+    chown -RH asterisk. /usr/local/fop2
     rm -rf /usr/src/*
     silent service apache2 stop
     silent service fop2 stop
@@ -403,7 +403,7 @@ if var_true "$ENABLE_XMPP" ; then
   silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf --shutdown
 fi
 
-chown -R asterisk. /var/spool/asterisk
+chown -RH asterisk. /var/spool/asterisk
 
 ### Apache setup
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
@@ -560,7 +560,7 @@ sed -i 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 mkdir -p /var/log/apache2
 chown -R root:adm /var/log/apache2
 chown asterisk. /run/lock/apache2
-chown -R asterisk. /usr/local/fop2
+chown -RH asterisk. /usr/local/fop2
 
 ### Disable indexes if outside of regular webroot
 if [ "$WEBROOT" != "/var/www/html" ]; then
