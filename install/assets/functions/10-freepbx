@@ -1,8 +1,8 @@
 #!/usr/bin/with-contenv bash
 
 check_process() {
-  while [ true ]; do
-    pid=`pgrep php | wc -l`
+  while true; do
+    pid=$(pgrep php | wc -l)
     if [ "$pid" = "1" ]; then
       sleep 3
     else
