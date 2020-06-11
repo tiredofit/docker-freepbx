@@ -462,6 +462,7 @@ EOF
 
 if [ "$VIRTUAL_PROTO" = "https" ] || var_true "$ENABLE_SSL" ;  then
   print_notice "Enabling SSL"
+  mkdir -p /certs
 
   if [ ! -f /certs/"${TLS_CERT}" ] && [ ! -f /certs/"${TLS_KEY}" ]; then
     print_warn "No SSL certs found, autogenerating self-signed - WebRTC will not work with a self-signed certificate!"
