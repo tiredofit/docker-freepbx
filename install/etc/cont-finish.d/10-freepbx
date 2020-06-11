@@ -1,20 +1,13 @@
 #!/usr/bin/with-contenv bash
 
-## Embedded DB variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
-     DB_EMBEDDED=TRUE
-  else
-     DB_EMBEDDED=FALSE      
-  fi
-  
 fwconsole stop
 service apache2 stop
 
-if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+if var_true "$DB_EMBEDDED" ;  then
 	service mysql stop
 fi
 
-if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
+if var_true "$ENABLE_XMPP" ;  then
 	mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
 fi
 

@@ -1,25 +1,20 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+# shellcheck disable=SC1090
+for s in /assets/functions/*; do source "$s"; done
+# shellcheck disable=SC2034
 PROCESS_NAME="mariadb"
 
- ## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
-     DB_EMBEDDED=TRUE
-  else
-     DB_EMBEDDED=FALSE
-  fi
-
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
+if var_true "$DB_EMBEDDED" ;  then
   silent service mysql stop
   mkdir -p /var/lib/mysql
 
-     if [ ! -d /var/lib/mysql/mysql ]; then
-        print_info "New Embedded Database Detected, setting up.."
-        cp -R /assets/config/var/lib/mysql/* /var/lib/mysql
-     fi
+  if [ ! -d /var/lib/mysql/mysql ]; then
+    print_info "New embedded database detected, setting up.."
+    cp -R /assets/config/var/lib/mysql/* /var/lib/mysql
+  fi
 
-  chown -R mysql:mysql /var/lib/mysql
+  chown -R mysql. /var/lib/mysql
   silent service mysql start
 fi
 

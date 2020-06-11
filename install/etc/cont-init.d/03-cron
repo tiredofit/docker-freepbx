@@ -1,18 +1,20 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+# shellcheck disable=SC1090
+for s in /assets/functions/*; do source "$s"; done
+# shellcheck disable=SC2034
 PROCESS_NAME="cron"
 
-### Set Defaults
+### Set defaults
 ENABLE_CRON=${ENABLE_CRON:-"TRUE"}
 
-### Check to see if Enabled/Disabled
-if [ "$ENABLE_CRON" = "FALSE" ] || [ "$ENABLE_CRON" = "false" ];  then
-        print_notice "Disabling Cron"
-        service_stop `basename $0`
+### Check to see if enabled/disabled
+if var_false $ENABLE_CRON ;  then
+  print_notice "Disabling Cron"
+  service_stop $(basename $0)
 fi
 
-print_debug "Creating Cron Folder"
+print_debug "Creating Cron folder"
 silent mkdir -p /var/spool/cron
 
 liftoff
