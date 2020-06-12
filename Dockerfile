@@ -32,7 +32,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/${MONGODB_VERSION} main" > /etc/apt/sources.list.d/mongodb-org.list && \
     echo "deb http://ftp.us.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/backports.list && \
     echo "deb-src http://ftp.us.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list.d/backports.list && \
-    apt-get update  && \
+    apt-get update && \
     apt-get -o Dpkg::Options::="--force-confold" upgrade -y && \
     \
 ### Install development dependencies
@@ -225,6 +225,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                           --enable BETTER_BACKTRACES \
                           --disable MOH-OPSOUND-WAV \
                           --enable MOH-OPSOUND-GSM \
+                          --disable res_digium_phone \
                           --disable codec_g723 \
                           --disable codec_g729a && \
     make && \
