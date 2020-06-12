@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 source /assets/functions/00-container
-prepare_service
+prepare_service single
 # shellcheck disable=SC2034
 PROCESS_NAME="freepbx"
 
@@ -206,11 +206,8 @@ EOF
   echo "icuinfo 2>/dev/null|grep \"version\"|sed 's/.*>\(.*\)<.*/\1/g'" > /usr/bin/icu-config
   chmod +x /usr/bin/icu-config
   silent fwconsole ma downloadinstall ucp
+
   if var_true "$ENABLE_XMPP" ;  then
-    print_notice "Starting MongoDB temporarily"
-    chown -R mongodb. /var/log/mongodb
-    rm -rf /var/run/mongodb/*
-    mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf run &
     print_notice "Module install: xmpp"
     check_process
     silent fwconsole ma downloadinstall xmpp
@@ -254,6 +251,7 @@ EOF
 
   touch /data/.installed
   echo "$ASTERISK_VERSION" > /etc/asterisk/.asterisk-version
+
 fi
 
 ### Data persistence workaround
@@ -396,11 +394,6 @@ if var_true "$ENABLE_FOP" ;  then
     silent service fop2 stop
     silent fwconsole stop
   fi
-fi
-
-if var_true "$ENABLE_XMPP" ; then
-  print_notice "Stopping MongoDB"
-  silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf --shutdown
 fi
 
 chown -RH asterisk. /var/spool/asterisk

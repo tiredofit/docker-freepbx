@@ -249,7 +249,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     make && \
     make install && \
     \
-#### Add usb dongle modem support
+#### Add USB Dongle support
     git clone https://github.com/rusxakep/asterisk-chan-dongle /usr/src/asterisk-chan-dongle && \
     cd /usr/src/asterisk-chan-dongle && \
     git checkout tags/$DONGLE_VERSION && \

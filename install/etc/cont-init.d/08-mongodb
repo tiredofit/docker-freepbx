@@ -1,7 +1,6 @@
 #!/usr/bin/with-contenv bash
 
 source /assets/functions/00-container
-prepare_service single
 # shellcheck disable=SC2034
 PROCESS_NAME="mongo"
 
@@ -9,6 +8,8 @@ if var_true "$ENABLE_XMPP" ;  then
 	print_notice "Enabling MongoDB for XMPP support"
 	mkdir -p /data/var/lib/mongodb
   mkdir -p /var/log/mongodb
+  chown -R mongodb. /var/log/mongodb
+  rm -rf /var/run/mongodb/*
   touch /var/log/mongodb/mongod.log
   service_start 08-mongodb
 else

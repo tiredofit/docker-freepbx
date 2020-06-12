@@ -1,9 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 source /assets/functions/00-container
-prepare_service
+prepare_service single
 
-fwconsole stop --immediate
-
-mkdir -p /tmp/state
-touch /tmp/state/10-freepbx-finish
+silent fwconsole stop --immediate
+rm -f /tmp/state/*-freepbx*
