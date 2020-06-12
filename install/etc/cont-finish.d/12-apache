@@ -3,7 +3,7 @@
 source /assets/functions/00-container
 prepare_service
 
-fwconsole stop --immediate
+service apache2 stop
 
 mkdir -p /tmp/state
-touch /tmp/state/10-freepbx-finish
+touch /tmp/state/12-apache-finish

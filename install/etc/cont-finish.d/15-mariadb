@@ -3,7 +3,9 @@
 source /assets/functions/00-container
 prepare_service
 
-fwconsole stop --immediate
+if var_true "$DB_EMBEDDED" ;  then
+	service mysql stop
+fi
 
 mkdir -p /tmp/state
-touch /tmp/state/10-freepbx-finish
+touch /tmp/state/15-mariadb-finish

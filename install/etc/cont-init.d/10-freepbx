@@ -268,12 +268,12 @@ fi
 if [ ! -f /data/etc/amportal.conf ]; then
   mkdir -p /data/etc
   cp -R /etc/amportal.conf /data/etc/
-  rm -rf /etc/amportal.conf
+  rm -f /etc/amportal.conf
   touch /data/etc/amportal.conf
   chown asterisk. /data/etc/amportal.conf
   ln -s /data/etc/amportal.conf /etc/amportal.conf
 else
-  ln -s /data/etc/amportal.conf /etc/amportal.conf
+  ln -sf /data/etc/amportal.conf /etc/amportal.conf
   touch /data/etc/amportal.conf
 fi
 
@@ -281,12 +281,12 @@ if var_true "$DB_EMBEDDED" ;  then
   if [ ! -f /data/etc/freepbx.conf ]; then
     mkdir -p /data/etc
     cp -R /etc/freepbx.conf /data/etc/
-    rm -rf /etc/freepbx.conf
+    rm -f /etc/freepbx.conf
     touch /data/etc/freepbx.conf
     chown asterisk. /data/etc/freepbx.conf
     ln -s /data/etc/freepbx.conf /etc/freepbx.conf
   else
-    ln -s /data/etc/freepbx.conf /etc/freepbx.conf
+    ln -sf /data/etc/freepbx.conf /etc/freepbx.conf
     touch /data/etc/freepbx.conf
   fi
 fi
@@ -489,7 +489,7 @@ EOF
 
     silent openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
     chmod 0600 /certs/key.pem
-    rm -rf /tmp/openssl.cnf
+    rm -f /tmp/openssl.cnf
     TLS_CERT="cert.pem"
     TLS_KEY="key.pem"
   fi
