@@ -1,16 +1,21 @@
 #!/usr/bin/with-contenv /bin/bash
 
-if [[ "$DB_EMBEDDED" = "FALSE" ]] || [[ "$DB_EMBEDDED" = "false" ]];  then  
-	## This is a dirty hack to allow for updating the CDR Module to use a seperate DB Host and the same DB as FreePBX.
-		echo '** [freepbx] Performing Manual Upgrade of CDR Module'
-		cp -R <WEBROOT>/admin/modules/cdr/install.php <WEBROOT>/admin/modules/cdr/.install.php
-		sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'$DB_HOST'";/g' <WEBROOT>/admin/modules/cdr/install.php
-		sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'$DB_NAME'";/g' <WEBROOT>/admin/modules/cdr/install.php
-		fwconsole ma upgrade cdr
-		cp -R <WEBROOT>/admin/modules/cdr/.install.php <WEBROOT>/admin/modules/cdr/install.php
-		fwconsole chown 
-    	fwconsole reload
-    	chown -R asterisk /etc/asterisk
+source /assets/functions/00-container
+prepare_service defaults
+
+if var_false "$DB_EMBEDDED" ;  then
+  ## This is a dirty hack to allow for updating the CDR Module to use a separate DB Host and the same DB as FreePBX.
+	echo '** [freepbx] Performing Manual Upgrade of CDR Module'
+	cp -R "$WEBROOT"/admin/modules/cdr/install.php "$WEBROOT"/admin/modules/cdr/.install.php
+	# shellcheck disable=SC2016
+	sed -i -e 's/\$db_host = !empty(\$db_host) ? \$db_host : "localhost";/\$db_host = !empty(\$db_host) ? \$db_host : "'"$DB_HOST"'";/g' "$WEBROOT"/admin/modules/cdr/install.php
+	# shellcheck disable=SC2016
+	sed -i -e 's/\$db_name = !empty(\$db_name) ? \$db_name : "asteriskcdrdb";/\$db_name = !empty(\$db_name) ? \$db_name : "'"$DB_NAME"'";/g' "$WEBROOT"/admin/modules/cdr/install.php
+	fwconsole ma upgrade cdr
+	cp -R "$WEBROOT"/admin/modules/cdr/.install.php "$WEBROOT"/admin/modules/cdr/install.php
+	fwconsole chown
+  fwconsole reload
+  chown -R asterisk. /etc/asterisk
 else
-		echo '** [freepbx] There is no need for you to run this script as you are using the embedded database'
+	echo '** [freepbx] There is no need for you to run this script as you are using the embedded database'
 fi
