@@ -3,16 +3,10 @@
 source /assets/functions/00-container
 prepare_service single
 
-### Set Defaults
-ENABLE_CRON=${ENABLE_CRON:-"TRUE"}
-
-### Check to see if Enabled/Disabled
-if [ "$ENABLE_CRON" = "FALSE" ] || [ "$ENABLE_CRON" = "false" ];  then
-        print_notice "Disabling Cron"
-        service_stop `basename $0`
+### Check to see if enabled/disabled
+if var_true "$ENABLE_CRON" ;  then
+  print_debug "Creating Cron folder"
+  silent mkdir -p /var/spool/cron
 fi
-
-print_debug "Creating Cron Folder"
-silent mkdir -p /var/spool/cron
 
 liftoff
