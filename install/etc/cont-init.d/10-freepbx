@@ -369,7 +369,7 @@ if [ ! -f "/usr/sbin/fwconsole" ]; then
   exit 1
 fi
 
-chown -R asterisk. /etc/asterisk
+chown -RH asterisk. /etc/asterisk
 chown asterisk. /etc/amportal.conf
 
 ### Custom file support
