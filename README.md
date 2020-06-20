@@ -123,7 +123,7 @@ below is the complete list of available options that can be used to customize yo
 | `DB_USER` | MySQL Username for above database e.g. `asterisk` |
 | `DB_PASS` | MySQL Password for above database e.g. `password`|
 | `ENABLE_FAIL2BAN` | Enable Fail2ban to block the "bad guys" - Default `TRUE`|
-| `ENABLE_FOP` | Enable Flash Operator Panel - Default `TRUE` |
+| `ENABLE_FOP` | Enable Flash Operator Panel - Default `FALSE` |
 | `ENABLE_SSL` | Enable HTTPd to serve SSL requests - Default `FALSE`|
 | `ENABLE_XMPP` | Enable XMPP Module with MongoDB - Default `FALSE` |
 | `FOP_DIRECTORY` | What folder to access FOP - Default `/fop`

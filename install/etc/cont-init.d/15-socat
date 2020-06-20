@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+
+source /assets/functions/00-container
+prepare_service single
+# shellcheck disable=SC2034
+PROCESS_NAME="socat"
+
+if [ "$SMTP_HOST" != "localhost" ] || [ "$SMTP_HOST" != "127.0.0.1" ] || [ "$SMTP_PORT" != 25 ] && var_true "$ENABLE_SMTP" ; then
+  print_notice "Custom SMTP relay detected, enabling proxy"
+  service_start 15-socat
+else
+	service_stop 15-socat
+fi
+
+liftoff
