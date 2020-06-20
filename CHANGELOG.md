@@ -1,3 +1,38 @@
+## 5.0.0 2020-06-19 <rusxakep@github>
+
+   ### Added
+      - Asterisk 17.x support added
+      - New Asterisk modules added to base image
+      - G72x codec CPU-versioning support added
+      - FreePBX 15.0.16.56 support added
+      - USB dongle (huawei) module support added
+      - MongoDB versioning support added
+      - Sync build with latest base image features (00-container)
+      - FreePBX keys added to avoid spam from gnupg in logs
+      - FreePBX modules added (backup, filestore, fw_langpacks)
+      - Fix MariaDB starting
+      - Change external MariaDB ODBC drivers to internal (debian repository)
+      - Some environment variables moved to \defaults to avoid rebuild image
+      - socat as SMTP proxy added for new FreePBX modules  
+      - Support for custom RTP ports added
+    
+
+   ### Changed
+      - Cleaned up Documentation
+      - ENABLE_CRON, ENABLE_SMTP now TRUE by default
+      - Fix for incorrect privileges in doctrine FreePBX cache system
+      - Extend featurecodes column in embedded database too
+      - Fix '--x' execute bit in all asterisk modules
+      - Fix MongoDB starting
+      - Fix bash scripts (fix 'sed'-scripts, fix 'chown'-scripts with symlinks and so on ...)
+      - Fix start/stop container scripts to avoid database corruption
+      - Create additional agi-bin, backup, fax and outgoing directories
+      - Fix XMPP service start/stop  
+      - Change FOP2 Module to FALSE by default due to flash deprecation
+      - RTP_START and RTP_FINISH values in embedded database
+      - Fix issues with cron running as root
+    
+
 ## 4.0.6 2020-06-08 <dave at tiredofit dot ca>
 
    ### Added
