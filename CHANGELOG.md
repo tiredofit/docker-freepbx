@@ -1,3 +1,8 @@
+## 5.0.1 2020-06-20 <rusxakep@github>
+
+   ### Changed
+      - Patch for version 5.0.0
+
 ## 5.0.0 2020-06-19 <rusxakep@github>
 
    ### Added
@@ -16,7 +21,6 @@
       - socat as SMTP proxy added for new FreePBX modules  
       - Support for custom RTP ports added
     
-
    ### Changed
       - Cleaned up Documentation
       - ENABLE_CRON, ENABLE_SMTP now TRUE by default
