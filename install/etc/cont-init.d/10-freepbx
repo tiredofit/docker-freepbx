@@ -362,7 +362,7 @@ fi
 
 chown asterisk. /etc/freepbx.conf
 
-print_info "Starting Asterisk {$ASTERISK_VERSION}"
+print_info "Starting Asterisk ${ASTERISK_VERSION}"
 
 if [ ! -f "/usr/sbin/fwconsole" ]; then
   print_error "Can't seem to locate /usr/sbin/fwconsole.. Exiting. This is likely because the initial installation of FreePBX failed, and usually an upstream error. Try again by deleting all volumes and databases and starting from scratch before submitting an issue."
