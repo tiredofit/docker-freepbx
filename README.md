@@ -88,6 +88,8 @@ See the example's folder for a working [docker-compose.yml](examples/docker-comp
 
 Login to the web server's admin URL (default /admin) and enter in your admin username, admin password, and email address and start configuring the system!
 
+*To set credentials for the first time navigate to `http://<your-ip-address>/admin/config.php` and fill out the form for initial user and server setup.*
+
 # Configuration
 
 ### Data-Volumes
