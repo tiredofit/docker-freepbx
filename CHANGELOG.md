@@ -1,3 +1,9 @@
+## 5.0.2 2020-07-13 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Disable app_vooicemail_odbc and app_voicemail_imap causing problems with Voicemail working
+
+
 ## 5.0.1 2020-06-20 <rusxakep@github>
 
    ### Changed

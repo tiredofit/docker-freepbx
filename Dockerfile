@@ -178,15 +178,14 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     cd /usr/src/asterisk/ && \
     make distclean && \
     contrib/scripts/get_mp3_source.sh && \
+    \
+    cd /usr/src/asterisk && \
     ./configure \
         --with-jansson-bundled \
         --with-pjproject-bundled \
         --with-bluetooth \
         --with-codec2 \
-        --with-corosync \
         --with-crypto \
-        --with-ffmpeg \
-        --with-freetds \
         --with-gmime \
         --with-iconv \
         --with-iksemel \
@@ -196,7 +195,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
         --with-libxslt \
         --with-lua \
         --with-ogg \
-        --with-openssl \
         --with-opus \
         --with-resample \
         --with-spandsp \
@@ -207,7 +205,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
         --with-uriparser \
         --with-vorbis \
         --with-vpb \
-        --with-zlib && \
+        && \
     \
     make menuselect/menuselect menuselect-tree menuselect.makeopts && \
     menuselect/menuselect --disable BUILD_NATIVE \
@@ -221,8 +219,9 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                           --enable BETTER_BACKTRACES \
                           --disable MOH-OPSOUND-WAV \
                           --enable MOH-OPSOUND-GSM \
+                          --disable app_voicemail_imap \
+                          --disable app_voicemail_odbc \
                           --disable res_digium_phone \
-                          --disable codec_g723 \
                           --disable codec_g729a && \
     make && \
     make install && \
