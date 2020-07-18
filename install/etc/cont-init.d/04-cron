@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+
+source /assets/functions/00-container
+prepare_service single
+
+### Check to see if enabled/disabled
+if var_true "$ENABLE_CRON" ;  then
+  print_debug "Creating Cron folder"
+  silent mkdir -p /var/spool/cron
+fi
+
+liftoff

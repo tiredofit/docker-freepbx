@@ -1,15 +1,17 @@
 #!/usr/bin/with-contenv bash
 
-for s in /assets/functions/*; do source $s; done
+source /assets/functions/00-container
+prepare_service single
+# shellcheck disable=SC2034
 PROCESS_NAME="fail2ban"
 
-if [[ "$ENABLE_FAIL2BAN" = "TRUE" ]] || [[ "$ENABLE_FAIL2BAN" = "true" ]];  then
+if var_true "$ENABLE_FAIL2BAN" ;  then
 	sed -i -e "s/logtarget = \/var\/log\/fail2ban.log/logtarget = \/var\/log\/fail2ban\/fail2ban.log/g" /etc/fail2ban/fail2ban.conf
 	rm -rf /etc/fail2ban/jail.d/*
 	mkdir -p /var/log/asterisk/
 	mkdir -p /var/log/fail2ban/
 	touch /var/log/asterisk/full
-    touch /var/log/asterisk/freepbx_security.log
+  touch /var/log/asterisk/freepbx_security.log
 	cat <<EOF > /etc/fail2ban/jail.conf
 
 #[asterisk-iptables]

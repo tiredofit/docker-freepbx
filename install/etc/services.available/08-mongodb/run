@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+
+source /assets/functions/00-container
+# shellcheck disable=SC2034
+PROCESS_NAME="mongo"
+
+check_container_initialized
+check_service_initialized init
+chown -R mongodb. /var/log/mongodb
+rm -rf /var/run/mongodb/*
+exec mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf run

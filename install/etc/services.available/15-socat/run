@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+source /assets/functions/00-container
+# shellcheck disable=SC2034
+PROCESS_NAME="socat"
+
+check_container_initialized
+check_service_initialized init
+exec socat tcp-listen:25,bind=127.0.0.1,fork,reuseaddr tcp:"$SMTP_HOST":"$SMTP_PORT"

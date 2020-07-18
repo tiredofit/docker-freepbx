@@ -1,22 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-## Embedded DB Variance
-  if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
-     DB_EMBEDDED=TRUE
-  else
-     DB_EMBEDDED=FALSE      
-  fi
-  
-fwconsole stop
-service apache2 stop
+source /assets/functions/00-container
+prepare_service single
 
-if [[ "$DB_EMBEDDED" = "TRUE" ]] || [[ "$DB_EMBEDDED" = "true" ]];  then
-	service mysql stop
-fi
-
-if [[ "$ENABLE_XMPP" = "TRUE" ]] || [[ "$ENABLE_XMPP" = "true" ]];  then
-	mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf --shutdown
-fi
-
-mkdir -p /tmp/state
-touch /tmp/state/10-freepbx-finish
+silent fwconsole stop --immediate
+rm -f /tmp/state/*-freepbx*
