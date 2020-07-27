@@ -1,3 +1,9 @@
+## 5.0.3 2020-07-27 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Set +x bit on 15-socat container initialization and runtime scripts
+
+
 ## 5.0.2 2020-07-13 <dave at tiredofit dot ca>
 
    ### Changed
