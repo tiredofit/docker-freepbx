@@ -127,6 +127,7 @@ below is the complete list of available options that can be used to customize yo
 | `ENABLE_FOP`                 | Enable Flash Operator Panel                                                        | `FALSE`         |
 | `ENABLE_SSL`                 | Enable HTTPd to serve SSL requests                                                 | `FALSE`         |
 | `ENABLE_XMPP`                | Enable XMPP Module with MongoDB                                                    | `FALSE`         |
+| `ENABLE_VM_TRANSCRIBE`       | Enable Voicemail Transcription with IBM Watson                                     | `FALSE`         |
 | `FOP_DIRECTORY`              | What folder to access FOP                                                          | `/fop`          |
 | `HTTP_PORT`                  | HTTP listening port                                                                | `80`            |
 | `HTTPS_PORT`                 | HTTPS listening port                                                               | `443`           |
@@ -137,8 +138,12 @@ below is the complete list of available options that can be used to customize yo
 | `TLS_CERT`                   | TLS certificate to drop in /certs for HTTPS if no reverse proxy                    |                 |
 | `TLS_KEY`                    | TLS Key to drop in /certs for HTTPS if no reverse proxy                            |                 |
 | `WEBROOT`                    | If you wish to install to a subfolder use this. Example: `/var/www/html/pbx`       | `/var/www/html` |
+| `VM_TRANSCRIBE_APIKEY`       | API Key from Watson See [tutorial](http://nerdvittles.com/?page_id=25616)          |                 |
+| `VM_TRANSCRIBE_MODEL`        | Watson Voice Model - See [here](https://cloud.ibm.com/docs/speech-to-text?topic=speech-to-text-models) for list | `en-GB_NarrowbandModel`
 
 *`ADMIN_DIRECTORY ` and `FOP_DIRECTORY` may not work correctly if `WEBROOT` is changed or `UCP_FIRST=FALSE`*
+
+If setting `ENABLE_VM_TRANSCRIBE=TRUE` you will need to change the `mailcmd` in Freepbx voicemail settings to `/usr/bin/watson-transcription` and set the API Key.
 
 ### Networking
 

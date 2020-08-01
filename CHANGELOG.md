@@ -1,3 +1,10 @@
+## 5.0.4 2020-08-01 <dave at tiredofit dot ca>
+
+   ### Added
+      - Asterisk 17.6.0
+      - Added capability of Voicemail transcription via IBM Watson (see /usr/sbin/watson-transcription)
+
+
 ## 5.0.3 2020-07-27 <dave at tiredofit dot ca>
 
    ### Changed
