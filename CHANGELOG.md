@@ -1,3 +1,9 @@
+## 5.0.5 2020-08-14 <hobbit378@github>
+
+   ### Fixed
+      - Changed routines to limit socat to start if SMTP_HOST=localhost
+
+
 ## 5.0.4 2020-08-01 <dave at tiredofit dot ca>
 
    ### Added
