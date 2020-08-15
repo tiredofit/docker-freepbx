@@ -178,7 +178,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     cd /usr/src/asterisk/ && \
     make distclean && \
     contrib/scripts/get_mp3_source.sh && \
-    \
     cd /usr/src/asterisk && \
     ./configure \
         --with-jansson-bundled \

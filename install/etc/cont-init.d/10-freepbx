@@ -578,8 +578,10 @@ if var_true "$ENABLE_FOP" ;  then
   mkdir -p /var/log/fop
   chown -R asterisk. /var/log/fop
   sed -i "s/manager_host=.*/manager_host=127.0.0.1/g" /usr/local/fop2/fop2.cfg
-  silent service fop2 restart
+  /usr/local/fop2/fop2_server -D
 fi
+
+chown asterisk:asterisk /usr/sbin/watson-transcription
 
 silent service apache2 restart
 

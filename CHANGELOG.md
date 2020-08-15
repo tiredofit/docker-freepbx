@@ -1,3 +1,11 @@
+## 5.0.6 2020-08-15 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fix for FOP2 not starting up
+      - Add debug statements to watson-transcription script
+      - Repair issues with watson transcription
+
+
 ## 5.0.5 2020-08-14 <hobbit378@github>
 
    ### Fixed
