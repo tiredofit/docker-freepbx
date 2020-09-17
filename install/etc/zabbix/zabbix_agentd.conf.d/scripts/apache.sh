@@ -82,14 +82,14 @@ cache_prefix="zapache-$UID-${STATUS_URL//[^a-zA-Z0-9_-]/_}"
 cache="$TMPDIR/$cache_prefix.cache"
 cache_timestamp_check="$TMPDIR/$cache_prefix.ts"
 # This assumes touch from coreutils
-touch -d "@$((`date +%s` - ($cache_seconds - 1)))" "$cache_timestamp_check"
+touch -d "@$(($(date +%s) - (cache_seconds - 1)))" "$cache_timestamp_check"
 
 if [ "$cache" -ot "$cache_timestamp_check" ]; then
-	curl="`which curl`"
+	curl="$(command -v curl)"
 	if [ "$curl" ]; then
 		fetch_url() { $curl --insecure --silent --location -H "Cache-Control: no-cache" "$@"; }
 	else
-		wget="`which wget`"
+		wget="$(command -v wget)"
 		if [ "$wget" ]; then
 			fetch_url() { $wget --no-check-certificate --quiet --header "Cache-Control: no-cache" -O - "$@"; }
 		else
@@ -108,7 +108,7 @@ fi
 
 case "$CASE_VALUE" in
 'ping')
-	if [ ! -s "$cache" -o "$cache" -ot "$cache_timestamp_check" ]; then
+	if [ ! -s "$cache" ] || [ "$cache" -ot "$cache_timestamp_check" ]; then
 		echo "0"
 	else
 		echo "1"
@@ -123,73 +123,73 @@ fi
  
 case "$CASE_VALUE" in
 'TotalAccesses')
-	value="`awk '/^Total Accesses:/ {print $3}' < \"$cache\"`"
+	value="$(awk '/^Total Accesses:/ {print $3}' < \""$cache"\")"
 	rval=$?;;
 'TotalKBytes')
-	value="`awk '/^Total kBytes:/ {print $3}' < \"$cache\"`"
+	value="$(awk '/^Total kBytes:/ {print $3}' < \""$cache"\")"
 	rval=$?;;
 'CPULoad')
-	value="`awk '/^CPULoad:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^CPULoad:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'Uptime')
-	value="`awk '/^Uptime:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^Uptime:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'ReqPerSec')
-	value="`awk '/^ReqPerSec:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^ReqPerSec:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'BytesPerSec')
-	value="`awk '/^BytesPerSec:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^BytesPerSec:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'BytesPerReq')
-	value="`awk '/^BytesPerReq:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^BytesPerReq:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'BusyWorkers')
-	value="`awk '/^BusyWorkers:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^BusyWorkers:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'IdleWorkers')
-	value="`awk '/^IdleWorkers:/ {print $2}' < \"$cache\"`"
+	value="$(awk '/^IdleWorkers:/ {print $2}' < \""$cache"\")"
 	rval=$?;;
 'WaitingForConnection')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"_")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"_")-1}' < \""$cache"\")"
 	rval=$?;;
 'StartingUp')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"S")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"S")-1}' < \""$cache"\")"
 	rval=$?;;
 'ReadingRequest')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"R")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"R")-1}' < \""$cache"\")"
 	rval=$?;;
 'SendingReply')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"W")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"W")-1}' < \""$cache"\")"
 	rval=$?;;
 'KeepAlive')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"K")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"K")-1}' < \""$cache"\")"
 	rval=$?;;
 'DNSLookup')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"D")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"D")-1}' < \""$cache"\")"
 	rval=$?;;
 'ClosingConnection')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"C")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"C")-1}' < \""$cache"\")"
 	rval=$?;;
 'Logging')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"L")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"L")-1}' < \""$cache"\")"
 	rval=$?;;
 'GracefullyFinishing')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"G")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"G")-1}' < \""$cache"\")"
 	rval=$?;;
 'IdleCleanupOfWorker')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,"I")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,"I")-1}' < \""$cache"\")"
 	rval=$?;;
 'OpenSlotWithNoCurrentProcess')
-	value="`awk '/^Scoreboard:/ {print split($2,notused,".")-1}' < \"$cache\"`"
+	value="$(awk '/^Scoreboard:/ {print split($2,notused,".")-1}' < \""$cache"\")"
 	rval=$?;;
 *)
 	usage
 	exit 1;;
 esac
 
-if [ "$rval" -eq 0 -a -z "$value" ]; then
+if [ "$rval" -eq 0 ] && [ -z "$value" ]; then
     case "$CASE_VALUE" in
-        # Theese metrics are output only if non-zero
+        # These metrics are output only if non-zero
         'CPULoad' | 'ReqPerSec' | 'BytesPerSec' | 'BytesPerReq')
             value=0
             ;;
