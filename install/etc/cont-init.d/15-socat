@@ -5,7 +5,7 @@ prepare_service single
 # shellcheck disable=SC2034
 PROCESS_NAME="socat"
 
-if  [ "$SMTP_HOST" != "localhost" -a "$SMTP_HOST" != "127.0.0.1" -o "$SMTP_PORT" != 25 ] && var_true "$ENABLE_SMTP" ; then
+if  [ "$SMTP_HOST" != "localhost" ] && [ "$SMTP_HOST" != "127.0.0.1" ] || [ "$SMTP_PORT" != 25 ] && var_true "$ENABLE_SMTP" ; then
   print_notice "Custom SMTP relay detected, enabling proxy"
   service_start 15-socat
 else
