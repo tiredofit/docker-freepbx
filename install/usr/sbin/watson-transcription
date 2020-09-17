@@ -29,7 +29,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 print_debug "Create Temporary Directory"
 # create a temporary directory and cd to it
 TMPDIR=$(mktemp -d)
-cd "$TMPDIR"
+cd "$TMPDIR" || exit
 print debug "Now working in ${TMPDIR}"
 
 # dump the stream to a temporary file
@@ -48,10 +48,10 @@ BOUNDARY=$(grep "boundary=" stream.org | cut -d'"' -f 2)
 # stream.part3 - attachment in base64 (WAV file)
 # stream.part4 - footer of the message
 print_debug "Cutting file into parts"
-awk '/'$BOUNDARY'/{i++}{print > "stream.part"i}' stream.org
+awk '/'"$BOUNDARY"'/{i++}{print > "stream.part"i}' stream.org
 
 # if mail is having no audio attachment (plain text)
-PLAINTEXT=$(cat stream.part1 | grep 'plain')
+PLAINTEXT=$(< stream.part1 grep 'plain')
 if [ "$PLAINTEXT" != "" ]; then
   print_debug "File has no audio attachment"
 
@@ -89,11 +89,12 @@ else
     API_PASSWORD="$VM_TRANSCRIBE_APIKEY"
     # Set the voice model to a valid IBM model
     # All models available via https://cloud.ibm.com/docs/speech-to-text?topic=speech-to-text-models
+    # shellcheck disable=SC2034
     API_MODEL=$VM_TRANSCRIBE_MODEL
     print_debug "Using API_MODEL ${VM_TRANSCRIBE_MODEL}"
 
     print_debug "Sending Payload to Watson"
-    curl -s "$CURL_OPTS" -k -u $API_USERNAME:$API_PASSWORD -X POST \
+    curl -s "$CURL_OPTS" -k -u $API_USERNAME:"$API_PASSWORD" -X POST \
       --limit-rate 40000 \
       --header "Content-Type: audio/wav" \
       --data-binary @stream.part3.wav \
@@ -101,7 +102,7 @@ else
 
     print_debug "Extracting Transcript Results"
     # Extract transcript results from JSON response
-    TRANSCRIPT=$(cat audio.txt | grep transcript | sed 's#^.*"transcript": "##g' | sed 's# "$##g')
+    TRANSCRIPT=$(< audio.txt grep transcript | sed 's#^.*"transcript": "##g' | sed 's# "$##g')
   else
     print_debug "Skipping Watson Transcription"
   fi
@@ -145,16 +146,18 @@ else
 
   # append end of mail body, converting it to LF only
   print_debug "Append end of mail body"
-  echo "" >>stream.tmp
-  echo "" >>stream.tmp
-  cat stream.part4 >>stream.tmp
+  {
+    echo ""
+    echo ""
+    cat stream.part4
+  } >> stream.tmp
   dos2unix -o stream.tmp
   cat stream.tmp >>stream.new
 fi
 
 # send the mail thru sendmail
 print_debug "Sending stream via sendmail"
-cat stream.new | sendmail -t
+< stream.new sendmail -t
 
 # remove all temporary files and temporary directory
 print_debug "Cleaning up"
