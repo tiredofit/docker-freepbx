@@ -144,6 +144,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                     php${PHP_VERSION}-ldap \
                     php${PHP_VERSION}-xml \
                     php${PHP_VERSION}-zip \
+                    php${PHP_VERSION}-sqlite3 \
                     php-pear \
                     pkg-config \
                     sipsak \
