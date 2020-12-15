@@ -163,6 +163,11 @@ The following ports are exposed.
 | `8009`            | UCP SSL     |
 | `18000-20000/udp` | RTP ports   |
 
+
+### Fail2Ban
+
+* For fail2ban rules to kickin, the `security` log level needs to be enable for asterisk `full` log file. This can be done from the Settings > Log File Settings > Log files.
+
 ## Maintenance
 
 * There seems to be a problem with the CDR Module when updating where it refuses to update when using an external DB Server.
