@@ -373,13 +373,22 @@ chown -RH asterisk. /etc/asterisk
 chown asterisk. /etc/amportal.conf
 
 ### Custom file support
-  if [ -d /assets/custom ] ; then
-     print_warn "Custom files found, copying over top of original.."
-     cp -R /assets/custom/* /
-     chown -R asterisk. /var/www/html
-     chown -RH asterisk. /var/lib/asterisk
-     chown -RH asterisk. /var/spool/asterisk
-  fi
+if [ -d /assets/custom ] ; then
+  print_warn "Custom files found, copying over top of original.."
+  cp -R /assets/custom/* /
+  chown -R asterisk. /var/www/html
+  chown -RH asterisk. /var/lib/asterisk
+  chown -RH asterisk. /var/spool/asterisk
+fi
+
+## Execute Custom Scripts
+if [ -d /assets/custom-scripts/ ] ; then
+    print_warn "Found Custom Scripts to Execute"
+    for f in $(find /assets/custom-scripts/ -name \*.sh -type f); do
+        print_warn "Running Script ${f}"
+        ${f}
+    done
+fi
 
 chown -RH asterisk. /var/spool/asterisk
 rm -f /tmp/cron.error

@@ -1,3 +1,10 @@
+## 5.0.7 2021-03-24 <dave at tiredofit dot ca>
+
+   ### Added
+      - Asterisk 17.9.3
+      - Added custom scripts support - Map /assets/custom-scripts/ and ame your files 01-xxx.sh 02-xxx.sh to have them executed in order. Make sure they are set executible
+
+
 ## 5.0.6 2020-08-15 <dave at tiredofit dot ca>
 
    ### Changed
