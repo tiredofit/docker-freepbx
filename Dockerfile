@@ -1,4 +1,4 @@
-FROM tiredofit/nodejs:10-debian-latest
+FROM tiredofit/nodejs:10-debian
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set defaults
