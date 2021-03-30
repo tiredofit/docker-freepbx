@@ -21,9 +21,9 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     \
 ### Install dependencies
     set -x && \
-    curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
+    curl -sSLk https://packages.sury.org/php/apt.gpg | apt-key add - && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/deb.sury.org.list && \
-    curl https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add - && \
+    curl -sSLk https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add - && \
     echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/${MONGODB_VERSION} main" > /etc/apt/sources.list.d/mongodb-org.list && \
     echo "deb http://ftp.us.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/backports.list && \
     echo "deb-src http://ftp.us.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list.d/backports.list && \
@@ -166,7 +166,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     \
 ### Build SpanDSP
     mkdir -p /usr/src/spandsp && \
-    curl -kL http://sources.buildroot.net/spandsp/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
+    curl -ssLk http://sources.buildroot.net/spandsp/spandsp-${SPANDSP_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/spandsp && \
     cd /usr/src/spandsp && \
     ./configure --prefix=/usr && \
     make && \
@@ -175,7 +175,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
 ### Build Asterisk
     cd /usr/src && \
     mkdir -p asterisk && \
-    curl -sSL http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-${ASTERISK_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk && \
+    curl -sSLk http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-${ASTERISK_VERSION}.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk && \
     cd /usr/src/asterisk/ && \
     make distclean && \
     contrib/scripts/get_mp3_source.sh && \
@@ -238,7 +238,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     make install && \
     \
     mkdir -p /usr/src/asterisk-g72x && \
-    curl https://bitbucket.org/arkadi/asterisk-g72x/get/master.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
+    curl -sSLk https://bitbucket.org/arkadi/asterisk-g72x/get/master.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
     cd /usr/src/asterisk-g72x && \
     ./autogen.sh && \
     ./configure --prefix=/usr --with-bcg729 --enable-$G72X_CPUHOST && \
