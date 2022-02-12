@@ -1,7 +1,7 @@
-# CI tiredofit/docker-freepbx
+### Application Level Image CI
 ### Dave Conroy <dave at tiredofit dot ca>
 
-name: 'Build Images'
+name: 'build'
 
 on:
   push:
@@ -9,19 +9,20 @@ on:
     - '**'
     - '!README.md'
 jobs:
-  master:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Prepare
         id: prep
         run: |
-          set -x
           DOCKER_IMAGE=${GITHUB_REPOSITORY/docker-/}
+          set -x
           if [[ $GITHUB_REF == refs/heads/* ]]; then
              if [[ $GITHUB_REF == refs/heads/*/* ]] ; then
-               BRANCH="$(echo $GITHUB_REF | sed "s|refs/heads/||g" | sed "s|/|-|g")"
+               BRANCH="${DOCKER_IMAGE}:$(echo $GITHUB_REF | sed "s|refs/heads/||g" | sed "s|/|-|g")"
              else
                BRANCH=${GITHUB_REF#refs/heads/}
              fi
@@ -47,8 +48,9 @@ jobs:
             esac
           fi
 
+
           if [[ $GITHUB_REF == refs/tags/* ]]; then
-               GITTAG="${DOCKER_IMAGE}:${BRANCH}_$(echo $GITHUB_REF | sed 's|refs/tags/||g')"
+               GITTAG="${DOCKER_IMAGE}:$(echo $GITHUB_REF | sed 's|refs/tags/||g')"
           fi
 
           if [ -n "${BRANCHTAG}" ] && [ -n "${GITTAG}" ]; then
@@ -86,6 +88,7 @@ jobs:
             sed -i "/FROM .*/a LABEL tiredofit.image.image_build_date=\"$(date +'%Y-%m-%d %H:%M:%S')\"" Dockerfile
             if [ -f "CHANGELOG.md" ] ; then
               sed -i "/FROM .*/a LABEL tiredofit.image.git_changelog_version=\"$(head -n1 ./CHANGELOG.md | awk '{print $2}')\"" Dockerfile
+              mkdir -p install/assets/.changelogs ; cp CHANGELOG.md install/assets/.changelogs/${GITHUB_REPOSITORY/\//_}.md
             fi
 
             if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -103,6 +106,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          #platforms: linux/amd64,linux/arm/v7,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags }}

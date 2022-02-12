@@ -1,4 +1,4 @@
-FROM tiredofit/nodejs:10-debian
+FROM tiredofit/debian:buster
 LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
 
 ### Set defaults
@@ -22,6 +22,8 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
 ### Install dependencies
     set -x && \
     curl -sSLk https://packages.sury.org/php/apt.gpg | apt-key add - && \
+    curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    echo "deb https://deb.nodesource.com/node_12.x $(cat /etc/os-release |grep "VERSION=" | awk 'NR>1{print $1}' RS='(' FS=')') main" > /etc/apt/sources.list.d/nodejs.list && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/deb.sury.org.list && \
     curl -sSLk https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add - && \
     echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/${MONGODB_VERSION} main" > /etc/apt/sources.list.d/mongodb-org.list && \
@@ -131,6 +133,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                     mariadb-server \
                     mongodb-org \
                     mpg123 \
+                    nodejs \
                     odbc-mariadb \
                     php${PHP_VERSION} \
                     php${PHP_VERSION}-curl \
@@ -298,7 +301,8 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     rm -rf /var/spool/asterisk && \
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
     rm -rf /etc/asterisk && \
-    ln -s /data/etc/asterisk /etc/asterisk
+    ln -s /data/etc/asterisk /etc/asterisk && \
+    ln -s /usr/sbin/crontab /usr/bin/crontab
 
 ### Networking configuration
 EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8008 8009 8025 ${RTP_START}-${RTP_FINISH}/udp

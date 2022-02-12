@@ -1,3 +1,10 @@
+## 5.1.0 2022-02-12 <dave at tiredofit dot ca>
+
+   ### Added
+      - Update to use Node 12
+      - Refresh Base image and bring packages up to date to resolve security concerns
+
+
 ## 5.0.7 2021-03-24 <dave at tiredofit dot ca>
 
    ### Added
