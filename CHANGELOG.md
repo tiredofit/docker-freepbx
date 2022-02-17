@@ -1,3 +1,10 @@
+## 5.1.1 2022-02-17 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Pin PHP to 5.6 due to multiple versions being installed from repo
+      - Downgrade back to Node 10
+
+
 ## 5.1.0 2022-02-12 <dave at tiredofit dot ca>
 
    ### Added
