@@ -5,5 +5,5 @@ prepare_service single
 
 if var_true "$DB_EMBEDDED" ;  then
 	silent service mysql stop
-	rm -f /tmp/state/*-mariadb*
+	rm -f /tmp/.container/*-mariadb*
 fi

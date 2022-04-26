@@ -5,5 +5,5 @@ prepare_service single
 
 if var_true "$ENABLE_XMPP" ;  then
   silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf --shutdown
-  rm -f /tmp/state/*-mongo*
+  rm -f /tmp/.container/*-mongo*
 fi

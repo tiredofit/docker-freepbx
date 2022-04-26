@@ -4,4 +4,4 @@ source /assets/functions/00-container
 prepare_service single
 
 silent fwconsole stop --immediate
-rm -f /tmp/state/*-freepbx*
+rm -f /tmp/.container/*-freepbx*
