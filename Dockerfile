@@ -277,7 +277,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     mkdir -p /var/log/asterisk && \
     mkdir -p /var/log/apache2 && \
     mkdir -p /var/log/httpd && \
-    update-alternatives --set php /usr/bin/php5.6 && \
+    update-alternatives --set php /usr/bin/php${PHP_VERSION} && \
     \
 ### Zabbix setup
     echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers && \
