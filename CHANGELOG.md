@@ -1,3 +1,13 @@
+## 5.2.0 2022-04-29 <dave at tiredofit dot ca>
+
+   ### Added
+      - Support latest tiredofit/debian base images
+
+   ### Changed
+      - Fix for PHP_VERSION not being used properly during Dockerfile build
+      - Move logrotate out of /install/etc to /install/assets
+
+
 ## 5.1.1 2022-02-17 <dave at tiredofit dot ca>
 
    ### Changed

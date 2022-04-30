@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 
 ADMIN_DIRECTORY=${ADMIN_DIRECTORY:-"/admin"}
 DB_EMBEDDED=${DB_EMBEDDED:-"TRUE"}
