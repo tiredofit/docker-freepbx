@@ -77,7 +77,7 @@ You will also need an external MySQL/MariaDB container, although it can use an i
 Clone this repository and build the image with `docker build -t (imagename) .`
 
 ### Prebuilt Images
-Builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/lemonldap) and is the recommended method of installation.
+Builds of the image are available on [Docker Hub](https://hub.docker.com/r/tiredofit/freepbx) and is the recommended method of installation.
 
 ```bash
 docker pull tiredofit/freepbx:(imagetag)
