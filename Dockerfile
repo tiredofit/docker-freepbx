@@ -288,6 +288,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ln -s /data/home/asterisk /home/asterisk && \
     mv /var/lib/asterisk /assets/config/var/lib/ && \
     ln -s /data/var/lib/asterisk /var/lib/asterisk && \
+    ln -s /data/var/lib/mysql /var/lib/mysql && \
     ln -s /data/usr/local/fop2 /usr/local/fop2 && \
     mkdir -p /assets/config/var/run/ && \
     mv /var/run/asterisk /assets/config/var/run/ && \
