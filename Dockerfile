@@ -303,7 +303,10 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
     rm -rf /etc/asterisk && \
     ln -s /data/etc/asterisk /etc/asterisk && \
-    ln -s /usr/sbin/crontab /usr/bin/crontab
+    ln -s /usr/sbin/crontab /usr/bin/crontab ; \
+    \
+### busybox/crontab hotfix missing SUID (https://github.com/tiredofit/docker-freepbx/issues/196)
+    chmod u+s /bin/busybox 
 
 ### Networking configuration
 EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8008 8009 8025 ${RTP_START}-${RTP_FINISH}/udp
